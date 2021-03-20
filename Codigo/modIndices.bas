@@ -29,6 +29,8 @@ Attribute VB_Name = "modIndices"
 
 Option Explicit
 
+Public grhCount As Long
+
 ''
 ' Carga los indices de Superficie
 '
@@ -40,16 +42,20 @@ Public Sub CargarIndicesSuperficie()
 '*************************************************
 
 On Error GoTo Fallo
+    Dim Leer As New clsIniReader
+    Dim i As Integer
+
     If FileExist(IniPath & "Datos\indices.ini", vbArchive) = False Then
         MsgBox "Falta el archivo 'Datos\indices.ini'", vbCritical
         End
     End If
-    Dim Leer As New clsIniReader
-    Dim i As Integer
+    
     Leer.Initialize IniPath & "Datos\indices.ini"
     MaxSup = Leer.GetValue("INIT", "Referencias")
+    
     ReDim SupData(MaxSup) As SupData
     frmMain.lListado(0).Clear
+    
     For i = 0 To MaxSup
         SupData(i).name = Leer.GetValue("REFERENCIA" & i, "Nombre")
         SupData(i).Grh = Val(Leer.GetValue("REFERENCIA" & i, "GrhIndice"))
@@ -59,6 +65,7 @@ On Error GoTo Fallo
         SupData(i).Capa = Val(Leer.GetValue("REFERENCIA" & i, "Capa"))
         frmMain.lListado(0).AddItem SupData(i).name & " - #" & i
     Next
+    
     DoEvents
     Exit Sub
 Fallo:
@@ -139,7 +146,7 @@ End Sub
 ' Carga los indices de Cuerpos
 '
 
-Public Sub CargarIndicesDeCuerpos()
+Public Sub CargarCuerpos()
 '*************************************************
 'Author: ^[GS]^
 'Last modified: 29/05/06
@@ -168,7 +175,7 @@ On Error GoTo Fallo
         InitGrh BodyData(i).Walk(3), MisCuerpos(i).Body(3), 0
         InitGrh BodyData(i).Walk(4), MisCuerpos(i).Body(4), 0
         BodyData(i).HeadOffset.X = MisCuerpos(i).HeadOffsetX
-        BodyData(i).HeadOffset.y = MisCuerpos(i).HeadOffsetY
+        BodyData(i).HeadOffset.Y = MisCuerpos(i).HeadOffsetY
     Next i
     Close #n
 Exit Sub
@@ -181,7 +188,7 @@ End Sub
 ' Carga los indices de Cabezas
 '
 
-Public Sub CargarIndicesDeCabezas()
+Public Sub CargarCabezas()
 On Error GoTo Fallo
     If FileExist(DirIndex & "Cabezas.ind", vbArchive) = False Then
         MsgBox "Falta el archivo 'Cabezas.ind' en " & DirIndex, vbCritical
@@ -269,206 +276,11 @@ Fallo:
 
 End Sub
 
-Public Sub CargarIndicesDeGraficos1()
+Public Sub LoadGrhData()
 'On Error Resume Next
 On Error GoTo ErrorHandler
     Dim Grh As Long
     Dim Frame As Long
-    Dim grhCount As Long
-    Dim handle As Integer
-    Dim fileVersion As Long
-    
-    'Open files
-    handle = FreeFile()
-    Open DirIndex & "\Graficos1.ind" For Binary Access Read As handle
-    Seek #1, 1
-    
-    'Get file version
-    Get handle, , fileVersion
-    
-    'Get number of grhs
-    Get handle, , grhCount
-    'MsgBox grhCount
-    'Resize arrays
-    ReDim GrhData(1 To grhCount) As GrhData
-    
-    While Not EOF(handle)
-        Get handle, , Grh
-        
-        With GrhData(Grh)
-            'Get number of frames
-            Get handle, , .NumFrames
-            If .NumFrames <= 0 Then GoTo ErrorHandler
-            
-            ReDim .Frames(1 To GrhData(Grh).NumFrames)
-            
-            If .NumFrames > 1 Then
-                'Read a animation GRH set
-                For Frame = 1 To .NumFrames
-                    Get handle, , .Frames(Frame)
-                    If .Frames(Frame) <= 0 Or .Frames(Frame) > grhCount Then
-                        GoTo ErrorHandler
-                    End If
-                Next Frame
-                
-                Get handle, , .speed
-                
-                If .speed <= 0 Then GoTo ErrorHandler
-                
-                'Compute width and height
-                .pixelHeight = GrhData(.Frames(1)).pixelHeight
-                If .pixelHeight <= 0 Then GoTo ErrorHandler
-                
-                .pixelWidth = GrhData(.Frames(1)).pixelWidth
-                If .pixelWidth <= 0 Then GoTo ErrorHandler
-                
-                .TileWidth = GrhData(.Frames(1)).TileWidth
-                If .TileWidth <= 0 Then GoTo ErrorHandler
-                
-                .TileHeight = GrhData(.Frames(1)).TileHeight
-                If .TileHeight <= 0 Then GoTo ErrorHandler
-            Else
-                'Read in normal GRH data
-                Get handle, , .FileNum
-                If .FileNum <= 0 Then GoTo ErrorHandler
-                
-                Get handle, , GrhData(Grh).sX
-                If .sX < 0 Then GoTo ErrorHandler
-                
-                Get handle, , .sY
-                If .sY < 0 Then GoTo ErrorHandler
-                
-                Get handle, , .pixelWidth
-                If .pixelWidth <= 0 Then GoTo ErrorHandler
-                
-                Get handle, , .pixelHeight
-                If .pixelHeight <= 0 Then GoTo ErrorHandler
-                
-                'Compute width and height
-                .TileWidth = .pixelWidth / TilePixelHeight
-                .TileHeight = .pixelHeight / TilePixelWidth
-                
-                .Frames(1) = Grh
-                If Grh = 32000 Then Exit Sub
-            End If
-        End With
-    Wend
-    
-    Close handle
-    
-    'LoadGrhData = True
-Exit Sub
-
-
-ErrorHandler:
-Close #1
-    MsgBox "Error al intentar cargar el Graficos " & Grh & " de graficos.ind en " & DirIndex & vbCrLf & "Err: " & Err.Number & " - " & Err.Description, vbCritical + vbOKOnly
-
-End Sub
-
-Public Sub CargarIndicesDeGraficos2()
-'On Error Resume Next
-On Error GoTo ErrorHandler
-    Dim Grh As Long
-    Dim Frame As Long
-    Dim grhCount As Long
-    Dim handle As Integer
-    Dim fileVersion As Long
-    
-    'Open files
-    handle = FreeFile()
-    Open DirIndex & "\Graficos2.ind" For Binary Access Read As handle
-    Seek #1, 1
-    
-    'Get file version
-    Get handle, , fileVersion
-    
-    'Get number of grhs
-    Get handle, , grhCount
-    'MsgBox grhCount
-    'Resize arrays
-    ReDim GrhData(1 To grhCount) As GrhData
-    
-    While Not EOF(handle)
-        Get handle, , Grh
-        
-        With GrhData(Grh)
-            'Get number of frames
-            Get handle, , .NumFrames
-            If .NumFrames <= 0 Then GoTo ErrorHandler
-            
-            ReDim .Frames(1 To GrhData(Grh).NumFrames)
-            
-            If .NumFrames > 1 Then
-                'Read a animation GRH set
-                For Frame = 1 To .NumFrames
-                    Get handle, , .Frames(Frame)
-                    If .Frames(Frame) <= 0 Or .Frames(Frame) > grhCount Then
-                        GoTo ErrorHandler
-                    End If
-                Next Frame
-                
-                Get handle, , .speed
-                
-                If .speed <= 0 Then GoTo ErrorHandler
-                
-                'Compute width and height
-                .pixelHeight = GrhData(.Frames(1)).pixelHeight
-                If .pixelHeight <= 0 Then GoTo ErrorHandler
-                
-                .pixelWidth = GrhData(.Frames(1)).pixelWidth
-                If .pixelWidth <= 0 Then GoTo ErrorHandler
-                
-                .TileWidth = GrhData(.Frames(1)).TileWidth
-                If .TileWidth <= 0 Then GoTo ErrorHandler
-                
-                .TileHeight = GrhData(.Frames(1)).TileHeight
-                If .TileHeight <= 0 Then GoTo ErrorHandler
-            Else
-                'Read in normal GRH data
-                Get handle, , .FileNum
-                If .FileNum <= 0 Then GoTo ErrorHandler
-                
-                Get handle, , GrhData(Grh).sX
-                If .sX < 0 Then GoTo ErrorHandler
-                
-                Get handle, , .sY
-                If .sY < 0 Then GoTo ErrorHandler
-                
-                Get handle, , .pixelWidth
-                If .pixelWidth <= 0 Then GoTo ErrorHandler
-                
-                Get handle, , .pixelHeight
-                If .pixelHeight <= 0 Then GoTo ErrorHandler
-                
-                'Compute width and height
-                .TileWidth = .pixelWidth / TilePixelHeight
-                .TileHeight = .pixelHeight / TilePixelWidth
-                
-                .Frames(1) = Grh
-                If Grh = 32000 Then Exit Sub
-            End If
-        End With
-    Wend
-    
-    Close handle
-    
-    'LoadGrhData = True
-Exit Sub
-
-
-ErrorHandler:
-Close #1
-    MsgBox "Error al intentar cargar el Graficos " & Grh & " de graficos.ind en " & DirIndex & vbCrLf & "Err: " & Err.Number & " - " & Err.Description, vbCritical + vbOKOnly
-
-End Sub
-
-Public Sub CargarIndicesDeGraficos3()
-'On Error Resume Next
-On Error GoTo ErrorHandler
-    Dim Grh As Long
-    Dim Frame As Long
-    Dim grhCount As Long
     Dim handle As Integer
     Dim fileVersion As Long
     

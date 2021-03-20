@@ -18,16 +18,24 @@ Begin VB.Form frmMusica
       TabIndex        =   4
       Top             =   1320
       Width           =   2415
-      _extentx        =   4260
-      _extenty        =   873
-      caption         =   "&Cerrar"
-      capalign        =   2
-      backstyle       =   2
-      cgradient       =   0
-      font            =   "frmMusica.frx":628A
-      mode            =   0
-      value           =   0
-      cback           =   -2147483633
+      _ExtentX        =   4260
+      _ExtentY        =   873
+      Caption         =   "&Cerrar"
+      CapAlign        =   2
+      BackStyle       =   2
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      cGradient       =   0
+      Mode            =   0
+      Value           =   0   'False
+      cBack           =   -2147483633
    End
    Begin WorldEditor.lvButtons_H cmdAplicarYCerrar 
       Height          =   495
@@ -35,17 +43,25 @@ Begin VB.Form frmMusica
       TabIndex        =   3
       Top             =   720
       Width           =   2415
-      _extentx        =   4260
-      _extenty        =   873
-      caption         =   "&Aplicar y Cerrar"
-      capalign        =   2
-      backstyle       =   2
-      cgradient       =   0
-      font            =   "frmMusica.frx":62B6
-      mode            =   0
-      value           =   0
-      enabled         =   0
-      cback           =   12648447
+      _ExtentX        =   4260
+      _ExtentY        =   873
+      Caption         =   "&Aplicar y Cerrar"
+      CapAlign        =   2
+      BackStyle       =   2
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      cGradient       =   0
+      Mode            =   0
+      Value           =   0   'False
+      Enabled         =   0   'False
+      cBack           =   12648447
    End
    Begin WorldEditor.lvButtons_H cmdDetener 
       Height          =   495
@@ -53,17 +69,25 @@ Begin VB.Form frmMusica
       TabIndex        =   2
       Top             =   120
       Width           =   1215
-      _extentx        =   2143
-      _extenty        =   873
-      caption         =   "&Detener"
-      capalign        =   2
-      backstyle       =   2
-      cgradient       =   0
-      font            =   "frmMusica.frx":62E2
-      mode            =   0
-      value           =   0
-      enabled         =   0
-      cback           =   12632319
+      _ExtentX        =   2143
+      _ExtentY        =   873
+      Caption         =   "&Detener"
+      CapAlign        =   2
+      BackStyle       =   2
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      cGradient       =   0
+      Mode            =   0
+      Value           =   0   'False
+      Enabled         =   0   'False
+      cBack           =   12632319
    End
    Begin WorldEditor.lvButtons_H cmdEscuchar 
       Height          =   495
@@ -71,17 +95,25 @@ Begin VB.Form frmMusica
       TabIndex        =   1
       Top             =   120
       Width           =   1215
-      _extentx        =   2143
-      _extenty        =   873
-      caption         =   "&Escuchar"
-      capalign        =   2
-      backstyle       =   2
-      cgradient       =   0
-      font            =   "frmMusica.frx":630E
-      mode            =   0
-      value           =   0
-      enabled         =   0
-      cback           =   12648384
+      _ExtentX        =   2143
+      _ExtentY        =   873
+      Caption         =   "&Escuchar"
+      CapAlign        =   2
+      BackStyle       =   2
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      cGradient       =   0
+      Mode            =   0
+      Value           =   0   'False
+      Enabled         =   0   'False
+      cBack           =   12648384
    End
    Begin VB.FileListBox fleMusicas 
       BeginProperty Font 
@@ -138,14 +170,16 @@ Private Sub cmdAplicarYCerrar_Click()
 'Author: ^[GS]^
 'Last modified: 20/05/06
 '*************************************************
-On Error Resume Next
-If Len(MidiActual) >= 5 Then
-    MapInfo.Music = Left(MidiActual, Len(MidiActual) - 4)
-    frmMapInfo.txtMapMusica.Text = MapInfo.Music
-    frmMain.lblMapMusica = MapInfo.Music
-    MidiActual = Empty
-End If
-Me.Hide
+    On Error Resume Next
+    
+    If Len(MidiActual) >= 5 Then
+        MapInfo.Music = Left(MidiActual, Len(MidiActual) - 4)
+        frmMapInfo.txtMapMusica.Text = MapInfo.Music
+        frmMain.lblMapMusica = MapInfo.Music
+        MidiActual = Empty
+    End If
+    
+    Me.Hide
 End Sub
 
 
@@ -158,7 +192,7 @@ Private Sub cmdCerrar_Click()
 'Author: ^[GS]^
 'Last modified: 20/05/06
 '*************************************************
-Me.Hide
+    Me.Hide
 End Sub
 
 ''
@@ -170,10 +204,10 @@ Private Sub cmdDetener_Click()
 'Author: ^[GS]^
 'Last modified: 20/05/06
 '*************************************************
-Stop_Midi
-cmdEscuchar.Enabled = True
-cmdDetener.Enabled = False
-Play = False
+    'Stop_Midi
+    cmdEscuchar.Enabled = True
+    cmdDetener.Enabled = False
+    Play = False
 End Sub
 
 ''
@@ -185,10 +219,10 @@ Private Sub cmdEscuchar_Click()
 'Author: ^[GS]^
 'Last modified: 20/05/06
 '*************************************************
-Play_Midi
-cmdDetener.Enabled = True
-cmdEscuchar.Enabled = False
-Play = True
+    'Play_Midi
+    cmdDetener.Enabled = True
+    cmdEscuchar.Enabled = False
+    Play = True
 End Sub
 
 ''
@@ -200,9 +234,9 @@ Private Sub fleMusicas_Click()
 'Author: ^[GS]^
 'Last modified: 20/05/06
 '*************************************************
-MidiActual = fleMusicas.List(fleMusicas.listIndex)
-CargarMIDI fleMusicas.Path & "\" & fleMusicas.List(fleMusicas.listIndex)
-cmdAplicarYCerrar.Enabled = True
-If Play = False Then cmdEscuchar.Enabled = True
+    MidiActual = fleMusicas.List(fleMusicas.listIndex)
+    'CargarMIDI fleMusicas.Path & "\" & fleMusicas.List(fleMusicas.listIndex)
+    cmdAplicarYCerrar.Enabled = True
+    If Play = False Then cmdEscuchar.Enabled = True
 End Sub
 

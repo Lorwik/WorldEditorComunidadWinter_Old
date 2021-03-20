@@ -94,17 +94,6 @@ Public PantallaY As Integer
 Public ClienteHeight As Integer
 Public ClienteWidth As Integer
 
-Public Type tSetupMods
-    bDinamic    As Boolean
-    byMemory    As Byte
-    bUseVideo   As Boolean
-    bNoMusic    As Boolean
-    bNoSound    As Boolean
-End Type
-
-Public ClientSetup As tSetupMods
-
-
 Public SobreX As Byte   ' Posicion X bajo el Cursor
 Public SobreY As Byte   ' Posicion Y bajo el Cursor
 
@@ -153,8 +142,6 @@ Public prgRun As Boolean
 Public CurrentGrh As Grh
 Public Play As Boolean
 Public MapaCargado As Boolean
-Public cFPS As Long
-Public dTiempoGT As Double
 Public dLastWalk As Double
 
 'Hold info about each map
@@ -191,14 +178,14 @@ Public Const YMinMapSize As Byte = 1
 'Holds a local position
 Public Type Position
     X As Integer
-    y As Integer
+    Y As Integer
 End Type
 
 'Holds a world position
 Public Type WorldPos
     Map As Integer
     X As Integer
-    y As Integer
+    Y As Integer
 End Type
 
 'Points to a grhData and keeps animation info
@@ -276,20 +263,24 @@ Public Type Obj
     Amount As Integer
 End Type
 
-'Holds info about each tile position
+'Tipo de las celdas del mapa
 Public Type MapBlock
-    
     Graphic(1 To 4) As Grh
     CharIndex As Integer
     ObjGrh As Grh
-    
-    Trigger As Integer
     
     NPCIndex As Integer
     OBJInfo As Obj
     TileExit As WorldPos
     Blocked As Byte
     
+    Trigger As Integer
+    
+    Engine_Light(0 To 3) As Long
+    Particle_Group_Index As Long 'Particle Engine
+    
+    fX As Grh
+    FxIndex As Integer
 End Type
 
 '********** Public VARS ***********
@@ -341,22 +332,6 @@ Type BITMAPINFOHEADER
         biClrImportant As Long
 End Type
 
-' DirectMusic
-Public IsPlayingCheck As Boolean
-Public Perf As DirectMusicPerformance
-Public Seg As DirectMusicSegment
-Public SegState As DirectMusicSegmentState
-Public Loader As DirectMusicLoader
-
-' DirectSound
-Public Const NumSoundBuffers As Byte = 20
-Public DirectSound As DirectSound
-Public DSBuffers(1 To NumSoundBuffers) As DirectSoundBuffer
-Public LastSoundBufferUsed As Integer
-
-Public gDespX As Integer
-Public gDespY As Integer
-
 'User status vars
 Public CurMap As Integer 'Current map loaded
 Public UserIndex As Integer
@@ -366,28 +341,8 @@ Public UserPos As Position 'Holds current user pos
 Public AddtoUserPos As Position 'For moving user
 Public UserCharIndex As Integer
 
-Public EngineRun As Boolean
-Public FramesPerSec As Integer
-Public FramesPerSecCounter As Long
-
-'Main view size size in tiles
-Public WindowTileWidth As Integer
-Public WindowTileHeight As Integer
-
-'Pixel offset of main view screen from 0,0
-Public MainViewTop As Integer
-Public MainViewLeft As Integer
-
-'How many tiles the engine "looks ahead" when
-'drawing the screen
-Public TileBufferSize As Integer
-
 'Handle to where all the drawing is going to take place
 Public DisplayFormhWnd As Long
-
-'Tile size in pixels
-Public TilePixelHeight As Integer
-Public TilePixelWidth As Integer
 
 'Map editor variables
 Public WalkMode As Boolean
@@ -407,19 +362,10 @@ Public MainViewWidth As Integer
 Public MainViewHeight As Integer
 Public BackBufferRect As RECT
 
-Public DirectX As New DirectX7
-Public DirectDraw As DirectDraw7
-
-Public PrimarySurface As DirectDrawSurface7
-Public PrimaryClipper As DirectDrawClipper
-Public SecundaryClipper As DirectDrawClipper
-Public BackBufferSurface As DirectDrawSurface7
-Public SurfaceDB As clsSurfaceManager
-
 '********** OUTSIDE FUNCTIONS ***********
 'Good old BitBlt
-Public Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
-Private Declare Function SetPixel Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal y As Long, ByVal crColor As Long) As Long
+Public Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
+Private Declare Function SetPixel Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
 
 'Sound stuff
 Public Declare Function mciSendString Lib "winmm.dll" Alias "mciSendStringA" (ByVal lpstrCommand As String, ByVal lpstrReturnString As String, ByVal uRetrunLength As Long, ByVal hwndCallback As Long) As Long
@@ -433,3 +379,8 @@ Public Declare Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivate
 Public Declare Function GetKeyState Lib "user32" (ByVal nVirtKey As Long) As Integer
 
 Public Declare Function GetTickCount Lib "kernel32" () As Long
+
+Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+
+'CopyMemory Kernel Function
+Public Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, hpvSource As Any, ByVal cbCopy As Long)

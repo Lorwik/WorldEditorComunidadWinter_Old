@@ -497,7 +497,7 @@ Private Sub txtMapMusica_LostFocus()
 'Last modified: 20/05/06
 '*************************************************
 MapInfo.Music = txtMapMusica.Text
-frmMain.lblMapMusica.Caption = MapInfo.Music
+frmMain.lblMapMusica.Text = MapInfo.Music
 MapInfo.Changed = 1
 End Sub
 
@@ -507,7 +507,7 @@ Private Sub txtMapVersion_LostFocus()
 'Last modified: 29/05/06
 '*************************************************
 MapInfo.MapVersion = txtMapVersion.Text
-frmMain.lblMapVersion.Caption = MapInfo.MapVersion
+frmMain.lblMapVersion.Text = MapInfo.MapVersion
 MapInfo.Changed = 1
 End Sub
 
@@ -517,7 +517,7 @@ Private Sub txtMapNombre_LostFocus()
 'Last modified: 20/05/06
 '*************************************************
 MapInfo.name = txtMapNombre.Text
-frmMain.lblMapNombre.Caption = MapInfo.name
+frmMain.lblMapNombre.Text = MapInfo.name
 MapInfo.Changed = 1
 End Sub
 
