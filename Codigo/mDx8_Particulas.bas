@@ -141,7 +141,7 @@ Private Type Particle_Group
     life_counter As Long
 End Type
 
-Dim particle_group_list() As Particle_Group
+Public particle_group_list() As Particle_Group
 Dim particle_group_count As Long
 Dim particle_group_last As Long
 

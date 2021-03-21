@@ -198,12 +198,14 @@ Public Sub NuevoMapa()
 
                 Call Engine_Long_To_RGB_List(MapData(X, Y).Engine_Light(), -1)
                 
-                Call mDx8_Luces.Delete_Light_To_Map(X, Y)
-                
                 .Light.active = False
                 .Light.range = 0
                 .Light.map_x = 0
                 .Light.map_y = 0
+                .Light.RGBCOLOR.a = 0
+                .Light.RGBCOLOR.R = 0
+                .Light.RGBCOLOR.G = 0
+                .Light.RGBCOLOR.B = 0
                 
                 For i = 0 To 3
                     .Engine_Light(i) = 0
@@ -214,6 +216,9 @@ Public Sub NuevoMapa()
             End With
         Next X
     Next Y
+    
+    'Borramos todas las luces
+    Call LightRemoveAll
     
     MapInfo.MapVersion = 0
     MapInfo.name = "Mapa Desconocido"
@@ -1144,13 +1149,13 @@ On Error Resume Next
         End If
     Next
     
-    For loopc = (NumMap_Save - 4) To (NumMap_Save + 8)
+    For loopc = (NumMap_Save - 8) To (NumMap_Save + 8)
             If FileExist(PATH_Save & NameMap_Save & loopc & MapFormat, vbArchive) = True Then
-                frmMain.MapPest(loopc - NumMap_Save + 4).Visible = True
-                frmMain.MapPest(loopc - NumMap_Save + 4).Enabled = True
-                frmMain.MapPest(loopc - NumMap_Save + 4).Caption = NameMap_Save & loopc
+                frmMain.MapPest(loopc - NumMap_Save + 8).Visible = True
+                frmMain.MapPest(loopc - NumMap_Save + 8).Enabled = True
+                frmMain.MapPest(loopc - NumMap_Save + 8).Caption = NameMap_Save & loopc
             Else
-                frmMain.MapPest(loopc - NumMap_Save + 4).Visible = False
+                frmMain.MapPest(loopc - NumMap_Save + 8).Visible = False
             End If
     Next
     

@@ -22,16 +22,24 @@ Begin VB.Form frmColorPicker
       TabIndex        =   25
       Top             =   4440
       Width           =   2295
-      _extentx        =   4048
-      _extenty        =   661
-      caption         =   "Seleccionar"
-      capalign        =   2
-      backstyle       =   2
-      cgradient       =   0
-      font            =   "frmColorPicker.frx":0000
-      mode            =   0
-      value           =   0
-      cback           =   -2147483633
+      _ExtentX        =   4048
+      _ExtentY        =   661
+      Caption         =   "Seleccionar"
+      CapAlign        =   2
+      BackStyle       =   2
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      cGradient       =   0
+      Mode            =   0
+      Value           =   0   'False
+      cBack           =   -2147483633
    End
    Begin VB.PictureBox picBigBox 
       Height          =   3870
@@ -50,7 +58,7 @@ Begin VB.Form frmColorPicker
       ForeColor       =   &H00C0FFC0&
       Height          =   3840
       Left            =   4260
-      Picture         =   "frmColorPicker.frx":002C
+      Picture         =   "frmColorPicker.frx":0000
       ScaleHeight     =   252
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   17
@@ -597,13 +605,13 @@ Public Sub Form_Load()
     lblThinContainer.BackStyle = 0 'Transparent
     lblThinContainer.Left = 284 - 10: lblThinContainer.Top = picThinBox.Top: lblThinContainer.Width = picThinBox.Width + 20: lblThinContainer.Height = picThinBox.Height
         
-    linTriang1Vert.X1 = 277: linTriang1Vert.X2 = 277: linTriang1Vert.Y1 = 251: linTriang1Vert.Y2 = 261
-    linTriang1Rising.X1 = 277: linTriang1Rising.X2 = 283: linTriang1Rising.Y1 = 261: linTriang1Rising.Y2 = 256
-    linTriang1Falling.X1 = 277: linTriang1Falling.X2 = 283: linTriang1Falling.Y1 = 251: linTriang1Falling.Y2 = 256
+    linTriang1Vert.x1 = 277: linTriang1Vert.x2 = 277: linTriang1Vert.y1 = 251: linTriang1Vert.y2 = 261
+    linTriang1Rising.x1 = 277: linTriang1Rising.x2 = 283: linTriang1Rising.y1 = 261: linTriang1Rising.y2 = 256
+    linTriang1Falling.x1 = 277: linTriang1Falling.x2 = 283: linTriang1Falling.y1 = 251: linTriang1Falling.y2 = 256
     
-    linTriang2Vert.X1 = 314: linTriang2Vert.X2 = 314: linTriang2Vert.Y1 = 251: linTriang2Vert.Y2 = 261
-    linTriang2Rising.X1 = 309: linTriang2Rising.X2 = 314: linTriang2Rising.Y2 = 261: linTriang2Rising.Y1 = 256
-    linTriang2Falling.X1 = 309: linTriang2Falling.X2 = 314: linTriang2Falling.Y2 = 251: linTriang2Falling.Y1 = 256
+    linTriang2Vert.x1 = 314: linTriang2Vert.x2 = 314: linTriang2Vert.y1 = 251: linTriang2Vert.y2 = 261
+    linTriang2Rising.x1 = 309: linTriang2Rising.x2 = 314: linTriang2Rising.y2 = 261: linTriang2Rising.y1 = 256
+    linTriang2Falling.x1 = 309: linTriang2Falling.x2 = 314: linTriang2Falling.y2 = 251: linTriang2Falling.y1 = 256
     
     picBigBox.Width = 256 + 4 '256 INCREASING BY 4 SINCE VB PROBABLY CHEATS THE SAME WAY AS IT DID IN picThinBox.
     picBigBox.Height = 256 + 4
@@ -1618,13 +1626,13 @@ Private Sub PaintThinBox(Index As Integer)
 End Sub
 
 Private Sub TriangelMove(Y)
-    linTriang1Vert.Y1 = Y + 28: linTriang1Vert.Y2 = Y + 28 + 10
-    linTriang1Rising.Y1 = Y + 28 + 10: linTriang1Rising.Y2 = Y + 28 + 4
-    linTriang1Falling.Y1 = Y + 28: linTriang1Falling.Y2 = Y + 28 + 6
+    linTriang1Vert.y1 = Y + 28: linTriang1Vert.y2 = Y + 28 + 10
+    linTriang1Rising.y1 = Y + 28 + 10: linTriang1Rising.y2 = Y + 28 + 4
+    linTriang1Falling.y1 = Y + 28: linTriang1Falling.y2 = Y + 28 + 6
 
-    linTriang2Vert.Y1 = Y + 28: linTriang2Vert.Y2 = Y + 28 + 10
-    linTriang2Rising.Y2 = Y + 28 + 10: linTriang2Rising.Y1 = Y + 28 + 5
-    linTriang2Falling.Y2 = Y + 28: linTriang2Falling.Y1 = Y + 28 + 5
+    linTriang2Vert.y1 = Y + 28: linTriang2Vert.y2 = Y + 28 + 10
+    linTriang2Rising.y2 = Y + 28 + 10: linTriang2Rising.y1 = Y + 28 + 5
+    linTriang2Falling.y2 = Y + 28: linTriang2Falling.y1 = Y + 28 + 5
 
 End Sub
 
@@ -1764,49 +1772,3 @@ Private Sub MoveHexBox()
     Next Ctr
 
 End Sub
-
-Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-
-    Dim bteFileHandle As Byte, Ctr As Byte, strAppPath As String
-
-    'MsgBox "Query Unload!"
-    For Ctr = 0 To 9 'Determing which optRadioknapp that was chosen the last session.
-
-        If objOption(Ctr) Then Exit For
-    Next Ctr
-
-    'Opening to write to the ini-file of the form.
-    bteFileHandle = FreeFile
-
-    On Error GoTo ErrorHandler 'Error 53 means that the SPECIAL file handling routines can't find the file.
-
-    'OPEN - if the file mentioned the open command doesn't already exist, a new file with the actual name will be created (exception for Input- and Acces-mode).
-    strAppPath = App.Path
-
-    If InStrRev(strAppPath, "\") <> Len(strAppPath) Then strAppPath = strAppPath & "\"  'Good windows-programming-manners.
-    Open strAppPath & "Colorpicker.ini" For Output As bteFileHandle
-    'Writing
-    Write #bteFileHandle, lblNewColor.BackColor 'Becames lblOld color the next time the program starts.
-    Write #bteFileHandle, "objOption" & Ctr 'Tells which optRadioButton was chosen the last time.
-
-    If arsPicPath(1) = "" Then 'Tells no userpictures what so ever.'Matrix-bases are all zero in this version.
-        Write #bteFileHandle, "NumberOfPaths" & 0
-    Else
-        Write #bteFileHandle, "NumberOfPaths" & UBound(arsPicPath)
-
-        'Writing userPicPaths to the ini-file.
-        For Ctr = 1 To UBound(arsPicPath)
-            Write #bteFileHandle, arsPicPath(Ctr)
-        Next Ctr
-
-    End If
-
-    'Closing to protect the file.
-    Close #bteFileHandle
-    Exit Sub
-
-ErrorHandler: '53 is error-number for missing file, 76 means missing path by the special file handling routines.
-    MsgBox "Unknown error" & Err.Description: End 'Bail
-
-End Sub
-

@@ -685,7 +685,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":9F8A
          mode            =   0
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H LvBTest 
@@ -703,7 +703,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":9FAE
          mode            =   0
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cmdInformacionDelMapa 
@@ -720,7 +720,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":9FD2
          mode            =   0
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin VB.Label lblNombreDel 
@@ -991,7 +991,7 @@ Begin VB.Form frmMain
             cgradient       =   0
             font            =   "frmMain.frx":63FC0
             mode            =   0
-            value           =   0
+            value           =   0   'False
             cback           =   -2147483633
          End
          Begin WorldEditor.lvButtons_H LvBAreas 
@@ -1009,7 +1009,7 @@ Begin VB.Form frmMain
             cgradient       =   0
             font            =   "frmMain.frx":63FE8
             mode            =   0
-            value           =   0
+            value           =   0   'False
             cback           =   -2147483633
          End
          Begin WorldEditor.lvButtons_H LvBAreas 
@@ -1027,7 +1027,7 @@ Begin VB.Form frmMain
             cgradient       =   0
             font            =   "frmMain.frx":64010
             mode            =   0
-            value           =   0
+            value           =   0   'False
             cback           =   -2147483633
          End
          Begin WorldEditor.lvButtons_H LvBAreas 
@@ -1045,7 +1045,7 @@ Begin VB.Form frmMain
             cgradient       =   0
             font            =   "frmMain.frx":64038
             mode            =   0
-            value           =   0
+            value           =   0   'False
             cback           =   -2147483633
          End
          Begin VB.Label lblY2 
@@ -1206,7 +1206,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64060
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cInsertarTransOBJ 
@@ -1224,7 +1224,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64084
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cUnionManual 
@@ -1242,7 +1242,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":640A8
          mode            =   0
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cUnionAuto 
@@ -1260,7 +1260,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":640CC
          mode            =   0
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cQuitarTrans 
@@ -1278,7 +1278,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":640F0
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin VB.ComboBox cCapas 
@@ -1385,7 +1385,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64138
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cQuitarEnEstaCapa 
@@ -1403,7 +1403,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":6415C
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cSeleccionarSuperficie 
@@ -1421,7 +1421,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64180
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin VB.ComboBox cNumFunc 
@@ -1752,7 +1752,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":641C0
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cVerTriggers 
@@ -1770,7 +1770,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":641E4
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cInsertarTrigger 
@@ -1788,7 +1788,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64208
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cAgregarFuncalAzar 
@@ -1807,7 +1807,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":6422C
          mode            =   0
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cQuitarFunc 
@@ -1826,7 +1826,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64250
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cInsertarFunc 
@@ -1845,7 +1845,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64274
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cVerBloqueos 
@@ -1863,7 +1863,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64298
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cInsertarBloqueo 
@@ -1881,7 +1881,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":642BC
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cQuitarBloqueo 
@@ -1899,7 +1899,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":642E0
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cAgregarFuncalAzar 
@@ -1918,7 +1918,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64304
          mode            =   0
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cQuitarFunc 
@@ -1937,7 +1937,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64328
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cInsertarFunc 
@@ -1956,7 +1956,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":6434C
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cInsertarFunc 
@@ -1975,7 +1975,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64370
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cQuitarFunc 
@@ -1994,7 +1994,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":64394
          mode            =   1
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin WorldEditor.lvButtons_H cAgregarFuncalAzar 
@@ -2013,7 +2013,7 @@ Begin VB.Form frmMain
          cgradient       =   0
          font            =   "frmMain.frx":643B8
          mode            =   0
-         value           =   0
+         value           =   0   'False
          cback           =   -2147483633
       End
       Begin VB.ComboBox cCantFunc 
@@ -2453,6 +2453,7 @@ Begin VB.Form frmMain
       _Version        =   393217
       BackColor       =   0
       BorderStyle     =   0
+      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -2483,7 +2484,7 @@ Begin VB.Form frmMain
       cgradient       =   0
       font            =   "frmMain.frx":64465
       mode            =   0
-      value           =   0
+      value           =   0   'False
       cback           =   12632319
    End
    Begin WorldEditor.lvButtons_H SelectPanel 
@@ -2502,7 +2503,7 @@ Begin VB.Form frmMain
       cgradient       =   8421631
       font            =   "frmMain.frx":64491
       mode            =   1
-      value           =   0
+      value           =   0   'False
       customclick     =   1
       image           =   "frmMain.frx":644B5
       imgsize         =   24
@@ -2526,7 +2527,7 @@ Begin VB.Form frmMain
       cgradient       =   8421631
       font            =   "frmMain.frx":64A7B
       mode            =   1
-      value           =   0
+      value           =   0   'False
       customclick     =   1
       image           =   "frmMain.frx":64A9F
       imgsize         =   24
@@ -2550,7 +2551,7 @@ Begin VB.Form frmMain
       cgradient       =   8421631
       font            =   "frmMain.frx":64FA1
       mode            =   1
-      value           =   0
+      value           =   0   'False
       customclick     =   1
       image           =   "frmMain.frx":64FC5
       imgsize         =   24
@@ -2574,7 +2575,7 @@ Begin VB.Form frmMain
       cgradient       =   8421631
       font            =   "frmMain.frx":6537B
       mode            =   1
-      value           =   0
+      value           =   0   'False
       customclick     =   1
       image           =   "frmMain.frx":653A7
       imgsize         =   24
@@ -2598,7 +2599,7 @@ Begin VB.Form frmMain
       cgradient       =   8421631
       font            =   "frmMain.frx":65729
       mode            =   1
-      value           =   0
+      value           =   0   'False
       image           =   "frmMain.frx":6574D
       imgsize         =   24
       imgalign        =   5
@@ -2622,7 +2623,7 @@ Begin VB.Form frmMain
       cfore           =   0
       font            =   "frmMain.frx":68DAF
       mode            =   1
-      value           =   0
+      value           =   0   'False
       image           =   "frmMain.frx":68DD3
       imgsize         =   24
       imgalign        =   5
@@ -2646,7 +2647,7 @@ Begin VB.Form frmMain
       cgradient       =   8421631
       font            =   "frmMain.frx":6C319
       mode            =   1
-      value           =   0
+      value           =   0   'False
       customclick     =   1
       image           =   "frmMain.frx":6C33D
       imgsize         =   24
@@ -2670,7 +2671,7 @@ Begin VB.Form frmMain
       cgradient       =   8421631
       font            =   "frmMain.frx":6C6F3
       mode            =   1
-      value           =   0
+      value           =   0   'False
       customclick     =   1
       image           =   "frmMain.frx":6C723
       imgsize         =   24
@@ -2694,7 +2695,7 @@ Begin VB.Form frmMain
       cgradient       =   8421631
       font            =   "frmMain.frx":6CD65
       mode            =   1
-      value           =   0
+      value           =   0   'False
       customclick     =   1
       image           =   "frmMain.frx":6CD95
       imgsize         =   24
@@ -2718,7 +2719,7 @@ Begin VB.Form frmMain
       cgradient       =   8421631
       font            =   "frmMain.frx":6D417
       mode            =   1
-      value           =   0
+      value           =   0   'False
       customclick     =   1
       image           =   "frmMain.frx":6D447
       imgsize         =   24
@@ -4710,7 +4711,7 @@ On Error Resume Next
     
     DeseaGuardarMapa Dialog.filename
     
-    For loopc = 0 To frmMain.MapPest.Count
+    For loopc = 0 To frmMain.MapPest.Count - 1
         frmMain.MapPest(loopc).Visible = False
     Next
     

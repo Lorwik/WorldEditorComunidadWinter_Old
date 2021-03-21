@@ -276,7 +276,7 @@ Public Sub Superficie_Todo()
 
 End Sub
 
-Public Sub Superficie_Area(ByVal X1 As Byte, ByVal X2 As Byte, ByVal Y1 As Byte, ByVal Y2 As Byte, ByVal Poner As Boolean)
+Public Sub Superficie_Area(ByVal x1 As Byte, ByVal x2 As Byte, ByVal y1 As Byte, ByVal y2 As Byte, ByVal Poner As Boolean)
 '*************************************************
 'Author: Lorwik
 'Last modified: 07/12/2018
@@ -291,8 +291,8 @@ Public Sub Superficie_Area(ByVal X1 As Byte, ByVal X2 As Byte, ByVal Y1 As Byte,
         Exit Sub
     End If
 
-    For Y = Y1 To Y2
-        For X = X1 To X2
+    For Y = y1 To y2
+        For X = x1 To x2
             If Poner = True Then
                 If frmMain.MOSAICO.value = vbChecked Then
                     Dim aux As Integer
@@ -318,7 +318,7 @@ Public Sub Superficie_Area(ByVal X1 As Byte, ByVal X2 As Byte, ByVal Y1 As Byte,
 
 End Sub
 
-Public Sub Bloqueos_Area(ByVal X1 As Byte, ByVal X2 As Byte, ByVal Y1 As Byte, ByVal Y2 As Byte, ByVal Inserta As Boolean)
+Public Sub Bloqueos_Area(ByVal x1 As Byte, ByVal x2 As Byte, ByVal y1 As Byte, ByVal y2 As Byte, ByVal Inserta As Boolean)
 '*************************************************
 'Author: Lorwik
 'Last modified: 07/12/2018
@@ -333,8 +333,8 @@ Public Sub Bloqueos_Area(ByVal X1 As Byte, ByVal X2 As Byte, ByVal Y1 As Byte, B
         Exit Sub
     End If
 
-    For Y = Y1 To Y2
-        For X = X1 To X2
+    For Y = y1 To y2
+        For X = x1 To x2
     
             If Inserta = True Then
                 MapData(X, Y).Blocked = 1
@@ -1038,16 +1038,15 @@ Sub ClickEdit(Button As Integer, tX As Integer, tY As Integer)
         
         ' ***************** Control de Funcion de Particles! *****************
         If frmParticle.cmdAdd.value = True Then ' Insertar Particle
-            MapInfo.Changed = 1 'Set changed flag
-            General_Particle_Create frmParticle.lstParticle.ListIndex + 1, tX, tY, frmParticle.Life.Text
-            MapData(tX, tY).Particle_Group_Index = frmParticle.lstParticle.ListIndex + 1
+            MapInfo.Changed = 1
+            General_Particle_Create CLng(frmParticle.lstParticle.ListIndex + 1), tX, tY, frmParticle.Life.Text
+            MapData(tX, tY).Particle_Group_Index = CLng(frmParticle.lstParticle.ListIndex + 1)
             
         ElseIf frmParticle.cmdDel.value = True Then ' Quitar Particle
             If MapData(tX, tY).Particle_Group_Index <> 0 Then
                 MapInfo.Changed = 1 'Set changed flag
-                Particle_Group_Remove MapData(tX, tY).Particle_Group_Index
-                'MapData(tX, tY).particle_group_index = 0
-                'MapData(tX, tY).particle_Index = 0
+                'Particle_Group_Remove MapData(tX, tY).Particle_Group_Index
+                MapData(tX, tY).Particle_Group_Index = 0
                 
             End If
             
@@ -1056,23 +1055,34 @@ Sub ClickEdit(Button As Integer, tX As Integer, tY As Integer)
         '***************** LUCES **********************
         If frmLuces.cInsertarLuz.value Then
             If Val(frmLuces.cRango = 0) Then Exit Sub
-            mDx8_Luces.Create_Light_To_Map tX, tY, frmLuces.cRango, Val(frmLuces.R), Val(frmLuces.G), Val(frmLuces.B)
+            Call mDx8_Luces.Create_Light_To_Map(tX, tY, frmLuces.cRango, Val(frmLuces.R), Val(frmLuces.G), Val(frmLuces.B))
+            Call mDx8_Luces.LightRenderAll
             
             With MapData(tX, tY).Light
                 .active = True
-                .map_x = tX
-                .map_y = tY
                 .range = frmLuces.cRango
+                .RGBCOLOR.a = 255
+                .RGBCOLOR.R = Val(frmLuces.R)
+                .RGBCOLOR.G = Val(frmLuces.G)
+                .RGBCOLOR.B = Val(frmLuces.B)
+                
             End With
             
             MapInfo.Changed = 1 'Set changed flag
             
         ElseIf frmLuces.cQuitarLuz.value Then
         
+            With MapData(tX, tY).Light
+                .range = 0
+                .RGBCOLOR.a = 255
+                .RGBCOLOR.R = Val(frmLuces.R)
+                .RGBCOLOR.G = Val(frmLuces.G)
+                .RGBCOLOR.B = Val(frmLuces.B)
+                
+            End With
+
             mDx8_Luces.Delete_Light_To_Map tX, tY
-            
-            MapData(tX, tY).Light.active = False
-            
+
             MapInfo.Changed = 1 'Set changed flag
             
         End If

@@ -209,6 +209,16 @@ Sub Cargar_CSM(ByVal Map As String)
                 Dim p As Byte
                 Get #fh, , Luces
                 For i = 1 To .NumeroLuces
+                
+                    With MapData(Luces(i).X, Luces(i).Y)
+                        .Light.range = Luces(i).range
+                        .Light.RGBCOLOR.a = 255
+                        .Light.RGBCOLOR.R = Luces(i).R
+                        .Light.RGBCOLOR.G = Luces(i).G
+                        .Light.RGBCOLOR.B = Luces(i).B
+
+                    End With
+                
                     Call Create_Light_To_Map(Luces(i).X, Luces(i).Y, Luces(i).range, Luces(i).R, Luces(i).G, Luces(i).B)
                 Next i
                 
@@ -378,20 +388,20 @@ On Error GoTo ErrorHandler
                     ReDim Preserve Particulas(1 To MH.NumeroParticulas)
                     Particulas(MH.NumeroParticulas).X = i
                     Particulas(MH.NumeroParticulas).Y = j
-                    'Particulas(MH.NumeroParticulas).Particula = CLng(particle_group_list(.Particle_Group_Index).stream_type)
+                    Particulas(MH.NumeroParticulas).Particula = CLng(particle_group_list(.Particle_Group_Index).stream_type)
                 End If
                
                '¿Hay luz activa en este punto?
-                If .Light.active Then
+                If .Light.range > 0 Then
                     MH.NumeroLuces = MH.NumeroLuces + 1
                     ReDim Preserve Luces(1 To MH.NumeroLuces)
                     
-                    Luces(MH.NumeroLuces).R = .Engine_Light(1)
-                    Luces(MH.NumeroLuces).G = .Engine_Light(2)
-                    Luces(MH.NumeroLuces).B = .Engine_Light(3)
+                    Luces(MH.NumeroLuces).R = .Light.RGBCOLOR.R
+                    Luces(MH.NumeroLuces).G = .Light.RGBCOLOR.G
+                    Luces(MH.NumeroLuces).B = .Light.RGBCOLOR.B
                     Luces(MH.NumeroLuces).range = .Light.range
-                    Luces(MH.NumeroLuces).X = .Light.map_x
-                    Luces(MH.NumeroLuces).Y = .Light.map_y
+                    Luces(MH.NumeroLuces).X = i
+                    Luces(MH.NumeroLuces).Y = j
                 End If
                 
                 If .OBJInfo.ObjIndex > 0 Then
