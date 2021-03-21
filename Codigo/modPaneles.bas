@@ -120,6 +120,8 @@ Public Sub VerFuncion(ByVal Numero As Byte, ByVal Ver As Boolean, Optional Norma
             frmMain.lbCapas.Visible = Ver
             frmMain.lbGrh.Visible = Ver
             frmMain.PreviewGrh.Visible = Ver
+            frmMain.FraRellenar.Visible = Ver
+            
         Case 1 ' Translados
             frmMain.lMapN.Visible = Ver
             frmMain.lXhor.Visible = Ver
@@ -132,10 +134,12 @@ Public Sub VerFuncion(ByVal Numero As Byte, ByVal Ver As Boolean, Optional Norma
             frmMain.cUnionManual.Visible = Ver
             frmMain.cUnionAuto.Visible = Ver
             frmMain.cQuitarTrans.Visible = Ver
+            
         Case 2 ' Bloqueos
             frmMain.cQuitarBloqueo.Visible = Ver
             frmMain.cInsertarBloqueo.Visible = Ver
             frmMain.cVerBloqueos.Visible = Ver
+            
         Case 3  ' NPCs
             frmMain.lListado(1).Visible = Ver
             frmMain.cFiltro(1).Visible = Ver
@@ -147,6 +151,7 @@ Public Sub VerFuncion(ByVal Numero As Byte, ByVal Ver As Boolean, Optional Norma
             frmMain.cAgregarFuncalAzar(Numero - 3).Visible = Ver
             frmMain.lCantFunc(Numero - 3).Visible = Ver
             frmMain.cCantFunc(Numero - 3).Visible = Ver
+            
         Case 4 ' NPCs Hostiles
             'frmMain.lListado(1).Visible = Ver
             'frmMain.cFiltro(1).Visible = Ver
@@ -158,6 +163,7 @@ Public Sub VerFuncion(ByVal Numero As Byte, ByVal Ver As Boolean, Optional Norma
             'frmMain.cAgregarFuncalAzar(Numero - 3).Visible = Ver
             'frmMain.lCantFunc(Numero - 3).Visible = Ver
             'frmMain.cCantFunc(Numero - 3).Visible = Ver
+            
         Case 5 ' OBJs
             frmMain.lListado(3).Visible = Ver
             frmMain.cFiltro(3).Visible = Ver
@@ -169,12 +175,21 @@ Public Sub VerFuncion(ByVal Numero As Byte, ByVal Ver As Boolean, Optional Norma
             frmMain.cAgregarFuncalAzar(Numero - 3).Visible = Ver
             frmMain.lCantFunc(Numero - 3).Visible = Ver
             frmMain.cCantFunc(Numero - 3).Visible = Ver
+            
         Case 6 ' Triggers
             frmMain.cQuitarTrigger.Visible = Ver
             frmMain.cInsertarTrigger.Visible = Ver
             frmMain.cVerTriggers.Visible = Ver
             frmMain.lListado(4).Visible = Ver
+            
+        Case 8 ' Particulas
+            frmParticle.Visible = Ver
+            
+        Case 9 'Luces
+            frmLuces.Visible = Ver
+            
     End Select
+    
     If Ver = True Then
         vMostrando = Numero
         If Numero < 0 Or Numero > 6 Then Exit Sub

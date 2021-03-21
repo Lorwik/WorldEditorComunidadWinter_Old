@@ -1026,8 +1026,6 @@ Private Sub cmdAplicar_Click()
         Exit Sub
     End If
     
-    modEdicion.Deshacer_Add "Insertar Translados a mapas Adyasentes" ' Hago deshacer
-    
     ' ARRIBA
     If Mapa(0).Text > -1 And Aplicar(0).value = 1 Then
         Y = PosLim(1).Text

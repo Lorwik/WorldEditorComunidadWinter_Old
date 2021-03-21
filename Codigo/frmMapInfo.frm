@@ -637,7 +637,7 @@ Private Sub txtAmbient_Change()
 'Author: Lorwik
 'Last modified: 10/08/14
 '*************************************************
-    MapInfo.ambient = txtAmbient.Text
+    MapInfo.ambient = TxtAmbient.Text
     MapInfo.Changed = 1
     
 End Sub

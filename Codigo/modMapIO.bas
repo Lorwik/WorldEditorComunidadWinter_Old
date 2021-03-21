@@ -89,7 +89,7 @@ Public Sub GuardarMapa(Optional Path As String)
 '*************************************************
 
     frmMain.Dialog.CancelError = True
-    On Error GoTo errhandler
+On Error GoTo ErrHandler
     
     If LenB(Path) = 0 Then
         frmMain.ObtenerNombreArchivo True
@@ -97,9 +97,15 @@ Public Sub GuardarMapa(Optional Path As String)
         If LenB(Path) = 0 Then Exit Sub
     End If
     
-    Call MapaV2_Guardar(Path)
+    If frmMain.Dialog.FilterIndex = 1 Then
+        Call Save_CSM(Path)
+            
+    ElseIf frmMain.Dialog.FilterIndex = 2 Then
+        Call MapaV2_Guardar(Path)
+        
+    End If
 
-errhandler:
+ErrHandler:
 End Sub
 
 ''
@@ -192,8 +198,17 @@ Public Sub NuevoMapa()
 
                 Call Engine_Long_To_RGB_List(MapData(X, Y).Engine_Light(), -1)
                 
-                'Call Light.Delete_Light_To_Map(X, Y)
-        
+                Call mDx8_Luces.Delete_Light_To_Map(X, Y)
+                
+                .Light.active = False
+                .Light.range = 0
+                .Light.map_x = 0
+                .Light.map_y = 0
+                
+                For i = 0 To 3
+                    .Engine_Light(i) = 0
+                Next i
+
                 InitGrh .Graphic(1), 1
         
             End With
@@ -201,7 +216,7 @@ Public Sub NuevoMapa()
     Next Y
     
     MapInfo.MapVersion = 0
-    MapInfo.name = "Nuevo Mapa"
+    MapInfo.name = "Mapa Desconocido"
     MapInfo.Music = 0
     MapInfo.PK = True
     MapInfo.MagiaSinEfecto = 0
@@ -211,17 +226,18 @@ Public Sub NuevoMapa()
     MapInfo.Zona = "CAMPO"
     MapInfo.Restringir = "No"
     MapInfo.NoEncriptarMP = 0
+    MapInfo.LuzBase = -1
     
     Call MapInfo_Actualizar
     
     bRefreshRadar = True ' Radar
     
+    Estado_Actual = Estados(e_estados.MedioDia)
+    Call Actualizar_Estado
+    
     'Set changed flag
     MapInfo.Changed = 0
     frmMain.MousePointer = 0
-    
-    ' Vacio deshacer
-    modEdicion.Deshacer_Clear
     
     MapaCargado = True
     EngineRun = True
@@ -597,9 +613,6 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
     Get FreeFileInf, , TempInt
     Get FreeFileInf, , TempInt
 
-    'Vamos a limpiar las luces y particulas del mapa anterior
-    'Engine.Particle_Group_Remove_All
-
     'Load arrays
     For Y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
@@ -749,9 +762,6 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
         'Set changed flag
         MapInfo.Changed = 0
         
-        ' Vacia el Deshacer
-        Call modEdicion.Deshacer_Clear
-        
         'Change mouse icon
         .MousePointer = 0
     
@@ -879,9 +889,6 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
     'Set changed flag
     MapInfo.Changed = 0
     
-    ' Vacia el Deshacer
-    modEdicion.Deshacer_Clear
-    
     Call AddtoRichTextBox(frmMain.StatTxt, "Mapa " & Map & " cargado...", 0, 255, 0)
     
     'Change mouse icon
@@ -929,9 +936,6 @@ Public Sub MapaV3_Cargar(ByVal Map As String)
     
     'Set changed flag
     MapInfo.Changed = 0
-    
-    ' Vacia el Deshacer
-    modEdicion.Deshacer_Clear
     
     Call AddtoRichTextBox(frmMain.StatTxt, "Mapa " & Map & " cargado...", 0, 255, 0)
     
@@ -1097,8 +1101,8 @@ On Error Resume Next
     frmMain.chkPKInseguro.value = IIf(MapInfo.PK = True, 1, 0)
     frmMain.txtMapNombre.Text = MapInfo.name
     frmMain.txtMapMusica.Text = MapInfo.Music
-    frmMain.txtAmbient.Text = MapInfo.ambient
-    frmMapInfo.txtAmbient.Text = MapInfo.ambient
+    frmMain.TxtAmbient.Text = MapInfo.ambient
+    frmMapInfo.TxtAmbient.Text = MapInfo.ambient
     frmMapInfo.TxtlvlMinimo = MapInfo.lvlMinimo
     frmMapInfo.chkMapMagiaSinEfecto.value = MapInfo.MagiaSinEfecto
     frmMapInfo.chkMapInviSinEfecto.value = IIf(MapInfo.InviSinEfecto, vbChecked, vbUnchecked)
@@ -1154,7 +1158,7 @@ End Sub
 
 Public Sub AbrirMapa(Optional ByVal IntMode As Boolean = False)
     frmMain.Dialog.CancelError = True
-    On Error GoTo errhandler
+    On Error GoTo ErrHandler
     
     DeseaGuardarMapa frmMain.Dialog.filename
     
@@ -1180,5 +1184,5 @@ Public Sub AbrirMapa(Optional ByVal IntMode As Boolean = False)
         EngineRun = True
     
     Exit Sub
-errhandler:
+ErrHandler:
 End Sub

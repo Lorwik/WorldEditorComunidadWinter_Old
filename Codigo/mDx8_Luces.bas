@@ -9,7 +9,7 @@ Attribute VB_Name = "mDx8_Luces"
 Option Base 0
 
 Private Type tLight
-    RGBcolor As D3DCOLORVALUE
+    RGBCOLOR As D3DCOLORVALUE
     active As Boolean
     map_x As Byte
     map_y As Byte
@@ -19,17 +19,26 @@ End Type
 Private Light_List() As tLight
 Private NumLights As Integer
 
-Public Luz_Actual As D3DCOLORVALUE
+Public Enum e_estados
+    Amanecer = 0
+    MedioDia
+    Tarde
+    noche
+End Enum
 
-Public Function Create_Light_To_Map(ByVal map_x As Byte, ByVal map_y As Byte, Optional range As Byte = 3, Optional ByVal Red As Byte = 255, Optional ByVal Green = 255, Optional ByVal Blue As Byte = 255)
+Public Estados(0 To 3) As D3DCOLORVALUE
+Public Estado_Actual As D3DCOLORVALUE
+Public Estado_Custom As D3DCOLORVALUE
+
+Public Function Create_Light_To_Map(ByVal map_x As Byte, ByVal map_y As Byte, Optional range As Byte = 3, Optional ByVal Red As Byte = 255, Optional ByVal Green As Byte = 255, Optional ByVal Blue As Byte = 255)
     NumLights = NumLights + 1
    
     ReDim Preserve Light_List(1 To NumLights) As tLight
    
-    Light_List(NumLights).RGBcolor.R = Red
-    Light_List(NumLights).RGBcolor.G = Green
-    Light_List(NumLights).RGBcolor.B = Blue
-    Light_List(NumLights).RGBcolor.a = 255
+    Light_List(NumLights).RGBCOLOR.R = Red
+    Light_List(NumLights).RGBCOLOR.G = Green
+    Light_List(NumLights).RGBCOLOR.B = Blue
+    Light_List(NumLights).RGBCOLOR.a = 255
     Light_List(NumLights).range = range
     Light_List(NumLights).active = True
     Light_List(NumLights).map_x = map_x
@@ -66,8 +75,7 @@ Public Function Delete_Light_To_Index(ByVal light_index As Integer)
         Do Until Light_List(NumLights).active
             NumLights = NumLights - 1
             If NumLights = 0 Then
-                Call Actualizar_Estado(Estado_Actual_Date)
-                Call LightRenderAll
+                Call Actualizar_Estado
                 Exit Function
                 
             End If
@@ -76,8 +84,8 @@ Public Function Delete_Light_To_Index(ByVal light_index As Integer)
     
     End If
  
-    Call Actualizar_Estado(Estado_Actual_Date)
-    Call LightRenderAll
+    Call Actualizar_Estado
+
 End Function
 
 #If LightEngine = 1 Then '   Luces Radiales
@@ -107,7 +115,7 @@ Private Sub LightRender(ByVal light_index As Integer)
     AmbientColor.G = Estado_Actual.G
     AmbientColor.B = Estado_Actual.B
 
-    LightColor = Light_List(light_index).RGBcolor
+    LightColor = Light_List(light_index).RGBCOLOR
        
     min_x = Light_List(light_index).map_x - Light_List(light_index).range
     max_x = Light_List(light_index).map_x + Light_List(light_index).range
@@ -190,7 +198,7 @@ Private Sub LightRender(ByVal light_index As Integer)
     
     With Light_List(light_index)
     
-        Color(0) = D3DColorARGB(255, .RGBcolor.R, .RGBcolor.G, .RGBcolor.B)
+        Color(0) = D3DColorARGB(255, .RGBCOLOR.R, .RGBCOLOR.G, .RGBCOLOR.B)
         Color(1) = Color(0)
         Color(2) = Color(0)
         Color(3) = Color(0)
@@ -317,7 +325,43 @@ Public Sub LightRemoveAll()
 
 End Sub
 
-Public Sub Actualizar_Estado(ByVal Estado As Byte)
+Public Sub Init_MeteoEngine()
+'***************************************************
+'Author: Standelf
+'Last Modification: 15/05/10
+'Initializate
+'***************************************************
+    With Estados(e_estados.Amanecer)
+        .a = 255
+        .R = 230
+        .G = 200
+        .B = 200
+    End With
+    
+    With Estados(e_estados.MedioDia)
+        .a = 255
+        .R = 255
+        .G = 255
+        .B = 255
+    End With
+    
+    With Estados(e_estados.Tarde)
+        .a = 255
+        .R = 200
+        .G = 200
+        .B = 200
+    End With
+  
+    With Estados(e_estados.noche)
+        .a = 255
+        .R = 165
+        .G = 165
+        .B = 165
+    End With
+    
+End Sub
+
+Public Sub Actualizar_Estado()
 '***************************************************
 'Author: Lorwik
 'Last Modification: 09/08/2020
@@ -325,15 +369,12 @@ Public Sub Actualizar_Estado(ByVal Estado As Byte)
 '***************************************************
     Dim X As Byte, Y As Byte
 
-    'Primero actualizamos la imagen del frmmain
-    'Call ActualizarImgClima
-
     '¿El mapa tiene su propia luz?
     If MapInfo.LuzBase <> -1 Then
-        
+        Debug.Print "MapInfo.LuzBase: " & MapInfo.LuzBase
         For X = XMinMapSize To XMaxMapSize
             For Y = YMinMapSize To YMaxMapSize
-                Call Engine_Long_To_RGB_List(MapData(X, Y).Engine_Light(), MapInfo.LuzBase)
+                Call Engine_D3DColor_To_RGB_List(MapData(X, Y).Engine_Light(), Estado_Custom)
             Next Y
         Next X
         
@@ -344,7 +385,7 @@ Public Sub Actualizar_Estado(ByVal Estado As Byte)
         
     For X = XMinMapSize To XMaxMapSize
         For Y = YMinMapSize To YMaxMapSize
-            Call Engine_D3DColor_To_RGB_List(MapData(X, Y).Engine_Light(), Luz_Actual)
+            Call Engine_D3DColor_To_RGB_List(MapData(X, Y).Engine_Light(), Estado_Actual)
         Next Y
     Next X
         

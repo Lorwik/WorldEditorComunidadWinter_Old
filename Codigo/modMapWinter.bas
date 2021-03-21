@@ -1,4 +1,6 @@
 Attribute VB_Name = "modMapWinter"
+Option Explicit
+
 '********************************
 'Load Map with .CSM format
 '********************************
@@ -198,7 +200,7 @@ Sub Cargar_CSM(ByVal Map As String)
                 ReDim Particulas(1 To .NumeroParticulas)
                 Get #fh, , Particulas
                 For i = 1 To .NumeroParticulas
-                    'MapData(Particulas(i).X, Particulas(i).Y).Particle_Group_Index = General_Particle_Create(Particulas(i).Particula, Particulas(i).X, Particulas(i).Y)
+                    MapData(Particulas(i).X, Particulas(i).Y).Particle_Group_Index = General_Particle_Create(Particulas(i).Particula, Particulas(i).X, Particulas(i).Y)
                 Next i
             End If
                 
@@ -260,20 +262,12 @@ Sub Cargar_CSM(ByVal Map As String)
             End If
         Next i
     Next j
-
-    '*******************************
-    'Render lights
-    'Light_Render_All
-    '*******************************
     
     'MapInfo_Cargar Map
     frmMain.txtMapVersion.Text = MapInfo.MapVersion
     
     Call Pestanas(Map, ".csm")
 
-    ' Vacia el Deshacer
-    modEdicion.Deshacer_Clear
-    
     'Change mouse icon
     frmMain.MousePointer = 0
     
@@ -329,7 +323,10 @@ On Error GoTo ErrorHandler
     
     frmMain.MousePointer = 11
     MapSize.XMax = XMaxMapSize
+    MapSize.XMin = XMinMapSize
     MapSize.YMax = YMaxMapSize
+    MapSize.YMin = YMinMapSize
+    
     ReDim L1(MapSize.XMin To MapSize.XMax, MapSize.YMin To MapSize.YMax)
     
     For j = MapSize.YMin To MapSize.YMax
@@ -385,17 +382,17 @@ On Error GoTo ErrorHandler
                 End If
                
                '¿Hay luz activa en este punto?
-                'If .Light.Active Then
-                '    MH.NumeroLuces = MH.NumeroLuces + 1
-                '    ReDim Preserve Luces(1 To MH.NumeroLuces)
+                If .Light.active Then
+                    MH.NumeroLuces = MH.NumeroLuces + 1
+                    ReDim Preserve Luces(1 To MH.NumeroLuces)
                     
-                '    Luces(MH.NumeroLuces).R = .Light.RGBCOLOR.R
-                '    Luces(MH.NumeroLuces).G = .Light.RGBCOLOR.G
-                '    Luces(MH.NumeroLuces).B = .Light.RGBCOLOR.B
-                '    Luces(MH.NumeroLuces).range = .Light.range
-                '    Luces(MH.NumeroLuces).X = .Light.map_x
-                '    Luces(MH.NumeroLuces).Y = .Light.map_y
-                'End If
+                    Luces(MH.NumeroLuces).R = .Engine_Light(1)
+                    Luces(MH.NumeroLuces).G = .Engine_Light(2)
+                    Luces(MH.NumeroLuces).B = .Engine_Light(3)
+                    Luces(MH.NumeroLuces).range = .Light.range
+                    Luces(MH.NumeroLuces).X = .Light.map_x
+                    Luces(MH.NumeroLuces).Y = .Light.map_y
+                End If
                 
                 If .OBJInfo.ObjIndex > 0 Then
                     MH.NumeroOBJs = MH.NumeroOBJs + 1
@@ -501,7 +498,7 @@ Public Sub CSMInfoSave()
     MapDat.lvlMinimo = MapInfo.lvlMinimo
     
     If frmMain.chkLuzClimatica = Checked Then
-        MapDat.LuzBase = base_light
+        MapDat.LuzBase = MapInfo.LuzBase
     Else
         MapDat.LuzBase = -1
     End If
@@ -550,9 +547,19 @@ Public Sub CSMInfoCargar()
         frmMain.chkLuzClimatica = Checked
         Call ConvertLongToRGB(MapDat.LuzBase, tR, tG, tB)
         
+        Estado_Custom.a = 255
+        Estado_Custom.R = tR
+        Estado_Custom.G = tG
+        Estado_Custom.B = tB
+        
+        Call Actualizar_Estado
+        
         frmMain.LuzMapa.Text = tR & "-" & tG & "-" & tB
+        frmMain.PicColorMap.BackColor = MapInfo.LuzBase
+        
     Else
         frmMain.chkLuzClimatica = Unchecked
+        
     End If
     
     MapInfo.MapVersion = MapDat.version

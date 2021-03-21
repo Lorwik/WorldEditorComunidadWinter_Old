@@ -115,10 +115,14 @@ Public SupData() As SupData
 
 Public Type NpcData
     name As String
+    ELV As Integer
+    Hostile As Byte
     Body As Integer
     Head As Integer
     Heading As Byte
+    NpcType As Byte
 End Type
+
 Public NumNPCs As Long
 'Public NumNPCsHOST As Integer
 Public NpcData() As NpcData
@@ -169,16 +173,12 @@ End Type
 
 '********** CONSTANTS ***********
 'Heading Constants
-Public Const NORTH As Byte = 1
-Public Const EAST  As Byte = 2
-Public Const SOUTH As Byte = 3
-Public Const WEST  As Byte = 4
-
-'Map sizes in tiles
-Public Const XMaxMapSize As Byte = 100
-Public Const XMinMapSize As Byte = 1
-Public Const YMaxMapSize As Byte = 100
-Public Const YMinMapSize As Byte = 1
+Public Enum eDireccion
+    NORTH = 1
+    EAST = 2
+    SOUTH = 3
+    WEST = 4
+End Enum
 
 '********** TYPES ***********
 'Holds a local position
@@ -255,7 +255,7 @@ Public HeadData() As tHeadData
 
 'Hold info about a character
 Public Type Char
-    active As Byte
+    Active As Byte
     Heading As Byte
     Pos As Position
 
@@ -273,6 +273,14 @@ Public Type Obj
     Amount As Integer
 End Type
 
+Private Type tLight
+    RGBCOLOR As D3DCOLORVALUE
+    Active As Boolean
+    map_x As Byte
+    map_y As Byte
+    range As Byte
+End Type
+
 'Tipo de las celdas del mapa
 Public Type MapBlock
     Graphic(1 To 4) As Grh
@@ -287,6 +295,8 @@ Public Type MapBlock
     Trigger As Integer
     
     Engine_Light(0 To 3) As Long
+    Light As tLight
+    
     Particle_Group_Index As Long 'Particle Engine
     
     fX As Grh
@@ -305,53 +315,24 @@ End Enum
 Public TipoMapaCargado As Byte
 
 '********** Public VARS ***********
+
+'Map sizes in tiles
+Public Const XMaxMapSize As Integer = 100
+Public Const XMinMapSize As Integer = 1
+Public Const YMaxMapSize As Integer = 100
+Public Const YMinMapSize As Integer = 1
+
 'Where the map borders are.. Set during load
-Public MinXBorder As Byte
-Public MaxXBorder As Byte
-Public MinYBorder As Byte
-Public MaxYBorder As Byte
-
-'Object Constants
-Public Const MAX_INVENORY_OBJS  As Integer = 10000
-
-' Deshacer
-Public Const maxDeshacer As Integer = 10
-Public MapData_Deshacer(1 To maxDeshacer, XMinMapSize To XMaxMapSize, YMinMapSize To YMaxMapSize) As MapBlock
-Type tDeshacerInfo
-    Libre As Boolean
-    Desc As String
-End Type
-Public MapData_Deshacer_Info(1 To maxDeshacer) As tDeshacerInfo
+Public MinXBorder As Integer
+Public MaxXBorder As Integer
+Public MinYBorder As Integer
+Public MaxYBorder As Integer
 
 '********** Public ARRAYS ***********
 Public GrhData() As GrhData 'Holds all the grh data
 Public MapData() As MapBlock 'Holds map data for current map
 Public MapInfo As MapInfo 'Holds map info for current map
 Public CharList(1 To 10000) As Char 'Holds info about all characters on map
-
-'Encabezado bmp
-Type BITMAPFILEHEADER
-        bfType As Integer
-        bfSize As Long
-        bfReserved1 As Integer
-        bfReserved2 As Integer
-        bfOffBits As Long
-End Type
-
-'Info del encabezado del bmp
-Type BITMAPINFOHEADER
-        biSize As Long
-        biWidth As Long
-        biHeight As Long
-        biPlanes As Integer
-        biBitCount As Integer
-        biCompression As Long
-        biSizeImage As Long
-        biXPelsPerMeter As Long
-        biYPelsPerMeter As Long
-        biClrUsed As Long
-        biClrImportant As Long
-End Type
 
 'User status vars
 Public CurMap As Integer 'Current map loaded
@@ -384,13 +365,6 @@ Public MainViewHeight As Integer
 Public BackBufferRect As RECT
 
 '********** OUTSIDE FUNCTIONS ***********
-'Good old BitBlt
-Public Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
-Private Declare Function SetPixel Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
-
-'Sound stuff
-Public Declare Function mciSendString Lib "winmm.dll" Alias "mciSendStringA" (ByVal lpstrCommand As String, ByVal lpstrReturnString As String, ByVal uRetrunLength As Long, ByVal hwndCallback As Long) As Long
-Public Declare Function sndPlaySound Lib "winmm.dll" Alias "sndPlaySoundA" (ByVal lpszSoundName As String, ByVal uFlags As Long) As Long
 
 'For Get and Write Var
 Public Declare Function writeprivateprofilestring Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationname As String, ByVal lpKeyname As Any, ByVal lpString As String, ByVal lpfilename As String) As Long
@@ -402,6 +376,3 @@ Public Declare Function GetKeyState Lib "user32" (ByVal nVirtKey As Long) As Int
 Public Declare Function GetTickCount Lib "kernel32" () As Long
 
 Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-
-'CopyMemory Kernel Function
-Public Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, hpvSource As Any, ByVal cbCopy As Long)

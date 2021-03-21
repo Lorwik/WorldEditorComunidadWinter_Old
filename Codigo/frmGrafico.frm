@@ -73,6 +73,8 @@ Attribute VB_Exposed = False
 'for more information about ORE please visit http://www.baronsoft.com/
 '**************************************************************
 
+Option Explicit
+
 Private Sub Form_Deactivate()
 '*************************************************
 'Author: Unkwown

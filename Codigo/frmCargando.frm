@@ -285,6 +285,6 @@ Attribute VB_Exposed = False
 'You can contact the original creator of ORE at aaron@baronsoft.com
 'for more information about ORE please visit http://www.baronsoft.com/
 '**************************************************************
-Private Sub Picture1_Click()
 
-End Sub
+Option Explicit
+

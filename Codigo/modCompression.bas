@@ -22,16 +22,12 @@ End Type
 
 Public Enum srcFileType
     Graphics
-    Ambient
+    ambient
     Music
-    Wav
     Scripts
     Map
-    Interface
     Fuentes
-    Skin
     Minimap
-    Patch
 End Enum
 
 Public Windows_Temp_Dir As String
@@ -41,15 +37,6 @@ Private Declare Function GetTempPath Lib "kernel32" Alias "GetTempPathA" (ByVal 
 
 Private Declare Function Compress Lib "zlib.dll" Alias "compress" (dest As Any, destLen As Any, src As Any, ByVal srcLen As Long) As Long
 Private Declare Function UnCompress Lib "zlib.dll" Alias "uncompress" (dest As Any, destLen As Any, src As Any, ByVal srcLen As Long) As Long
-
-'Loading pictures from byte arrays
-Private Declare Function CreateStreamOnHGlobal Lib "ole32" (ByVal hGlobal As Long, ByVal fDeleteOnRelease As Long, ppstm As Any) As Long
-Private Declare Function OleLoadPicture Lib "olepro32" (pStream As Any, ByVal lSize As Long, ByVal fRunmode As Long, riid As Any, ppvObj As Any) As Long
-Private Declare Function CLSIDFromString Lib "ole32" (ByVal lpsz As Any, pclsid As Any) As Long
-Private Declare Function GlobalAlloc Lib "kernel32" (ByVal uFlags As Long, ByVal dwBytes As Long) As Long
-Private Declare Function GlobalLock Lib "kernel32" (ByVal hMem As Long) As Long
-Private Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) As Long
-Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (pDest As Any, pSource As Any, ByVal dwLength As Long)
 
 Public Function Formato() As String
 
@@ -76,50 +63,6 @@ Public Sub GenerateContra()
         ReDim PkContra(Len(Contra) - 1)
         For loopc = 0 To UBound(PkContra)
             PkContra(loopc) = Asc(mid(Contra, loopc + 1, 1))
-        Next loopc
-    End If
-    
-End Sub
-
-Public Sub Compress_Data(ByRef Data() As Byte)
-'*****************************************************************
-'Author: Juan Martín Dotuyo Dodero
-'Last Modify Date: 10/13/2004
-'Compresses binary data avoiding data loses
-'*****************************************************************
-
-    Dim Dimensions As Long
-    Dim DimBuffer As Long
-    Dim BufTemp() As Byte
-    Dim BufTemp2() As Byte
-    Dim loopc As Long
-    
-    'Get size of the uncompressed data
-    Dimensions = UBound(Data)
-    
-    'Prepare a buffer 1.06 times as big as the original size
-    DimBuffer = Dimensions * 1.06
-    ReDim BufTemp(DimBuffer)
-    
-    'Compress data using zlib
-    Compress BufTemp(0), DimBuffer, Data(0), Dimensions
-    
-    'Deallocate memory used by uncompressed data
-    Erase Data
-    
-    'Get rid of unused bytes in the compressed data buffer
-    ReDim Preserve BufTemp(DimBuffer - 1)
-    
-    'Copy the compressed data buffer to the original data array so it will return to caller
-    Data = BufTemp
-    
-    'Deallocate memory used by the temp buffer
-    Erase BufTemp
-    
-    'Encrypt the first byte of the compressed data for extra security
-    If UBound(PkContra) <= UBound(Data) And UBound(PkContra) <> 0 Then
-        For loopc = 0 To UBound(PkContra)
-            Data(loopc) = Data(loopc) Xor PkContra(loopc)
         Next loopc
     End If
     
@@ -240,7 +183,7 @@ Public Function extractMusic(ByVal file_name As String, Optional ByVal TempDir A
     Dim handle As Integer
     
 'Set up the error handler
-On Local Error GoTo errhandler
+On Local Error GoTo ErrHandler
     
     SourceFilePath = DirRecursos & "Music" & Formato
     OutputFilePath = App.Path & "\EXTRAIDOS\Musica\"
@@ -299,7 +242,7 @@ On Local Error GoTo errhandler
     extractMusic = True
 Exit Function
 
-errhandler:
+ErrHandler:
     Close handle
     Erase SourceData
     'Display an error message if it didn't work
@@ -318,7 +261,7 @@ Public Function Extract_File_Memory(ByVal File_Type As srcFileType, ByVal file_n
     Dim InfoHead As INFOHEADER
     Dim handle As Integer
    
-On Local Error GoTo errhandler
+On Local Error GoTo ErrHandler
    
     Select Case File_Type
     
@@ -334,7 +277,7 @@ On Local Error GoTo errhandler
         Case Map
                 SourceFilePath = DirRecursos & "Mapas" & Formato
 
-        Case Ambient
+        Case ambient
                 SourceFilePath = DirRecursos & "Ambient" & Formato
                 
         Case Fuentes
@@ -370,7 +313,7 @@ On Local Error GoTo errhandler
     Extract_File_Memory = True
 Exit Function
  
-errhandler:
+ErrHandler:
     Close handle
     Erase SourceData
 End Function
@@ -462,7 +405,7 @@ Public Function File_Find(ByVal resource_file_path As String, ByVal file_name As
 'Extra archivos en memoria
 '*********************************************
  
-On Error GoTo errhandler
+On Error GoTo ErrHandler
  
     Dim Max As Integer
     Dim Min As Integer
@@ -514,7 +457,7 @@ On Error GoTo errhandler
         End If
     Loop
    
-errhandler:
+ErrHandler:
     Close file_handler
     File_Find.strFileName = ""
     File_Find.lngFileSize = 0

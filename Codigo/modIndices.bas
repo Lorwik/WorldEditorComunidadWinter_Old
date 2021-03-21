@@ -151,7 +151,7 @@ Sub CargarCuerpos()
 'Fecha: ???
 'Descripción: Carga el index de Cuerpos
 '*************************************
-On Error GoTo errhandler:
+On Error GoTo ErrHandler:
 
     Dim buffer()    As Byte
     Dim dLen        As Long
@@ -208,7 +208,7 @@ On Error GoTo errhandler:
     
     Set fileBuff = Nothing
     
-errhandler:
+ErrHandler:
     
     If Err.Number <> 0 Then
         
@@ -240,45 +240,56 @@ Public Sub CargarIndicesNPC()
 '*************************************************
 On Error Resume Next
 'On Error GoTo Fallo
-    If FileExist(DirDats & "\NPCs.dat", vbArchive) = False Then
+Debug.Print DirDats & "NPCs.dat"
+
+    If FileExist(DirDats & "NPCs.dat", vbArchive) = False Then
         MsgBox "Falta el archivo 'NPCs.dat' en " & DirDats, vbCritical
         End
     End If
-    'If FileExist(DirDats & "\NPCs-HOSTILES.dat", vbArchive) = False Then
-    '    MsgBox "Falta el archivo 'NPCs-HOSTILES.dat' en " & DirDats, vbCritical
-    '    End
-    'End If
+
     Dim Trabajando As String
-    Dim NPC As Integer
+    Dim NPC As Long
     Dim Leer As New clsIniReader
+    Dim vDatos As String
+    
     frmMain.lListado(1).Clear
     frmMain.lListado(2).Clear
-    Call Leer.Initialize(DirDats & "\NPCs.dat")
+    
+    Call Leer.Initialize(DirDats & "NPCs.dat")
     NumNPCs = Val(Leer.GetValue("INIT", "NumNPCs"))
-    'Call Leer.Initialize(DirDats & "\NPCs-HOSTILES.dat")
-    'NumNPCsHOST = Val(Leer.GetValue("INIT", "NumNPCs"))
-    ReDim NpcData(1000) As NpcData
+    
+    ReDim NpcData(NumNPCs) As NpcData
     Trabajando = "Dats\NPCs.dat"
+    
     'Call Leer.Initialize(DirDats & "\NPCs.dat")
     'MsgBox "  "
     For NPC = 1 To NumNPCs
-        NpcData(NPC).name = Leer.GetValue("NPC" & NPC, "Name")
+        NpcData(NPC).name = CStr(Leer.GetValue("NPC" & NPC, "Name"))
+        NpcData(NPC).ELV = Val(Leer.GetValue("NPC" & NPC, "ELV"))
+        NpcData(NPC).Hostile = Val(Leer.GetValue("NPC" & NPC, "Hostile"))
+        NpcData(NPC).NpcType = Val(Leer.GetValue("NPC" & NPC, "NPCType"))
         
         NpcData(NPC).Body = Val(Leer.GetValue("NPC" & NPC, "Body"))
         NpcData(NPC).Head = Val(Leer.GetValue("NPC" & NPC, "Head"))
         NpcData(NPC).Heading = Val(Leer.GetValue("NPC" & NPC, "Heading"))
-        If LenB(NpcData(NPC).name) <> 0 Then frmMain.lListado(1).AddItem NpcData(NPC).name & " - #" & NPC
+        
+        vDatos = "#" & NPC & " " & NpcData(NPC).name
+                
+        'Marcamos a los hostiles y sus lvl
+        If NpcData(NPC).Hostile = 1 Then
+            vDatos = vDatos & " - [LVL:" & NpcData(NPC).ELV & " <HOSTIL>"
+            
+            'Marcamos a los WorldBoss
+            If NpcData(NPC).NpcType = 12 Then _
+                vDatos = vDatos & " <WORLDBOSS>"
+                
+            vDatos = vDatos & "]"
+        End If
+        
+        If LenB(NpcData(NPC).name) <> 0 Then frmMain.lListado(1).AddItem vDatos
     Next
-    'MsgBox "  "
-    'Trabajando = "Dats\NPCs-HOSTILES.dat"
-    'Call Leer.Initialize(DirDats & "\NPCs-HOSTILES.dat")
-    'For NPC = 1 To NumNPCsHOST
-    '    NpcData(NPC + 499).name = Leer.GetValue("NPC" & (NPC + 499), "Name")
-    '    NpcData(NPC + 499).Body = Val(Leer.GetValue("NPC" & (NPC + 499), "Body"))
-    '    NpcData(NPC + 499).Head = Val(Leer.GetValue("NPC" & (NPC + 499), "Head"))
-    '    NpcData(NPC + 499).Heading = Val(Leer.GetValue("NPC" & (NPC + 499), "Heading"))
-    '    If LenB(NpcData(NPC + 499).name) <> 0 Then frmMain.lListado(2).AddItem NpcData(NPC + 499).name & " - #" & (NPC + 499)
-    'Next NPC
+    
+    Set Leer = Nothing
     Exit Sub
 Fallo:
     MsgBox "Error al intentar cargar el NPC " & NPC & " de " & Trabajando & " en " & DirDats & vbCrLf & "Err: " & Err.Number & " - " & Err.Description, vbCritical + vbOKOnly

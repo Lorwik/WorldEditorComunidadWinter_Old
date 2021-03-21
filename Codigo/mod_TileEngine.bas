@@ -198,54 +198,6 @@ Public Sub InitGrh(ByRef Grh As Grh, ByVal GrhIndex As Long, Optional ByVal Star
     Grh.speed = GrhData(Grh.GrhIndex).speed
 End Sub
 
-Sub MoveCharbyHead(CharIndex As Integer, nHeading As Byte)
-'*************************************************
-'Author: Unkwown
-'Last modified: 20/05/06
-'*************************************************
-    Dim addX As Integer
-    Dim addY As Integer
-    Dim X As Integer
-    Dim Y As Integer
-    Dim nX As Integer
-    Dim nY As Integer
-    
-    X = CharList(CharIndex).Pos.X
-    Y = CharList(CharIndex).Pos.Y
-    
-    'Figure out which way to move
-    Select Case nHeading
-    
-        Case NORTH
-            addY = -1
-    
-        Case EAST
-            addX = 1
-    
-        Case SOUTH
-            addY = 1
-        
-        Case WEST
-            addX = -1
-            
-    End Select
-    
-    nX = X + addX
-    nY = Y + addY
-    
-    MapData(nX, nY).CharIndex = CharIndex
-    CharList(CharIndex).Pos.X = nX
-    CharList(CharIndex).Pos.Y = nY
-    MapData(X, Y).CharIndex = 0
-    
-    CharList(CharIndex).MoveOffset.X = -1 * (TilePixelWidth * addX)
-    CharList(CharIndex).MoveOffset.Y = -1 * (TilePixelHeight * addY)
-    
-    CharList(CharIndex).Moving = 1
-    CharList(CharIndex).Heading = nHeading
-
-End Sub
-
 Sub MoveCharbyPos(CharIndex As Integer, nX As Integer, nY As Integer)
 '*************************************************
 'Author: Unkwown
@@ -264,19 +216,19 @@ Sub MoveCharbyPos(CharIndex As Integer, nX As Integer, nY As Integer)
     addY = nY - Y
     
     If Sgn(addX) = 1 Then
-        nHeading = EAST
+        nHeading = eDireccion.EAST
     End If
     
     If Sgn(addX) = -1 Then
-        nHeading = WEST
+        nHeading = eDireccion.WEST
     End If
     
     If Sgn(addY) = -1 Then
-        nHeading = NORTH
+        nHeading = eDireccion.NORTH
     End If
     
     If Sgn(addY) = 1 Then
-        nHeading = SOUTH
+        nHeading = eDireccion.SOUTH
     End If
     
     MapData(nX, nY).CharIndex = CharIndex
@@ -319,7 +271,7 @@ Function LegalPos(X As Integer, Y As Integer) As Boolean
     LegalPos = True
     
     'Check to see if its out of bounds
-    If X - 8 < 1 Or X - 8 > 100 Or Y - 6 < 1 Or Y - 6 > 100 Then
+    If X < XMinMapSize Or X > XMaxMapSize Or Y < YMinMapSize Or Y > YMaxMapSize Then
         LegalPos = False
         Exit Function
     End If
@@ -335,21 +287,6 @@ Function LegalPos(X As Integer, Y As Integer) As Boolean
         LegalPos = False
         Exit Function
     End If
-
-End Function
-
-Function InMapLegalBounds(X As Integer, Y As Integer) As Boolean
-'*************************************************
-'Author: Unkwown
-'Last modified: 20/05/06
-'*************************************************
-
-    If X < MinXBorder Or X > MaxXBorder Or Y < MinYBorder Or Y > MaxYBorder Then
-        InMapLegalBounds = False
-        Exit Function
-    End If
-    
-    InMapLegalBounds = True
 
 End Function
 
@@ -434,7 +371,7 @@ Error:
     End If
 End Sub
 
-Sub Draw_GrhIndex(ByVal GrhIndex As Long, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByRef Color_List() As Long, Optional ByVal angle As Single = 0, Optional ByVal Alpha As Boolean = False)
+Sub Draw_GrhIndex(ByVal GrhIndex As Long, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByRef Color_List() As Long, Optional ByVal Alpha As Boolean = False)
     Dim SourceRect As RECT
     
     With GrhData(GrhIndex)
@@ -453,43 +390,6 @@ Sub Draw_GrhIndex(ByVal GrhIndex As Long, ByVal X As Integer, ByVal Y As Integer
         Call Device_Textured_Render(X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, Color_List(), Alpha)
     End With
     
-End Sub
-
-Sub DrawGrhtoHdc(ByRef Pic As PictureBox, _
-                 ByVal GrhIndex As Long, _
-                 ByVal X As Integer, _
-                 ByVal Y As Integer)
-
-    '*****************************************************************
-    'Draws a Grh's portion to the given area of any Device Context
-    '*****************************************************************
-         
-    Dim destRect As RECT
-    
-    destRect.Bottom = Pic.ScaleHeight / 16
-    destRect.Right = Pic.ScaleWidth / 16
-    destRect.Left = 0
-    destRect.Top = 0
-    
-    DoEvents
-    
-    Pic.AutoRedraw = False
-        
-    'Clear the inventory window
-    Call Engine_BeginScene
-        
-    Call Draw_GrhIndex(GrhIndex, Y, X, 0, Normal_RGBList())
-        
-    Call Engine_EndScene(destRect, Pic.hWnd)
-    
-    Call DrawBuffer.LoadPictureBlt(Pic.hdc)
-
-    Pic.AutoRedraw = True
-
-    Call DrawBuffer.PaintPicture(Pic.hdc, 0, 0, Pic.Width, Pic.Height, 0, 0, vbSrcCopy)
-
-    Pic.Picture = Pic.Image
-        
 End Sub
 
 Public Sub PrepareDrawBuffer()
@@ -734,27 +634,23 @@ On Error GoTo RenderScreen_Err
     
     Dim PixelOffsetXTemp As Integer 'For centering grhs
     Dim PixelOffsetYTemp As Integer 'For centering grhs
-    
-    Dim ElapsedTime      As Single
-    
+
     Dim Sobre            As Long
     Dim Grh              As Grh                  'Temp Grh for show tile and blocked
     Dim bCapa            As Byte                 'cCapas ' 31/05/2006 - GS, control de Capas
     Dim iGrhIndex        As Integer  'Usado en el Layer 1
     
-    ElapsedTime = Engine_ElapsedTime()
-    
     'Figure out Ends and Starts of screen
     screenminY = tiley - HalfWindowTileHeight
     screenmaxY = tiley + HalfWindowTileHeight
     screenminX = tilex - HalfWindowTileWidth
-    screenmaxX = tilex + HalfWindowTileWidth
+    screenmaxX = tilex + HalfWindowTileWidth + 1
     
     minY = screenminY - TileBufferSize
     maxY = screenmaxY + TileBufferSize
     minX = screenminX - TileBufferSize
     maxX = screenmaxX + TileBufferSize
-    
+
     ' 31/05/2006 - GS, control de Capas
     If Val(frmMain.cCapas.Text) >= 1 And (frmMain.cCapas.Text) <= 4 Then
         bCapa = Val(frmMain.cCapas.Text)
@@ -874,7 +770,7 @@ On Error GoTo RenderScreen_Err
                 PixelOffsetXTemp = ScreenX * 32 + PixelOffsetX - 32
                 PixelOffsetYTemp = ScreenY * 32 + PixelOffsetY - 32
                 
-                If X > 100 Or X < -3 Then Exit For ' 30/05/2006
+                If X > XMaxMapSize Or X < -3 Then Exit For ' 30/05/2006
                 
                 With MapData(X, Y)
                     
@@ -893,6 +789,10 @@ On Error GoTo RenderScreen_Err
                     If .Graphic(3).GrhIndex <> 0 And VerCapa3 Then _
                         Call Draw_Grh(.Graphic(3), _
                                 PixelOffsetXTemp, PixelOffsetYTemp, 1, .Engine_Light(), 1)
+                                
+                    'Particulas *****************************************
+                    If .Particle_Group_Index Then _
+                        Call mDx8_Particulas.Particle_Group_Render(.Particle_Group_Index, PixelOffsetXTemp + 16, PixelOffsetYTemp + 16)
                          
                 End With
                 
@@ -915,7 +815,7 @@ On Error GoTo RenderScreen_Err
             PixelOffsetXTemp = ScreenX * TilePixelWidth + PixelOffsetX - 32
             PixelOffsetYTemp = ScreenY * TilePixelHeight + PixelOffsetY - 32
         
-            If X < 101 And X > 0 And Y < 101 And Y > 0 Then ' 30/05/2006
+            If X < XMaxMapSize + 1 And X > 0 And Y < XMaxMapSize + 1 And Y > 0 Then ' 30/05/2006
             
                 '<----- Layer 4 ----->
                 If MapData(X, Y).Graphic(4).GrhIndex <> 0 And (frmMain.mnuVerCapa4.Checked = True) Then
@@ -949,10 +849,10 @@ On Error GoTo RenderScreen_Err
                     Call Draw_Grh(Grh, PixelOffsetXTemp, PixelOffsetYTemp, 1, Normal_RGBList(), 0)
                         
                 End If
-                
+
                 If VerTriggers Then '4978
                     If MapData(X, Y).Trigger > 0 Then _
-                        Call DrawText(PixelOffsetXTemp, PixelOffsetYTemp, MapData(X, Y).Trigger, vbWhite, 1)
+                        Call DrawText(PixelOffsetXTemp, PixelOffsetYTemp, MapData(X, Y).Trigger, -1, False, 1)
                 End If
                     
                 If Seleccionando Then
@@ -973,7 +873,7 @@ On Error GoTo RenderScreen_Err
         
         ScreenY = ScreenY + 1
     Next Y
-    
+
 RenderScreen_Err:
 
     If Err.Number Then
@@ -1014,27 +914,14 @@ Public Sub RenderPreview()
     
     frmMain.PreviewGrh.AutoRedraw = False
 
-    Call Engine_EndScene(destRect, frmMain.PreviewGrh.hWnd)
+    Call Engine_EndScene(destRect, frmMain.PreviewGrh.hwnd)
 
-    Call DrawBuffer.LoadPictureBlt(frmMain.PreviewGrh.hdc)
+    Call DrawBuffer.LoadPictureBlt(frmMain.PreviewGrh.hDC)
 
     frmMain.PreviewGrh.AutoRedraw = True
 
-    Call DrawBuffer.PaintPicture(frmMain.PreviewGrh.hdc, 0, 0, frmMain.PreviewGrh.Width, frmMain.PreviewGrh.Height, 0, 0, vbSrcCopy)
+    Call DrawBuffer.PaintPicture(frmMain.PreviewGrh.hDC, 0, 0, frmMain.PreviewGrh.Width, frmMain.PreviewGrh.Height, 0, 0, vbSrcCopy)
 End Sub
-
-Function HayUserAbajo(X As Integer, Y As Integer, GrhIndex) As Boolean
-'*************************************************
-'Author: Unkwown
-'Last modified: 20/05/06
-'*************************************************
-    HayUserAbajo = _
-        CharList(UserCharIndex).Pos.X >= X - (GrhData(GrhIndex).TileWidth \ 2) _
-    And CharList(UserCharIndex).Pos.X <= X + (GrhData(GrhIndex).TileWidth \ 2) _
-    And CharList(UserCharIndex).Pos.Y >= Y - (GrhData(GrhIndex).TileHeight - 1) _
-    And CharList(UserCharIndex).Pos.Y <= Y
-    
-End Function
 
 Function PixelPos(X As Integer) As Integer
 '*************************************************
@@ -1046,7 +933,7 @@ PixelPos = (TilePixelWidth * X) - TilePixelWidth
 
 End Function
 
-Public Sub InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setTilePixelHeight As Integer, ByVal setTilePixelWidth As Integer, ByVal pixelsToScrollPerFrameX As Integer, pixelsToScrollPerFrameY As Integer)
+Public Sub InitTileEngine(ByVal setTilePixelHeight As Integer, ByVal setTilePixelWidth As Integer, ByVal pixelsToScrollPerFrameX As Integer, pixelsToScrollPerFrameY As Integer)
 '***************************************************
 'Author: Aaron Perkins
 'Last Modification: 08/14/07
@@ -1073,8 +960,8 @@ On Error GoTo ErrorHandler:
     ReDim MapData(XMinMapSize To XMaxMapSize, YMinMapSize To YMaxMapSize) As MapBlock
     
     'Set intial user position
-    UserPos.X = MinXBorder
-    UserPos.Y = MinYBorder
+    UserPos.X = 50
+    UserPos.Y = 50
     
     'Set scroll pixels per frame
     ScrollPixelsPerFrameX = pixelsToScrollPerFrameX
@@ -1126,6 +1013,7 @@ On Error GoTo 0
     End With
     
     Call LoadGraphics
+    Call CargarParticulas
 
     Exit Sub
     
@@ -1141,10 +1029,7 @@ Public Sub LoadGraphics()
     Call SurfaceDB.Initialize(DirectD3D8, ClientSetup.byMemory)
 End Sub
 
-Sub ShowNextFrame(ByVal DisplayFormTop As Integer, _
-                  ByVal DisplayFormLeft As Integer, _
-                  ByVal MouseViewX As Integer, _
-                  ByVal MouseViewY As Integer)
+Sub ShowNextFrame()
 
 On Error GoTo ErrorHandler:
 
@@ -1175,9 +1060,6 @@ On Error GoTo ErrorHandler:
             End If
     
         End If
-            
-        'Update mouse position within view area
-        Call ConvertCPtoTP(MouseViewX, MouseViewY, MouseTileX, MouseTileY)
             
         '****** Update screen ******
         Call RenderScreen(UserPos.X - AddtoUserPos.X, UserPos.Y - AddtoUserPos.Y, OffsetCounterX, OffsetCounterY)

@@ -53,24 +53,6 @@ End Type
 
 Private cfonts(1 To 2) As CustomFont ' _Default2 As CustomFont
 
-Public Function ColorToDX8(ByVal long_color As Long) As Long
-    Dim TEMP_COLOR As String
-    Dim Red As Integer, Blue As Integer, Green As Integer
-    
-    TEMP_COLOR = Hex$(long_color)
-    If Len(TEMP_COLOR) < 6 Then
-        'Give is 6 digits for easy RGB conversion.
-        TEMP_COLOR = String$(6 - Len(TEMP_COLOR), "0") + TEMP_COLOR
-    End If
-    
-    Red = CLng("&H" + mid$(TEMP_COLOR, 1, 2))
-    Green = CLng("&H" + mid$(TEMP_COLOR, 3, 2))
-    Blue = CLng("&H" + mid$(TEMP_COLOR, 5, 2))
-    
-    ColorToDX8 = D3DColorXRGB(Red, Green, Blue)
-
-End Function
-
 Public Sub Text_Render_Special(ByVal intX As Integer, ByVal intY As Integer, ByRef strText As String, ByVal lngColor As Long, Optional bolCentred As Boolean = False, Optional Font As Integer = 1)  ' GSZAO
 '*****************************************************************
 'Text_Render_Special by ^[GS]^
@@ -127,10 +109,8 @@ Private Sub Engine_Render_Text(ByRef Batch As clsBatch, _
      'WyroX: Agregado para evitar dibujar emojis en los nombres de los personajes
     If ParseEmoticons Then
         'Analizar mensaje, palabra por palabra... GSZAO
-        Dim NewText As String
         
         tempstr = Split(Text, Chr$(32))
-        NewText = Text
         Text = vbNullString
 
         For i = 0 To UBound(tempstr)
@@ -216,28 +196,6 @@ Sub ConvertLongToRGB(ByVal value As Long, R As Byte, G As Byte, B As Byte)
     G = Int(value / 256) Mod 256
     B = Int(value / 256 / 256) Mod 256
 End Sub
-
-Public Function ARGB(ByVal R As Long, ByVal G As Long, ByVal B As Long, ByVal a As Long) As Long
-        
-    Dim c As Long
-        
-    If a > 127 Then
-        a = a - 128
-        c = a * 2 ^ 24 Or &H80000000
-        c = c Or R * 2 ^ 16
-        c = c Or G * 2 ^ 8
-        c = c Or B
-    Else
-        c = a * 2 ^ 24
-        c = c Or R * 2 ^ 16
-        c = c Or G * 2 ^ 8
-        c = c Or B
-    End If
-    
-    ARGB = c
-
-End Function
-
 
 Private Function Engine_GetTextWidth(ByRef UseFont As CustomFont, ByVal Text As String) As Integer
 '***************************************************

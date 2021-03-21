@@ -67,16 +67,6 @@ Private Sub Class_Terminate()
 
 End Sub
  
-Public Property Get Surface(ByVal fileIndex As Long) As Direct3DTexture8
-
-    '**************************************************************
-    'Author: Juan Mart�n Sotuyo Dodero
-    'Last Modify Date: 3/06/2006
-    'Used to return a texture
-    '**************************************************************
-    
-End Property
- 
 Public Function GetTexture(ByVal filename As Integer, _
                            ByRef TextureWidth As Long, _
                            ByRef TextureHeight As Long) As Direct3DTexture8
@@ -132,7 +122,7 @@ Private Function CrearGrafico(ByVal Archivo As Integer, _
                               ByRef TextureWidth As Long, _
                               ByRef TextureHeight As Long) As Direct3DTexture8
 
-    On Error GoTo errhandler
+    On Error GoTo ErrHandler
 
     Dim surface_desc As D3DSURFACE_DESC
     Dim texture_info As D3DXIMAGE_INFO
@@ -206,7 +196,7 @@ Private Function CrearGrafico(ByVal Archivo As Integer, _
     
     Exit Function
     
-errhandler:
+ErrHandler:
     Debug.Print "ERROR AL CARGAR EL GRAFICO> " & Archivo & Extension
 
 End Function

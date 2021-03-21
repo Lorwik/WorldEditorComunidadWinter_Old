@@ -58,7 +58,7 @@ If HotKeysAllow = False Then Exit Sub
     
     
     If GetKeyState(vbKeyUp) < 0 Then
-        If UserPos.Y < 1 Then Exit Sub ' 10
+        If UserPos.Y < YMinMapSize Then Exit Sub ' 10
         If LegalPos(UserPos.X, UserPos.Y - 1) And WalkMode = True Then
             If dLastWalk + 50 > GetTickCount Then Exit Sub
             UserPos.Y = UserPos.Y - 1
@@ -73,37 +73,45 @@ If HotKeysAllow = False Then Exit Sub
     End If
 
     If GetKeyState(vbKeyRight) < 0 Then
-        If UserPos.X > 100 Then Exit Sub ' 89
+        If UserPos.X > XMaxMapSize Then Exit Sub ' 89
         If LegalPos(UserPos.X + 1, UserPos.Y) And WalkMode = True Then
             If dLastWalk + 50 > GetTickCount Then Exit Sub
             UserPos.X = UserPos.X + 1
             MoveCharbyPos UserCharIndex, UserPos.X, UserPos.Y
             dLastWalk = GetTickCount
+            
         ElseIf WalkMode = False Then
             UserPos.X = UserPos.X + 1
+            
         End If
+        
         bRefreshRadar = True ' Radar
         frmMain.SetFocus
         Exit Sub
     End If
 
     If GetKeyState(vbKeyDown) < 0 Then
-        If UserPos.Y > 100 Then Exit Sub ' 92
+        If UserPos.Y > YMaxMapSize Then Exit Sub ' 92
+        
         If LegalPos(UserPos.X, UserPos.Y + 1) And WalkMode = True Then
             If dLastWalk + 50 > GetTickCount Then Exit Sub
             UserPos.Y = UserPos.Y + 1
             MoveCharbyPos UserCharIndex, UserPos.X, UserPos.Y
             dLastWalk = GetTickCount
+            
         ElseIf WalkMode = False Then
             UserPos.Y = UserPos.Y + 1
+            
         End If
+        
         bRefreshRadar = True ' Radar
         frmMain.SetFocus
         Exit Sub
+        
     End If
 
     If GetKeyState(vbKeyLeft) < 0 Then
-        If UserPos.X < 1 Then Exit Sub ' 12
+        If UserPos.X < XMinMapSize Then Exit Sub ' 12
         If LegalPos(UserPos.X - 1, UserPos.Y) And WalkMode = True Then
             If dLastWalk + 50 > GetTickCount Then Exit Sub
             UserPos.X = UserPos.X - 1
@@ -124,32 +132,32 @@ Public Function ReadField(Pos As Integer, Text As String, SepASCII As Integer) A
 'Author: Unkwown
 'Last modified: 20/05/06
 '*************************************************
-Dim i As Integer
-Dim lastPos As Integer
-Dim CurChar As String * 1
-Dim FieldNum As Integer
-Dim Seperator As String
-
-Seperator = Chr(SepASCII)
-lastPos = 0
-FieldNum = 0
-
-For i = 1 To Len(Text)
-    CurChar = mid(Text, i, 1)
-    If CurChar = Seperator Then
-        FieldNum = FieldNum + 1
-        If FieldNum = Pos Then
-            ReadField = mid(Text, lastPos + 1, (InStr(lastPos + 1, Text, Seperator, vbTextCompare) - 1) - (lastPos))
-            Exit Function
+    Dim i As Integer
+    Dim lastPos As Integer
+    Dim CurChar As String * 1
+    Dim FieldNum As Integer
+    Dim Seperator As String
+    
+    Seperator = Chr(SepASCII)
+    lastPos = 0
+    FieldNum = 0
+    
+    For i = 1 To Len(Text)
+        CurChar = mid(Text, i, 1)
+        If CurChar = Seperator Then
+            FieldNum = FieldNum + 1
+            If FieldNum = Pos Then
+                ReadField = mid(Text, lastPos + 1, (InStr(lastPos + 1, Text, Seperator, vbTextCompare) - 1) - (lastPos))
+                Exit Function
+            End If
+            lastPos = i
         End If
-        lastPos = i
+    Next i
+    FieldNum = FieldNum + 1
+    
+    If FieldNum = Pos Then
+        ReadField = mid(Text, lastPos + 1)
     End If
-Next i
-FieldNum = FieldNum + 1
-
-If FieldNum = Pos Then
-    ReadField = mid(Text, lastPos + 1)
-End If
 
 End Function
 
@@ -165,16 +173,16 @@ Private Function autoCompletaPath(ByVal Path As String) As String
 'Author: ^[GS]^
 'Last modified: 22/05/06
 '*************************************************
-Path = Replace(Path, "/", "\")
-If Left(Path, 1) = "\" Then
-    ' agrego app.path & path
-    Path = App.Path & Path
-End If
-If Right(Path, 1) <> "\" Then
-    ' me aseguro que el final sea con "\"
-    Path = Path & "\"
-End If
-autoCompletaPath = Path
+    Path = Replace(Path, "/", "\")
+    If Left(Path, 1) = "\" Then
+        ' agrego app.path & path
+        Path = App.Path & Path
+    End If
+    If Right(Path, 1) <> "\" Then
+        ' me aseguro que el final sea con "\"
+        Path = Path & "\"
+    End If
+    autoCompletaPath = Path
 End Function
 
 ''
@@ -357,7 +365,7 @@ On Error Resume Next
     Call mDx8_Engine.Engine_DirectX8_Init
     
     'Tile Engine
-    Call InitTileEngine(frmMain.hWnd, 32, 32, 8, 8)
+    Call InitTileEngine(32, 32, 8, 8)
     
     Call mDx8_Engine.Engine_DirectX8_Aditional_Init
     
@@ -371,6 +379,10 @@ On Error Resume Next
     frmCargando.Hide
     
     frmMain.Show
+    frmParticle.Show , frmMain
+    frmParticle.Visible = False
+    frmLuces.Show , frmMain
+    frmLuces.Visible = False
     modMapIO.NuevoMapa
     DoEvents
     
@@ -381,7 +393,7 @@ On Error Resume Next
     Do While prgRun
 
         If frmMain.WindowState <> vbMinimized And frmMain.Visible Then
-            Call ShowNextFrame(frmMain.Top, frmMain.Left, frmMain.MouseX, frmMain.MouseY)
+            Call ShowNextFrame
             
             Call CheckKeys
 
@@ -440,7 +452,7 @@ Public Sub WriteVar(File As String, Main As String, Var As String, value As Stri
 'Author: Unkwown
 'Last modified: 20/05/06
 '*************************************************
-writeprivateprofilestring Main, Var, value, File
+    writeprivateprofilestring Main, Var, value, File
 End Sub
 
 Public Sub ToggleWalkMode()
@@ -449,28 +461,28 @@ Public Sub ToggleWalkMode()
 'Last modified: 28/05/06 - GS
 '*************************************************
 On Error GoTo fin:
-If WalkMode = False Then
-    WalkMode = True
-Else
-    frmMain.mnuModoCaminata.Checked = False
-    WalkMode = False
-End If
-
-If WalkMode = False Then
-    'Erase character
-    Call EraseChar(UserCharIndex)
-    MapData(UserPos.X, UserPos.Y).CharIndex = 0
-Else
-    'MakeCharacter
-    If LegalPos(UserPos.X, UserPos.Y) Then
-        Call MakeChar(NextOpenChar(), 1, 1, SOUTH, UserPos.X, UserPos.Y)
-        UserCharIndex = MapData(UserPos.X, UserPos.Y).CharIndex
-        frmMain.mnuModoCaminata.Checked = True
+    If WalkMode = False Then
+        WalkMode = True
     Else
-        MsgBox "ERROR: Ubicacion ilegal."
+        frmMain.mnuModoCaminata.Checked = False
         WalkMode = False
     End If
-End If
+    
+    If WalkMode = False Then
+        'Erase character
+        Call EraseChar(UserCharIndex)
+        MapData(UserPos.X, UserPos.Y).CharIndex = 0
+    Else
+        'MakeCharacter
+        If LegalPos(UserPos.X, UserPos.Y) Then
+            Call MakeChar(NextOpenChar(), 1, 1, SOUTH, UserPos.X, UserPos.Y)
+            UserCharIndex = MapData(UserPos.X, UserPos.Y).CharIndex
+            frmMain.mnuModoCaminata.Checked = True
+        Else
+            MsgBox "ERROR: Ubicacion ilegal."
+            WalkMode = False
+        End If
+    End If
 fin:
 End Sub
 
@@ -480,19 +492,19 @@ Public Sub FixCoasts(ByVal GrhIndex As Long, ByVal X As Integer, ByVal Y As Inte
 'Last modified: 20/05/06
 '*************************************************
 
-If GrhIndex = 7284 Or GrhIndex = 7290 Or GrhIndex = 7291 Or GrhIndex = 7297 Or _
-   GrhIndex = 7300 Or GrhIndex = 7301 Or GrhIndex = 7302 Or GrhIndex = 7303 Or _
-   GrhIndex = 7304 Or GrhIndex = 7306 Or GrhIndex = 7308 Or GrhIndex = 7310 Or _
-   GrhIndex = 7311 Or GrhIndex = 7313 Or GrhIndex = 7314 Or GrhIndex = 7315 Or _
-   GrhIndex = 7316 Or GrhIndex = 7317 Or GrhIndex = 7319 Or GrhIndex = 7321 Or _
-   GrhIndex = 7325 Or GrhIndex = 7326 Or GrhIndex = 7327 Or GrhIndex = 7328 Or GrhIndex = 7332 Or _
-   GrhIndex = 7338 Or GrhIndex = 7339 Or GrhIndex = 7345 Or GrhIndex = 7348 Or _
-   GrhIndex = 7349 Or GrhIndex = 7350 Or GrhIndex = 7351 Or GrhIndex = 7352 Or _
-   GrhIndex = 7349 Or GrhIndex = 7350 Or GrhIndex = 7351 Or _
-   GrhIndex = 7354 Or GrhIndex = 7357 Or GrhIndex = 7358 Or GrhIndex = 7360 Or _
-   GrhIndex = 7362 Or GrhIndex = 7363 Or GrhIndex = 7365 Or GrhIndex = 7366 Or _
-   GrhIndex = 7367 Or GrhIndex = 7368 Or GrhIndex = 7369 Or GrhIndex = 7371 Or _
-   GrhIndex = 7373 Or GrhIndex = 7375 Or GrhIndex = 7376 Then MapData(X, Y).Graphic(2).GrhIndex = 0
+    If GrhIndex = 7284 Or GrhIndex = 7290 Or GrhIndex = 7291 Or GrhIndex = 7297 Or _
+       GrhIndex = 7300 Or GrhIndex = 7301 Or GrhIndex = 7302 Or GrhIndex = 7303 Or _
+       GrhIndex = 7304 Or GrhIndex = 7306 Or GrhIndex = 7308 Or GrhIndex = 7310 Or _
+       GrhIndex = 7311 Or GrhIndex = 7313 Or GrhIndex = 7314 Or GrhIndex = 7315 Or _
+       GrhIndex = 7316 Or GrhIndex = 7317 Or GrhIndex = 7319 Or GrhIndex = 7321 Or _
+       GrhIndex = 7325 Or GrhIndex = 7326 Or GrhIndex = 7327 Or GrhIndex = 7328 Or GrhIndex = 7332 Or _
+       GrhIndex = 7338 Or GrhIndex = 7339 Or GrhIndex = 7345 Or GrhIndex = 7348 Or _
+       GrhIndex = 7349 Or GrhIndex = 7350 Or GrhIndex = 7351 Or GrhIndex = 7352 Or _
+       GrhIndex = 7349 Or GrhIndex = 7350 Or GrhIndex = 7351 Or _
+       GrhIndex = 7354 Or GrhIndex = 7357 Or GrhIndex = 7358 Or GrhIndex = 7360 Or _
+       GrhIndex = 7362 Or GrhIndex = 7363 Or GrhIndex = 7365 Or GrhIndex = 7366 Or _
+       GrhIndex = 7367 Or GrhIndex = 7368 Or GrhIndex = 7369 Or GrhIndex = 7371 Or _
+       GrhIndex = 7373 Or GrhIndex = 7375 Or GrhIndex = 7376 Then MapData(X, Y).Graphic(2).GrhIndex = 0
 
 End Sub
 
@@ -501,8 +513,10 @@ Public Function RandomNumber(ByVal LowerBound As Variant, ByVal UpperBound As Va
 'Author: Unkwown
 'Last modified: 20/05/06
 '*************************************************
-Randomize Timer
-RandomNumber = (UpperBound - LowerBound + 1) * Rnd + LowerBound
+    Randomize Timer
+    
+    RandomNumber = (UpperBound - LowerBound + 1) * Rnd + LowerBound
+    If RandomNumber > UpperBound Then RandomNumber = UpperBound
 End Function
 
 
@@ -515,21 +529,21 @@ Public Sub RefreshAllChars()
 'Author: ^[GS]^
 'Last modified: 28/05/06
 '*************************************************
-On Error Resume Next
-Dim loopc As Integer
-frmMain.ApuntadorRadar.Move UserPos.X - 12, UserPos.Y - 10
-frmMain.picRadar.Cls
-For loopc = 1 To LastChar
-    If CharList(loopc).Active = 1 Then
-        MapData(CharList(loopc).Pos.X, CharList(loopc).Pos.Y).CharIndex = loopc
-        If CharList(loopc).Heading <> 0 Then
-            frmMain.picRadar.ForeColor = vbGreen
-            frmMain.picRadar.Line (0 + CharList(loopc).Pos.X, 0 + CharList(loopc).Pos.Y)-(2 + CharList(loopc).Pos.X, 0 + CharList(loopc).Pos.Y)
-            frmMain.picRadar.Line (0 + CharList(loopc).Pos.X, 1 + CharList(loopc).Pos.Y)-(2 + CharList(loopc).Pos.X, 1 + CharList(loopc).Pos.Y)
+    On Error Resume Next
+    Dim loopc As Integer
+    frmMain.ApuntadorRadar.Move UserPos.X - 12, UserPos.Y - 10
+    frmMain.picRadar.Cls
+    For loopc = 1 To LastChar
+        If CharList(loopc).active = 1 Then
+            MapData(CharList(loopc).Pos.X, CharList(loopc).Pos.Y).CharIndex = loopc
+            If CharList(loopc).Heading <> 0 Then
+                frmMain.picRadar.ForeColor = vbGreen
+                frmMain.picRadar.Line (0 + CharList(loopc).Pos.X, 0 + CharList(loopc).Pos.Y)-(2 + CharList(loopc).Pos.X, 0 + CharList(loopc).Pos.Y)
+                frmMain.picRadar.Line (0 + CharList(loopc).Pos.X, 1 + CharList(loopc).Pos.Y)-(2 + CharList(loopc).Pos.X, 1 + CharList(loopc).Pos.Y)
+            End If
         End If
-    End If
-Next loopc
-bRefreshRadar = False
+    Next loopc
+    bRefreshRadar = False
 End Sub
 
 ''
@@ -630,3 +644,48 @@ Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, _
     End With
 End Sub
 
+Public Function Selected_Color()
+    
+    On Error GoTo Selected_Color_Err
+    
+
+    Dim c   As Long
+  
+    Dim R   As Integer ' Red component value   (0 to 255)
+    Dim G   As Integer ' Green component value (0 to 255)
+    Dim B   As Integer ' Blue component value  (0 to 255)
+  
+    Dim Out As String  ' Function output string
+    
+    ' Setup the color selection palette dialog.
+    With frmMain.Dialog
+  
+        ' Set initial flags to open the full palette and allow an
+        ' initial default color selection.
+        .flags = cdlCCFullOpen + cdlCCRGBInit
+      
+        .Color = RGB(255, 255, 255)
+      
+        ' Display the full color palette
+        .ShowColor
+        c = .Color
+                      
+    End With
+
+    R = c And 255              ' Get lowest 8 bits  - Red
+    G = Int(c / 256) And 255   ' Get middle 8 bits  - Green
+    B = Int(c / 65536) And 255 ' Get highest 8 bits - Blue
+  
+    ' If H mode is selected, replace default with hex RGB values.
+    Out = "&H" & Format(Hex(R), "0#") & Format(Hex(G), "0#") & Format(Hex(B), "0#")
+    frmMain.PicColorMap.BackColor = RGB(R, G, B)
+
+    Selected_Color = Out
+    
+    Exit Function
+
+Selected_Color_Err:
+    Call RegistrarError(Err.Number, Err.Description, " modEdicion.Selected_Color", Erl)
+    Resume Next
+    
+End Function

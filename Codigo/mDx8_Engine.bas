@@ -164,7 +164,7 @@ Private Function Engine_Init_DirectDevice(D3DCREATEFLAGS As CONST_D3DCREATEFLAGS
         .BackBufferFormat = DispMode.Format
         .BackBufferWidth = ScreenWidth
         .BackBufferHeight = ScreenHeight
-        .hDeviceWindow = frmMain.MainViewPic.hWnd
+        .hDeviceWindow = frmMain.MainViewPic.hwnd
     End With
     
     If Not DirectDevice Is Nothing Then
@@ -236,10 +236,10 @@ On Error Resume Next
     Dim i As Byte
     
     '   DeInit Lights
-    'Call DeInit_LightEngine
+    Call DeInit_LightEngine
     
     '   Clean Particles
-    'Call Particle_Group_Remove_All
+    Call Particle_Group_Remove_All
     
     '   Clean Texture
     Call DirectDevice.SetTexture(0, Nothing)
@@ -286,40 +286,13 @@ Public Sub Engine_DirectX8_Aditional_Init()
         
         ' Inicializamos otros sistemas.
         Call mDx8_Text.Engine_Init_FontSettings
+        Call Init_MeteoEngine
         
         ' Inicializa DIB surface, un buffer usado para dejar imagenes estaticas en PictureBox
         Call PrepareDrawBuffer
         
     End If
     
-End Sub
-
-Public Sub Engine_Draw_Line(x1 As Single, y1 As Single, x2 As Single, y2 As Single, Optional Color As Long = -1, Optional Color2 As Long = -1)
-On Error GoTo Error
-    
-    Call Engine_Long_To_RGB_List(temp_rgb(), Color)
-    
-    Call SpriteBatch.SetTexture(Nothing)
-    Call SpriteBatch.Draw(x1, y1, x2, y2, temp_rgb())
-    
-Exit Sub
-
-Error:
-    'Call Log_Engine("Error in Engine_Draw_Line, " & Err.Description & " (" & Err.number & ")")
-End Sub
-
-Public Sub Engine_Draw_Point(x1 As Single, y1 As Single, Optional Color As Long = -1)
-On Error GoTo Error
-    
-    Call Engine_Long_To_RGB_List(temp_rgb(), Color)
-    
-    Call SpriteBatch.SetTexture(Nothing)
-    Call SpriteBatch.Draw(x1, y1, 0, 1, temp_rgb(), 0, 0)
-    
-Exit Sub
-
-Error:
-    'Call Log_Engine("Error in Engine_Draw_Point, " & Err.Description & " (" & Err.number & ")")
 End Sub
 
 Public Function Engine_ElapsedTime() As Long
@@ -360,49 +333,13 @@ Public Function Engine_PixelPosY(ByVal Y As Integer) As Integer
     
 End Function
 
-Public Function Engine_TPtoSPX(ByVal X As Byte) As Long
-'************************************************************
-'Tile Position to Screen Position
-'Takes the tile position and returns the pixel location on the screen
-'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_TPtoSPX
-'************************************************************
-
-    Engine_TPtoSPX = Engine_PixelPosX(X - ((UserPos.X - HalfWindowTileWidth) - TileBufferSize)) + OffsetCounterX - 272 + ((10 - TileBufferSize) * 32)
-    
-End Function
-
-Public Function Engine_TPtoSPY(ByVal Y As Byte) As Long
-'************************************************************
-'Tile Position to Screen Position
-'Takes the tile position and returns the pixel location on the screen
-'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_TPtoSPY
-'************************************************************
-
-    Engine_TPtoSPY = Engine_PixelPosY(Y - ((UserPos.Y - HalfWindowTileHeight) - TileBufferSize)) + OffsetCounterY - 272 + ((10 - TileBufferSize) * 32)
-    
-End Function
-
-Public Sub Engine_Draw_Box(ByVal X As Integer, ByVal Y As Integer, ByVal Width As Integer, ByVal Height As Integer, Color As Long)
-'***************************************************
-'Author: Ezequiel Juarez (Standelf)
-'Last Modification: 29/12/10
-'Blisse-AO | Render Box
-'***************************************************
-
-    Call Engine_Long_To_RGB_List(temp_rgb(), Color)
-
-    Call SpriteBatch.SetTexture(Nothing)
-    Call SpriteBatch.Draw(X, Y, Width, ByVal Height, temp_rgb())
-    
-End Sub
-
 Public Sub Engine_D3DColor_To_RGB_List(rgb_list() As Long, Color As D3DCOLORVALUE)
 '***************************************************
 'Author: Ezequiel Juarez (Standelf)
 'Last Modification: 14/05/10
 'Blisse-AO | Set a D3DColorValue to a RGB List
 '***************************************************
-    rgb_list(0) = D3DColorARGB(Color.a, Color.R, Color.G, Color.B)
+    rgb_list(0) = D3DColorARGB(Color.a, Color.r, Color.g, Color.b)
     rgb_list(1) = rgb_list(0)
     rgb_list(2) = rgb_list(0)
     rgb_list(3) = rgb_list(0)
@@ -418,17 +355,6 @@ Public Sub Engine_Long_To_RGB_List(rgb_list() As Long, long_color As Long)
     rgb_list(1) = rgb_list(0)
     rgb_list(2) = rgb_list(0)
     rgb_list(3) = rgb_list(0)
-End Sub
-
-Public Sub Long_To_RGB(ByRef tR As Byte, ByRef tG As Byte, ByRef tB As Byte, long_color As Long)
-'***************************************************
-'Author: Lorwik
-'Last Modification: 08/03/2021
-'Conversor de color de Long a RGB
-'***************************************************
-    tR = (long_color And &HFF)
-    tG = (long_color And &HFF00&) \ &H100
-    tB = (long_color And &HFF0000) \ &H10000
 End Sub
 
 Public Function SetARGB_Alpha(rgb_list() As Long, Alpha As Byte) As Long()
@@ -475,105 +401,6 @@ Private Function Engine_Collision_Between(ByVal value As Single, ByVal Bound1 As
         End If
     End If
     
-End Function
-
-Public Function Engine_Collision_Line(ByVal L1X1 As Long, ByVal L1Y1 As Long, ByVal L1X2 As Long, ByVal L1Y2 As Long, ByVal L2X1 As Long, ByVal L2Y1 As Long, ByVal L2X2 As Long, ByVal L2Y2 As Long) As Byte
-'*****************************************************************
-'Check if two lines intersect (return 1 if true)
-'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_Collision_Line
-'*****************************************************************
-Dim m1 As Single
-Dim M2 As Single
-Dim b1 As Single
-Dim b2 As Single
-Dim IX As Single
-
-    'This will fix problems with vertical lines
-    If L1X1 = L1X2 Then L1X1 = L1X1 + 1
-    If L2X1 = L2X2 Then L2X1 = L2X1 + 1
-
-    'Find the first slope
-    m1 = (L1Y2 - L1Y1) / (L1X2 - L1X1)
-    b1 = L1Y2 - m1 * L1X2
-
-    'Find the second slope
-    M2 = (L2Y2 - L2Y1) / (L2X2 - L2X1)
-    b2 = L2Y2 - M2 * L2X2
-    
-    'Check if the slopes are the same
-    If M2 - m1 = 0 Then
-    
-        If b2 = b1 Then
-            'The lines are the same
-            Engine_Collision_Line = 1
-        Else
-            'The lines are parallel (can never intersect)
-            Engine_Collision_Line = 0
-        End If
-        
-    Else
-        
-        'An intersection is a point that lies on both lines. To find this, we set the Y equations equal and solve for X.
-        'M1X+B1 = M2X+B2 -> M1X-M2X = -B1+B2 -> X = B1+B2/(M1-M2)
-        IX = ((b2 - b1) / (m1 - M2))
-        
-        'Check for the collision
-        If Engine_Collision_Between(IX, L1X1, L1X2) Then
-            If Engine_Collision_Between(IX, L2X1, L2X2) Then Engine_Collision_Line = 1
-        End If
-        
-    End If
-    
-End Function
-
-Public Function Engine_Collision_LineRect(ByVal sX As Long, ByVal sY As Long, ByVal SW As Long, ByVal SH As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Byte
-'*****************************************************************
-'Check if a line intersects with a rectangle (returns 1 if true)
-'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_Collision_LineRect
-'*****************************************************************
-
-    'Top line
-    If Engine_Collision_Line(sX, sY, sX + SW, sY, x1, y1, x2, y2) Then
-        Engine_Collision_LineRect = 1
-        Exit Function
-    End If
-    
-    'Right line
-    If Engine_Collision_Line(sX + SW, sY, sX + SW, sY + SH, x1, y1, x2, y2) Then
-        Engine_Collision_LineRect = 1
-        Exit Function
-    End If
-
-    'Bottom line
-    If Engine_Collision_Line(sX, sY + SH, sX + SW, sY + SH, x1, y1, x2, y2) Then
-        Engine_Collision_LineRect = 1
-        Exit Function
-    End If
-
-    'Left line
-    If Engine_Collision_Line(sX, sY, sX, sY + SW, x1, y1, x2, y2) Then
-        Engine_Collision_LineRect = 1
-        Exit Function
-    End If
-
-End Function
-
-Function Engine_Collision_Rect(ByVal x1 As Integer, ByVal y1 As Integer, ByVal Width1 As Integer, ByVal Height1 As Integer, ByVal x2 As Integer, ByVal y2 As Integer, ByVal Width2 As Integer, ByVal Height2 As Integer) As Boolean
-'*****************************************************************
-'Check for collision between two rectangles
-'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_Collision_Rect
-'*****************************************************************
-
-    If x1 + Width1 >= x2 Then
-        If x1 <= x2 + Width2 Then
-            If y1 + Height1 >= y2 Then
-                If y1 <= y2 + Height2 Then
-                    Engine_Collision_Rect = True
-                End If
-            End If
-        End If
-    End If
-
 End Function
 
 Public Sub Engine_BeginScene(Optional ByVal Color As Long = 0)
@@ -623,51 +450,6 @@ DeviceHandler:
     
 End Sub
 
-Public Sub Engine_ZoomIn()
-'**************************************************************
-'Author: Standelf
-'Last Modify Date: 29/12/2010
-'**************************************************************
-
-    With MainScreenRect
-        .Top = 0
-        .Left = 0
-        .Bottom = IIf(.Bottom - 1 <= 367, .Bottom, .Bottom - 1)
-        .Right = IIf(.Right - 1 <= 491, .Right, .Right - 1)
-    End With
-    
-End Sub
-
-Public Sub Engine_ZoomOut()
-'**************************************************************
-'Author: Standelf
-'Last Modify Date: 29/12/2010
-'**************************************************************
-
-    With MainScreenRect
-        .Top = 0
-        .Left = 0
-        .Bottom = IIf(.Bottom + 1 >= 459, .Bottom, .Bottom + 1)
-        .Right = IIf(.Right + 1 >= 583, .Right, .Right + 1)
-    End With
-    
-End Sub
-
-Public Sub Engine_ZoomNormal()
-'**************************************************************
-'Author: Standelf
-'Last Modify Date: 29/12/2010
-'**************************************************************
-
-    With MainScreenRect
-        .Top = 0
-        .Left = 0
-        .Bottom = ScreenHeight
-        .Right = ScreenWidth
-    End With
-    
-End Sub
-
 Public Function ZoomOffset(ByVal offset As Byte) As Single
 '**************************************************************
 'Author: Standelf
@@ -675,16 +457,6 @@ Public Function ZoomOffset(ByVal offset As Byte) As Single
 '**************************************************************
 
     ZoomOffset = IIf((offset = 1), (ScreenHeight - MainScreenRect.Bottom) / 2, (ScreenWidth - MainScreenRect.Right) / 2)
-    
-End Function
-
-Function Engine_Distance(ByVal x1 As Integer, ByVal y1 As Integer, ByVal x2 As Integer, ByVal y2 As Integer) As Long
-'***************************************************
-'Author: Standelf
-'Last Modification: -
-'***************************************************
-
-    Engine_Distance = Abs(x1 - x2) + Abs(y1 - y2)
     
 End Function
 
@@ -712,86 +484,13 @@ Public Sub Engine_Update_FPS()
 
 End Sub
 
-Public Function Engine_GetAngle(ByVal CenterX As Integer, ByVal CenterY As Integer, ByVal TargetX As Integer, ByVal TargetY As Integer) As Single
-'************************************************************
-'Gets the angle between two points in a 2d plane
-'More info: http://www.vbgore.com/GameClient.TileEn ... e_GetAngle" class="postlink" rel="nofollow" onClick="window.open(this.href);return false;
-'************************************************************
-Dim SideA As Single
-Dim SideC As Single
- 
-    On Error GoTo ErrOut
- 
-    'Check for horizontal lines (90 or 270 degrees)
-    If CenterY = TargetY Then
- 
-        'Check for going right (90 degrees)
-        If CenterX < TargetX Then
-            Engine_GetAngle = 90
- 
-            'Check for going left (270 degrees)
-        Else
-            Engine_GetAngle = 270
-        End If
- 
-        'Exit the function
-        Exit Function
- 
-    End If
- 
-    'Check for horizontal lines (360 or 180 degrees)
-    If CenterX = TargetX Then
- 
-        'Check for going up (360 degrees)
-        If CenterY > TargetY Then
-            Engine_GetAngle = 360
- 
-            'Check for going down (180 degrees)
-        Else
-            Engine_GetAngle = 180
-        End If
- 
-        'Exit the function
-        Exit Function
- 
-    End If
- 
-    'Calculate Side C
-    SideC = Sqr(Abs(TargetX - CenterX) ^ 2 + Abs(TargetY - CenterY) ^ 2)
- 
-    'Side B = CenterY
- 
-    'Calculate Side A
-    SideA = Sqr(Abs(TargetX - CenterX) ^ 2 + TargetY ^ 2)
- 
-    'Calculate the angle
-    Engine_GetAngle = (SideA ^ 2 - CenterY ^ 2 - SideC ^ 2) / (CenterY * SideC * -2)
-    Engine_GetAngle = (Atn(-Engine_GetAngle / Sqr(-Engine_GetAngle * Engine_GetAngle + 1)) + 1.5708) * 57.29583
- 
-    'If the angle is >180, subtract from 360
-    If TargetX < CenterX Then Engine_GetAngle = 360 - Engine_GetAngle
- 
-    'Exit function
- 
-Exit Function
- 
-    'Check for error
-ErrOut:
- 
-    'Return a 0 saying there was an error
-    Engine_GetAngle = 0
- 
-Exit Function
- 
-End Function
-
 Public Sub Engine_Get_ARGB(Color As Long, Data As D3DCOLORVALUE)
 '**************************************************************
 'Author: Standelf
 'Last Modify Date: 18/10/2012
 '**************************************************************
     
-    Dim a As Long, R As Long, G As Long, B As Long
+    Dim a As Long, r As Long, g As Long, b As Long
         
     If Color < 0 Then
         a = ((Color And (&H7F000000)) / (2 ^ 24)) Or &H80&
@@ -799,15 +498,15 @@ Public Sub Engine_Get_ARGB(Color As Long, Data As D3DCOLORVALUE)
         a = Color / (2 ^ 24)
     End If
     
-    R = (Color And &HFF0000) / (2 ^ 16)
-    G = (Color And &HFF00&) / (2 ^ 8)
-    B = (Color And &HFF&)
+    r = (Color And &HFF0000) / (2 ^ 16)
+    g = (Color And &HFF00&) / (2 ^ 8)
+    b = (Color And &HFF&)
     
     With Data
         .a = a
-        .R = R
-        .G = G
-        .B = B
+        .r = r
+        .g = g
+        .b = b
     End With
         
 End Sub
