@@ -123,13 +123,16 @@ Public Sub CargarIndicesTriggers()
 '*************************************************
 
 On Error GoTo Fallo
+
     If FileExist(IniPath & "Datos\Triggers.ini", vbArchive) = False Then
-        MsgBox "Falta el archivo 'Triggers.ini' en " & DirIndex, vbCritical
+        MsgBox "Falta el archivo 'Triggers.ini' en " & IniPath & "Datos\", vbCritical
         End
     End If
+    
     Dim NumT As Integer
     Dim T As Integer
     Dim Leer As New clsIniReader
+    
     Leer.Initialize IniPath & "Datos\Triggers.ini"
     frmMain.lListado(4).Clear
     NumT = Val(Leer.GetValue("INIT", "NumTriggers"))
@@ -142,46 +145,80 @@ Fallo:
     MsgBox "Error al intentar cargar el Trigger " & T & " de Datos\Triggers.ini" & vbCrLf & "Err: " & Err.Number & " - " & Err.Description, vbCritical + vbOKOnly
 End Sub
 
-''
-' Carga los indices de Cuerpos
-'
+Sub CargarCuerpos()
+'*************************************
+'Autor: Lorwik
+'Fecha: ???
+'Descripción: Carga el index de Cuerpos
+'*************************************
+On Error GoTo errhandler:
 
-Public Sub CargarCuerpos()
-'*************************************************
-'Author: ^[GS]^
-'Last modified: 29/05/06
-'*************************************************
-
-On Error GoTo Fallo
-    If FileExist(DirIndex & "Personajes.ind", vbArchive) = False Then
-        MsgBox "Falta el archivo 'Personajes.ind' en " & DirIndex, vbCritical
-        End
+    Dim buffer()    As Byte
+    Dim dLen        As Long
+    Dim InfoHead    As INFOHEADER
+    Dim i           As Long
+    Dim NumCuerpos As Integer
+    Dim MisCuerpos() As tIndiceCuerpo
+    Dim LaCabecera As tCabecera
+    Dim fileBuff  As clsByteBuffer
+    
+    InfoHead = File_Find(DirRecursos & "Scripts" & modCompression.Formato, LCase$("Personajes.ind"))
+    
+    If InfoHead.lngFileSize <> 0 Then
+    
+        Extract_File_Memory Scripts, LCase$("Personajes.ind"), buffer()
+        
+        Set fileBuff = New clsByteBuffer
+        
+        fileBuff.initializeReader buffer
+        
+        LaCabecera.Desc = fileBuff.getString(Len(LaCabecera.Desc))
+        LaCabecera.CRC = fileBuff.getLong
+        LaCabecera.MagicWord = fileBuff.getLong
+    
+        'num de cabezas
+        NumCuerpos = fileBuff.getInteger()
+    
+        'Resize array
+        ReDim BodyData(0 To NumCuerpos) As tBodyData
+        ReDim MisCuerpos(0 To NumCuerpos) As tIndiceCuerpo
+        
+    
+        For i = 1 To NumCuerpos
+            MisCuerpos(i).Body(1) = fileBuff.getLong()
+            MisCuerpos(i).Body(2) = fileBuff.getLong()
+            MisCuerpos(i).Body(3) = fileBuff.getLong()
+            MisCuerpos(i).Body(4) = fileBuff.getLong()
+            MisCuerpos(i).HeadOffsetX = fileBuff.getInteger()
+            MisCuerpos(i).HeadOffsetY = fileBuff.getInteger()
+            
+            If MisCuerpos(i).Body(1) Then
+                Call InitGrh(BodyData(i).Walk(1), MisCuerpos(i).Body(1), 0)
+                Call InitGrh(BodyData(i).Walk(2), MisCuerpos(i).Body(2), 0)
+                Call InitGrh(BodyData(i).Walk(3), MisCuerpos(i).Body(3), 0)
+                Call InitGrh(BodyData(i).Walk(4), MisCuerpos(i).Body(4), 0)
+                
+                BodyData(i).HeadOffset.X = MisCuerpos(i).HeadOffsetX
+                BodyData(i).HeadOffset.Y = MisCuerpos(i).HeadOffsetY
+            End If
+        Next i
+    
+        Erase buffer
     End If
-    Dim n As Integer
-    Dim i As Integer
-    n = FreeFile
-    Open DirIndex & "Personajes.ind" For Binary Access Read As #n
-    'cabecera
-    Get #n, , MiCabecera
-    'num de cabezas
-    Get #n, , NumBodies
-    'Resize array
-    ReDim BodyData(0 To NumBodies + 1) As tBodyData
-    ReDim MisCuerpos(0 To NumBodies + 1) As tIndiceCuerpo
-    For i = 1 To NumBodies
-        Get #n, , MisCuerpos(i)
-        InitGrh BodyData(i).Walk(1), MisCuerpos(i).Body(1), 0
-        InitGrh BodyData(i).Walk(2), MisCuerpos(i).Body(2), 0
-        InitGrh BodyData(i).Walk(3), MisCuerpos(i).Body(3), 0
-        InitGrh BodyData(i).Walk(4), MisCuerpos(i).Body(4), 0
-        BodyData(i).HeadOffset.X = MisCuerpos(i).HeadOffsetX
-        BodyData(i).HeadOffset.Y = MisCuerpos(i).HeadOffsetY
-    Next i
-    Close #n
-Exit Sub
-Fallo:
-    MsgBox "Error al intentar cargar el Cuerpo " & i & " de Personajes.ind en " & DirIndex & vbCrLf & "Err: " & Err.Number & " - " & Err.Description, vbCritical + vbOKOnly
-
+    
+    Set fileBuff = Nothing
+    
+errhandler:
+    
+    If Err.Number <> 0 Then
+        
+        If Err.Number = 53 Then
+            Call MsgBox("El archivo Personajes.ind no existe. ")
+            Call CloseClient
+        End If
+        
+    End If
+    
 End Sub
 
 ''
@@ -189,34 +226,6 @@ End Sub
 '
 
 Public Sub CargarCabezas()
-On Error GoTo Fallo
-    If FileExist(DirIndex & "Cabezas.ind", vbArchive) = False Then
-        MsgBox "Falta el archivo 'Cabezas.ind' en " & DirIndex, vbCritical
-        End
-    End If
-    Dim n As Integer
-    Dim i As Integer
-    Dim MisCabezas() As tIndiceCabeza
-    n = FreeFile
-    Open DirIndex & "Cabezas.ind" For Binary Access Read As #n
-    'cabecera
-    Get #n, , MiCabecera
-    'num de cabezas
-    Get #n, , Numheads
-    'Resize array
-    ReDim HeadData(0 To Numheads + 1) As tHeadData
-    ReDim MisCabezas(0 To Numheads + 1) As tIndiceCabeza
-    For i = 1 To Numheads
-        Get #n, , MisCabezas(i)
-        InitGrh HeadData(i).Head(1), MisCabezas(i).Head(1), 0
-        InitGrh HeadData(i).Head(2), MisCabezas(i).Head(2), 0
-        InitGrh HeadData(i).Head(3), MisCabezas(i).Head(3), 0
-        InitGrh HeadData(i).Head(4), MisCabezas(i).Head(4), 0
-    Next i
-    Close #n
-Exit Sub
-Fallo:
-    MsgBox "Error al intentar cargar la Cabeza " & i & " de Cabezas.ind en " & DirIndex & vbCrLf & "Err: " & Err.Number & " - " & Err.Description, vbCritical + vbOKOnly
 
 End Sub
 
@@ -276,52 +285,67 @@ Fallo:
 
 End Sub
 
+''
+' Loads grh data using the new file format.
+'
+
 Public Sub LoadGrhData()
-'On Error Resume Next
-On Error GoTo ErrorHandler
-    Dim Grh As Long
-    Dim Frame As Long
-    Dim handle As Integer
+'*************************************
+'Autor: Lorwik
+'Fecha: ???
+'Descripción: Carga el index de Graficos
+'*************************************
+On Error GoTo ErrorHandler:
+
+    Dim Grh         As Long
+    Dim Frame       As Long
     Dim fileVersion As Long
+    Dim LaCabecera  As tCabecera
+    Dim fileBuff    As clsByteBuffer
+    Dim InfoHead    As INFOHEADER
+    Dim buffer()    As Byte
     
-    'Open files
-    handle = FreeFile()
-    Open DirIndex & "\Graficos.ind" For Binary Access Read As handle
-    Seek #1, 1
+    InfoHead = File_Find(DirRecursos & "Scripts" & Formato, LCase$("Graficos.ind"))
     
-    'Get file version
-    Get handle, , fileVersion
+    If InfoHead.lngFileSize <> 0 Then
     
-    'Get number of grhs
-    Get handle, , grhCount
-    'MsgBox grhCount
-    'Resize arrays
-    ReDim GrhData(1 To grhCount) As GrhData
+        Extract_File_Memory Scripts, LCase$("Graficos.ind"), buffer()
+        
+        Set fileBuff = New clsByteBuffer
+        
+        fileBuff.initializeReader buffer
+        
+        LaCabecera.Desc = fileBuff.getString(Len(LaCabecera.Desc))
+        LaCabecera.CRC = fileBuff.getLong
+        LaCabecera.MagicWord = fileBuff.getLong
     
-    While Not EOF(handle)
-        Get handle, , Grh
-        If Grh <> 0 Then
+        fileVersion = fileBuff.getLong
+        
+        grhCount = fileBuff.getLong
+
+        ReDim GrhData(0 To grhCount) As GrhData
+        
+        While Grh < grhCount
+            Grh = fileBuff.getLong
+
             With GrhData(Grh)
-                'Get number of frames
-                Get handle, , .NumFrames
+            
+                '.active = True
+                .NumFrames = fileBuff.getInteger
                 If .NumFrames <= 0 Then GoTo ErrorHandler
                 
-                ReDim .Frames(1 To GrhData(Grh).NumFrames)
+                ReDim .Frames(1 To .NumFrames)
                 
                 If .NumFrames > 1 Then
-                    'Read a animation GRH set
+                
                     For Frame = 1 To .NumFrames
-                        Get handle, , .Frames(Frame)
-                        If .Frames(Frame) <= 0 Or .Frames(Frame) > grhCount Then
-                            GoTo ErrorHandler
-                        End If
+                        .Frames(Frame) = fileBuff.getLong
+                        If .Frames(Frame) <= 0 Or .Frames(Frame) > grhCount Then GoTo ErrorHandler
                     Next Frame
                     
-                    Get handle, , .speed
-                    
+                    .speed = fileBuff.getSingle
                     If .speed <= 0 Then GoTo ErrorHandler
                     
-                    'Compute width and height
                     .pixelHeight = GrhData(.Frames(1)).pixelHeight
                     If .pixelHeight <= 0 Then GoTo ErrorHandler
                     
@@ -333,42 +357,51 @@ On Error GoTo ErrorHandler
                     
                     .TileHeight = GrhData(.Frames(1)).TileHeight
                     If .TileHeight <= 0 Then GoTo ErrorHandler
+                    
                 Else
-                    'Read in normal GRH data
-                    Get handle, , .FileNum
+                    
+                    .FileNum = fileBuff.getLong
                     If .FileNum <= 0 Then GoTo ErrorHandler
                     
-                    Get handle, , GrhData(Grh).sX
-                    If .sX < 0 Then GoTo ErrorHandler
-                    
-                    Get handle, , .sY
-                    If .sY < 0 Then GoTo ErrorHandler
-                    
-                    Get handle, , .pixelWidth
+                    .pixelWidth = fileBuff.getInteger
                     If .pixelWidth <= 0 Then GoTo ErrorHandler
                     
-                    Get handle, , .pixelHeight
+                    .pixelHeight = fileBuff.getInteger
                     If .pixelHeight <= 0 Then GoTo ErrorHandler
                     
-                    'Compute width and height
+                    .sX = fileBuff.getInteger
+                    If .sX < 0 Then GoTo ErrorHandler
+                    
+                    .sY = fileBuff.getInteger
+                    If .sY < 0 Then GoTo ErrorHandler
+                    
                     .TileWidth = .pixelWidth / TilePixelHeight
                     .TileHeight = .pixelHeight / TilePixelWidth
                     
                     .Frames(1) = Grh
-                    If Grh = 32000 Then Exit Sub
+                    
                 End If
+                
             End With
-        End If
-    Wend
+            
+        Wend
+        
+        Erase buffer
+    End If
     
-    Close handle
+    Set fileBuff = Nothing
     
-    'LoadGrhData = True
 Exit Sub
 
-
 ErrorHandler:
-Close #1
-    MsgBox "Error al intentar cargar el Graficos " & Grh & " de graficos.ind en " & DirIndex & vbCrLf & "Err: " & Err.Number & " - " & Err.Description, vbCritical + vbOKOnly
-
+    
+    If Err.Number <> 0 Then
+        
+        If Err.Number = 53 Then
+            Call MsgBox("El archivo Graficos.ind no existe.")
+            Call CloseClient
+        End If
+        
+    End If
+    
 End Sub

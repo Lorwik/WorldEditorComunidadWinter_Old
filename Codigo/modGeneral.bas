@@ -125,13 +125,13 @@ Public Function ReadField(Pos As Integer, Text As String, SepASCII As Integer) A
 'Last modified: 20/05/06
 '*************************************************
 Dim i As Integer
-Dim LastPos As Integer
+Dim lastPos As Integer
 Dim CurChar As String * 1
 Dim FieldNum As Integer
 Dim Seperator As String
 
 Seperator = Chr(SepASCII)
-LastPos = 0
+lastPos = 0
 FieldNum = 0
 
 For i = 1 To Len(Text)
@@ -139,16 +139,16 @@ For i = 1 To Len(Text)
     If CurChar = Seperator Then
         FieldNum = FieldNum + 1
         If FieldNum = Pos Then
-            ReadField = mid(Text, LastPos + 1, (InStr(LastPos + 1, Text, Seperator, vbTextCompare) - 1) - (LastPos))
+            ReadField = mid(Text, lastPos + 1, (InStr(lastPos + 1, Text, Seperator, vbTextCompare) - 1) - (lastPos))
             Exit Function
         End If
-        LastPos = i
+        lastPos = i
     End If
 Next i
 FieldNum = FieldNum + 1
 
 If FieldNum = Pos Then
-    ReadField = mid(Text, LastPos + 1)
+    ReadField = mid(Text, lastPos + 1)
 End If
 
 End Function
@@ -195,8 +195,7 @@ Private Sub CargarMapIni()
     'Si el WorldEditor.ini no existe, tomamos estos parametros por defecto
     If Not FileExist(IniPath & "Datos\WorldEditor.ini", vbArchive) Then
         frmMain.mnuGuardarUltimaConfig.Checked = True
-        DirGraficos = IniPath & "Graficos\"
-        DirIndex = IniPath & "INIT\"
+        DirRecursos = IniPath & "Recursos\"
         DirMidi = IniPath & "MIDI\"
         frmMusica.fleMusicas.Path = DirMidi
         DirDats = IniPath & "DATS\"
@@ -226,7 +225,7 @@ Private Sub CargarMapIni()
     
     'Reciente
     frmMain.Dialog.InitDir = Leer.GetValue("PATH", "UltimoMapa")
-    DirGraficos = autoCompletaPath(Leer.GetValue("PATH", "DirGraficos"))
+    DirRecursos = autoCompletaPath(Leer.GetValue("PATH", "DirRecursos"))
     
     '-------
     'Carga de rutas
@@ -235,11 +234,11 @@ Private Sub CargarMapIni()
     '****
     'RUTA DE GRAFFICOS
     '*****************
-    If DirGraficos = "\" Then
-        DirGraficos = IniPath & "Graficos\"
+    If DirRecursos = "\" Then
+        DirRecursos = IniPath & "Recursos\"
     End If
     
-    If FileExist(DirGraficos, vbDirectory) = False Then
+    If FileExist(DirRecursos, vbDirectory) = False Then
         MsgBox "El directorio de Graficos es incorrecto", vbCritical + vbOKOnly
         End
     End If
@@ -259,19 +258,6 @@ Private Sub CargarMapIni()
     End If
     
     frmMusica.fleMusicas.Path = DirMidi
-    DirIndex = autoCompletaPath(Leer.GetValue("PATH", "DirIndex"))
-    
-    '****
-    'RUTA DE INIT
-    '*****************
-    If DirIndex = "\" Then
-        DirIndex = IniPath & "INIT\"
-    End If
-    
-    If FileExist(DirIndex, vbDirectory) = False Then
-        MsgBox "El directorio de Index es incorrecto", vbCritical + vbOKOnly
-        End
-    End If
     
     '****
     'RUTA DE DATS
@@ -343,6 +329,7 @@ On Error Resume Next
 
     If App.PrevInstance = True Then End
     
+    Call GenerateContra
     Call CargarMapIni
     Call LeerConfiguracion
     
@@ -410,7 +397,7 @@ On Error Resume Next
         End If
         
         If frmMain.PreviewGrh.Visible = True Then
-            Call modPaneles.VistaPreviaDeSup
+            Call RenderPreview
         End If
         
         'FPS Counter - mostramos las FPS
@@ -592,33 +579,54 @@ Public Sub CloseClient()
     
 End Sub
 
-Public Sub LogError(ByVal Numero As Long, ByVal Descripcion As String, ByVal Componente As String, Optional ByVal Linea As Integer)
-'**********************************************************
-'Author: Jopi
-'Guarda una descripcion detallada del error en Errores.log
-'**********************************************************
-    Dim File As Integer
-        File = FreeFile
-        
-    Open App.Path & "\logs\Errores.log" For Append As #File
+Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, _
+                    ByVal Text As String, _
+                    Optional ByVal Red As Integer = -1, _
+                    Optional ByVal Green As Integer, _
+                    Optional ByVal Blue As Integer, _
+                    Optional ByVal bold As Boolean = False, _
+                    Optional ByVal italic As Boolean = False, _
+                    Optional ByVal bCrLf As Boolean = True, _
+                    Optional ByVal Alignment As Byte = rtfLeft)
     
-        Print #File, "Error: " & Numero
-        Print #File, "Descripcion: " & Descripcion
+'****************************************************
+'Adds text to a Richtext box at the bottom.
+'Automatically scrolls to new text.
+'Text box MUST be multiline and have a 3D apperance!
+'****************************************************
+'Pablo (ToxicWaste) 01/26/2007 : Now the list refeshes properly.
+'Juan Martin Sotuyo Dodero (Maraxus) 03/29/2007 : Replaced ToxicWaste's code for extra performance.
+'Jopi 17/08/2019 : Consola transparente.
+'Jopi 17/08/2019 : Ahora podes especificar el alineamiento del texto.
+'****************************************************
+    With RichTextBox
         
-        If LenB(Linea) <> 0 Then
-            Print #File, "Linea: " & Linea
+        If Len(.Text) > 1000 Then
+            'Get rid of first line
+            .SelStart = InStr(1, .Text, vbCrLf) + 1
+            .SelLength = Len(.Text) - .SelStart + 2
+            .TextRTF = .SelRTF
         End If
         
-        Print #File, "Componente: " & Componente
-        Print #File, "Fecha y Hora: " & Date$ & "-" & Time$
-        Print #File, vbNullString
+        .SelStart = Len(.Text)
+        .SelLength = 0
+        .SelBold = bold
+        .SelItalic = italic
         
-    Close #File
-    
-    Debug.Print "Error: " & Numero & vbNewLine & _
-                "Descripcion: " & Descripcion & vbNewLine & _
-                "Componente: " & Componente & vbNewLine & _
-                "Fecha y Hora: " & Date$ & "-" & Time$ & vbNewLine
-                
+        ' 0 = Left
+        ' 1 = Center
+        ' 2 = Right
+        .SelAlignment = Alignment
+
+        If Not Red = -1 Then .SelColor = RGB(Red, Green, Blue)
+        
+        If bCrLf And Len(.Text) > 0 Then Text = vbCrLf & Text
+        
+        .SelText = Text
+
+        ' Esto arregla el bug de las letras superponiendose la consola del frmMain
+        If Not RichTextBox = frmMain.StatTxt Then RichTextBox.Refresh
+
+    End With
 End Sub
 

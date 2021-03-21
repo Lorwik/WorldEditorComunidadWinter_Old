@@ -91,8 +91,9 @@ Sub ConvertCPtoTP(ByVal viewPortX As Integer, ByVal viewPortY As Integer, ByRef 
 '******************************************
 'Converts where the mouse is in the main window to a tile position. MUST be called eveytime the mouse moves.
 '******************************************
-    tX = UserPos.X + viewPortX \ TilePixelWidth - WindowTileWidth \ 2
-    tY = UserPos.Y + viewPortY \ TilePixelHeight - WindowTileHeight \ 2
+
+    tX = (UserPos.X + viewPortX \ TilePixelWidth - WindowTileWidth \ 2) + 1
+    tY = (UserPos.Y + viewPortY \ TilePixelHeight - WindowTileHeight \ 2) + 1
 End Sub
 
 Sub MakeChar(CharIndex As Integer, Body As Integer, Head As Integer, Heading As Byte, X As Integer, Y As Integer)
@@ -109,8 +110,12 @@ On Error Resume Next
     With CharList(CharIndex)
     
     'Update head, body, ect.
+    If Body > 0 Then _
     .Body = BodyData(Body)
-    .Head = HeadData(Head)
+    
+    'If Head > 0 Then _
+        .Head = HeadData(Head)
+        
     .Heading = Heading
     
     'Reset moving stats
@@ -123,7 +128,7 @@ On Error Resume Next
     .Pos.Y = Y
     
     'Make active
-    .Active = 1
+    .active = 1
     
     End With
     
@@ -141,11 +146,11 @@ Sub EraseChar(CharIndex As Integer)
 '*************************************************
     If CharIndex = 0 Then Exit Sub
     'Make un-active
-    CharList(CharIndex).Active = 0
+    CharList(CharIndex).active = 0
     
     'Update lastchar
     If CharIndex = LastChar Then
-        Do Until CharList(LastChar).Active = 1
+        Do Until CharList(LastChar).active = 1
             LastChar = LastChar - 1
             If LastChar = 0 Then Exit Do
         Loop
@@ -297,7 +302,7 @@ Function NextOpenChar() As Integer
     Dim loopc As Integer
     
     loopc = 1
-    Do While CharList(loopc).Active
+    Do While CharList(loopc).active
         loopc = loopc + 1
     Loop
     
@@ -369,9 +374,9 @@ Sub Draw_Grh(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Cen
     
 On Error GoTo Error
 
-    If Grh.GrhIndex > grhCount Or GrhData(Grh.GrhIndex).NumFrames = 0 Or GrhData(Grh.GrhIndex).FileNum = 0 Then
+    If Grh.GrhIndex > grhCount Or GrhData(Grh.GrhIndex).NumFrames = 0 And GrhData(Grh.GrhIndex).FileNum = 0 Then
         Call InitGrh(Grh, GRH_ERROR) ' 23829
-        'Call AddtoRichTextBox(frmMain.StatTxt, "Error en Grh. Posicion: X:" & X & " Y:" & Y, 255, 0, 0)
+        Call AddtoRichTextBox(frmMain.StatTxt, "Error en Grh. Posicion: X:" & X & " Y:" & Y, 255, 0, 0)
     End If
 
     If Animate Then
@@ -419,7 +424,7 @@ Error:
         Resume
     Else
         #If Desarrollo = 0 Then
-            Call LogError(Err.Number, "Error in Draw_Grh, " & Err.Description, "Draw_Grh", Erl)
+            Call RegistrarError(Err.Number, "Error in Draw_Grh, " & Err.Description, "Draw_Grh", Erl)
             MsgBox "Error en el Engine Grafico, Por favor contacte a los adminsitradores enviandoles el archivo Errors.Log que se encuentra el la carpeta del cliente.", vbCritical
             Call CloseClient
         
@@ -523,15 +528,20 @@ Public Sub PegarSeleccion() '(mx As Integer, my As Integer)
     'podria usar copy mem , pero por las dudas no XD
     Static UltimoX As Integer
     Static UltimoY As Integer
-    If UltimoX = SobreX And UltimoY = SobreY Then Exit Sub
-    UltimoX = SobreX
-    UltimoY = SobreY
+    
     Dim X As Integer
     Dim Y As Integer
+    
+    If UltimoX = SobreX And UltimoY = SobreY Then Exit Sub
+    
+    UltimoX = SobreX
+    UltimoY = SobreY
+    
     DeSeleccionAncho = SeleccionAncho
     DeSeleccionAlto = SeleccionAlto
     DeSeleccionOX = SobreX
     DeSeleccionOY = SobreY
+    
     ReDim DeSeleccionMap(DeSeleccionAncho, DeSeleccionAlto) As MapBlock
     
     For X = 0 To DeSeleccionAncho - 1
@@ -539,6 +549,7 @@ Public Sub PegarSeleccion() '(mx As Integer, my As Integer)
             DeSeleccionMap(X, Y) = MapData(X + SobreX, Y + SobreY)
         Next
     Next
+    
     For X = 0 To SeleccionAncho - 1
         For Y = 0 To SeleccionAlto - 1
              MapData(X + SobreX, Y + SobreY) = SeleccionMap(X, Y)
@@ -554,12 +565,14 @@ Public Sub AccionSeleccion()
 '*************************************************
     Dim X As Integer
     Dim Y As Integer
+    
     SeleccionAncho = Abs(SeleccionIX - SeleccionFX) + 1
     SeleccionAlto = Abs(SeleccionIY - SeleccionFY) + 1
     DeSeleccionAncho = SeleccionAncho
     DeSeleccionAlto = SeleccionAlto
     DeSeleccionOX = SeleccionIX
     DeSeleccionOY = SeleccionIY
+    
     ReDim DeSeleccionMap(DeSeleccionAncho, DeSeleccionAlto) As MapBlock
     
     For X = 0 To SeleccionAncho - 1
@@ -567,6 +580,7 @@ Public Sub AccionSeleccion()
             DeSeleccionMap(X, Y) = MapData(X + SeleccionIX, Y + SeleccionIY)
         Next
     Next
+    
     For X = 0 To SeleccionAncho - 1
         For Y = 0 To SeleccionAlto - 1
            ClickEdit vbLeftButton, SeleccionIX + X, SeleccionIY + Y
@@ -582,6 +596,7 @@ Public Sub BlockearSeleccion()
 '*************************************************
     Dim X As Integer
     Dim Y As Integer
+    
     Dim Vacio As MapBlock
     SeleccionAncho = Abs(SeleccionIX - SeleccionFX) + 1
     SeleccionAlto = Abs(SeleccionIY - SeleccionFY) + 1
@@ -589,6 +604,7 @@ Public Sub BlockearSeleccion()
     DeSeleccionAlto = SeleccionAlto
     DeSeleccionOX = SeleccionIX
     DeSeleccionOY = SeleccionIY
+    
     ReDim DeSeleccionMap(DeSeleccionAncho, DeSeleccionAlto) As MapBlock
     
     For X = 0 To SeleccionAncho - 1
@@ -596,6 +612,7 @@ Public Sub BlockearSeleccion()
             DeSeleccionMap(X, Y) = MapData(X + SeleccionIX, Y + SeleccionIY)
         Next
     Next
+    
     For X = 0 To SeleccionAncho - 1
         For Y = 0 To SeleccionAlto - 1
              If MapData(X + SeleccionIX, Y + SeleccionIY).Blocked = 1 Then
@@ -605,6 +622,7 @@ Public Sub BlockearSeleccion()
             End If
         Next
     Next
+    
     Seleccionando = False
 End Sub
 
@@ -614,13 +632,16 @@ Public Sub CortarSeleccion()
 'Last modified: 21/11/07
 '*************************************************
     CopiarSeleccion
+    
     Dim X As Integer
     Dim Y As Integer
     Dim Vacio As MapBlock
+    
     DeSeleccionAncho = SeleccionAncho
     DeSeleccionAlto = SeleccionAlto
     DeSeleccionOX = SeleccionIX
     DeSeleccionOY = SeleccionIY
+    
     ReDim DeSeleccionMap(DeSeleccionAncho, DeSeleccionAlto) As MapBlock
     
     For X = 0 To SeleccionAncho - 1
@@ -628,6 +649,7 @@ Public Sub CortarSeleccion()
             DeSeleccionMap(X, Y) = MapData(X + SeleccionIX, Y + SeleccionIY)
         Next
     Next
+    
     For X = 0 To SeleccionAncho - 1
         For Y = 0 To SeleccionAlto - 1
              MapData(X + SeleccionIX, Y + SeleccionIY) = Vacio
@@ -644,10 +666,12 @@ Public Sub CopiarSeleccion()
     'podria usar copy mem , pero por las dudas no XD
     Dim X As Integer
     Dim Y As Integer
+    
     Seleccionando = False
     SeleccionAncho = Abs(SeleccionIX - SeleccionFX) + 1
     SeleccionAlto = Abs(SeleccionIY - SeleccionFY) + 1
     ReDim SeleccionMap(SeleccionAncho, SeleccionAlto) As MapBlock
+    
     For X = 0 To SeleccionAncho - 1
         For Y = 0 To SeleccionAlto - 1
             SeleccionMap(X, Y) = MapData(X + SeleccionIX, Y + SeleccionIY)
@@ -713,17 +737,10 @@ On Error GoTo RenderScreen_Err
     
     Dim ElapsedTime      As Single
     
-    Dim r                As RECT
-    Dim Sobre            As Integer
-    Dim Moved            As Byte
-    Dim iPPx             As Integer              'Usado en el Layer de Chars
-    Dim iPPy             As Integer              'Usado en el Layer de Chars
+    Dim Sobre            As Long
     Dim Grh              As Grh                  'Temp Grh for show tile and blocked
     Dim bCapa            As Byte                 'cCapas ' 31/05/2006 - GS, control de Capas
-    Dim SelRect          As RECT
-    Dim rSourceRect      As RECT     'Usado en el Layer 1
     Dim iGrhIndex        As Integer  'Usado en el Layer 1
-    Dim TempChar         As Char
     
     ElapsedTime = Engine_ElapsedTime()
     
@@ -734,7 +751,7 @@ On Error GoTo RenderScreen_Err
     screenmaxX = tilex + HalfWindowTileWidth
     
     minY = screenminY - TileBufferSize
-    maxY = screenmaxY + TileBufferSize * 2 ' WyroX: Parche para que no desaparezcan techos y arboles
+    maxY = screenmaxY + TileBufferSize
     minX = screenminX - TileBufferSize
     maxX = screenmaxX + TileBufferSize
     
@@ -747,106 +764,104 @@ On Error GoTo RenderScreen_Err
     
     GenerarVista 'Loopzer
     
-    'Draw floor layer
+     'Draw floor layer
     For Y = screenminY To screenmaxY
+    
         For X = screenminX To screenmaxX
             
-            If X > 100 Or Y < 1 Then Exit For ' 30/05/2006
-    
-                'Layer 1 **********************************
-                If SobreX = X And SobreY = Y Then
-                
-                    ' Pone Grh !
-                    Sobre = -1
-                    
-                    If frmMain.cSeleccionarSuperficie.value = True Then
-                        Sobre = MapData(X, Y).Graphic(bCapa).GrhIndex
+            'Previsualización
+            '*******************************
+            If SobreX = X And SobreY = Y Then
                         
-                        If frmConfigSup.MOSAICO.value = vbChecked Then
-                            Dim aux As Integer
-                            Dim dy As Integer
-                            Dim dX As Integer
-                            
-                            If frmConfigSup.DespMosaic.value = vbChecked Then
-                                dy = Val(frmConfigSup.DMLargo.Text)
-                                dX = Val(frmConfigSup.DMAncho.Text)
-                                
-                            Else
-                                dy = 0
-                                dX = 0
-                                
-                            End If
-                            
-                            If frmMain.mnuAutoCompletarSuperficies.Checked = False Then
-                                aux = Val(frmMain.cGrh.Text) + _
-                                (((Y + dy) Mod frmConfigSup.mLargo.Text) * frmConfigSup.mAncho.Text) + ((X + dX) Mod frmConfigSup.mAncho.Text)
-                                If MapData(X, Y).Graphic(bCapa).GrhIndex <> aux Then
-                                    MapData(X, Y).Graphic(bCapa).GrhIndex = aux
-                                    InitGrh MapData(X, Y).Graphic(bCapa), aux
-                                    
-                                End If
-                                
-                            Else
-                                aux = Val(frmMain.cGrh.Text) + _
-                                (((Y + dy) Mod frmConfigSup.mLargo.Text) * frmConfigSup.mAncho.Text) + ((X + dX) Mod frmConfigSup.mAncho.Text)
-                                If MapData(X, Y).Graphic(bCapa).GrhIndex <> aux Then
-                                    MapData(X, Y).Graphic(bCapa).GrhIndex = aux
-                                    InitGrh MapData(X, Y).Graphic(bCapa), aux
-                                    
-                                End If
-                                
-                            End If
-                            
+                ' Pone Grh !
+                Sobre = -1
+
+                If frmMain.cSeleccionarSuperficie.value = True Then
+                    Sobre = MapData(X, Y).Graphic(bCapa).GrhIndex
+
+                    If frmMain.MOSAICO.value = vbChecked Then
+                        Dim aux As Long
+                        Dim dy  As Integer
+                        Dim dX  As Integer
+
+                        If frmMain.DespMosaic.value = vbChecked Then
+                            dy = Val(frmMain.DMLargo.Text)
+                            dX = Val(frmMain.DMAncho.Text)
                         Else
-                            If MapData(X, Y).Graphic(bCapa).GrhIndex <> Val(frmMain.cGrh.Text) Then
-                                MapData(X, Y).Graphic(bCapa).GrhIndex = Val(frmMain.cGrh.Text)
-                                InitGrh MapData(X, Y).Graphic(bCapa), Val(frmMain.cGrh.Text)
-                                
+                            dy = 0
+                            dX = 0
+
+                        End If
+
+                        If frmMain.mnuAutoCompletarSuperficies.Checked = False Then
+                            aux = Val(frmMain.cGrh.Text) + (((Y + dy) Mod frmMain.mLargo.Text) * frmMain.mAncho.Text) + ((X + dX) Mod frmMain.mAncho.Text)
+
+                            If MapData(X, Y).Graphic(bCapa).GrhIndex <> aux Then
+                                MapData(X, Y).Graphic(bCapa).GrhIndex = aux
+                                InitGrh MapData(X, Y).Graphic(bCapa), aux
+
                             End If
-                            
+
+                        Else
+                            aux = Val(frmMain.cGrh.Text) + (((Y + dy) Mod frmMain.mLargo.Text) * frmMain.mAncho.Text) + ((X + dX) Mod frmMain.mAncho.Text)
+
+                            If MapData(X, Y).Graphic(bCapa).GrhIndex <> aux Then
+                                MapData(X, Y).Graphic(bCapa).GrhIndex = aux
+                                InitGrh MapData(X, Y).Graphic(bCapa), aux
+
+                            End If
+
                         End If
-                        
+
+                    Else
+
+                        If MapData(X, Y).Graphic(bCapa).GrhIndex <> Val(frmMain.cGrh.Text) Then
+                            MapData(X, Y).Graphic(bCapa).GrhIndex = Val(frmMain.cGrh.Text)
+                            InitGrh MapData(X, Y).Graphic(bCapa), Val(frmMain.cGrh.Text)
+
+                        End If
+
                     End If
+
+                End If
+
+            Else
+            
+                Sobre = -1
+            
+            End If
+                
+            If InMapBounds(X, Y) Then
+                
+                PixelOffsetXTemp = (ScreenX - 1) * TilePixelWidth + PixelOffsetX
+                PixelOffsetYTemp = (ScreenY - 1) * TilePixelHeight + PixelOffsetY
+                
+                'Layer 1 **********************************
+                If MapData(X, Y).Graphic(1).GrhIndex And VerCapa1 Then _
+                    Call Draw_Grh(MapData(X, Y).Graphic(1), PixelOffsetXTemp, PixelOffsetYTemp, 1, MapData(X, Y).Engine_Light(), 1)
                     
-                Else
-                    Sobre = -1
+                'Layer 2 **********************************
+                If MapData(X, Y).Graphic(2).GrhIndex <> 0 And VerCapa2 Then _
+                    Call Draw_Grh(MapData(X, Y).Graphic(2), PixelOffsetXTemp, PixelOffsetYTemp, 1, MapData(X, Y).Engine_Light(), 1)
+                    
+                If Sobre >= 0 Then
+                    If MapData(X, Y).Graphic(bCapa).GrhIndex <> Sobre Then
+                        MapData(X, Y).Graphic(bCapa).GrhIndex = Sobre
+                        InitGrh MapData(X, Y).Graphic(bCapa), Sobre
+                            
+                        If MapData(X, Y).Graphic(bCapa).GrhIndex = GRH_ERROR Then _
+                            MapData(X, Y).Graphic(bCapa).GrhIndex = 0
+                    End If
                     
                 End If
                 
-                If InMapBounds(X, Y) Then
-                
-                    PixelOffsetXTemp = (ScreenX - 1) * TilePixelWidth + PixelOffsetX
-                    PixelOffsetYTemp = (ScreenY - 1) * TilePixelHeight + PixelOffsetY
-                
-                    'Layer 1 **********************************
-                    If MapData(X, Y).Graphic(1).GrhIndex And VerCapa1 Then
-                        Call Draw_Grh(MapData(X, Y).Graphic(1), PixelOffsetXTemp, PixelOffsetYTemp, 1, MapData(X, Y).Engine_Light(), 1)
-                    End If
-                    
-                    'Layer 2 **********************************
-                    If MapData(X, Y).Graphic(2).GrhIndex <> 0 And VerCapa2 Then
-                        Call Draw_Grh(MapData(X, Y).Graphic(2), PixelOffsetXTemp, PixelOffsetYTemp, 1, MapData(X, Y).Engine_Light(), 1)
-                    End If
-                    
-                    If Sobre >= 0 Then
-                        If MapData(X, Y).Graphic(bCapa).GrhIndex <> Sobre Then
-                            MapData(X, Y).Graphic(bCapa).GrhIndex = Sobre
-                            InitGrh MapData(X, Y).Graphic(bCapa), Sobre
-                            
-                            If MapData(X, Y).Graphic(bCapa).GrhIndex = GRH_ERROR Then _
-                                MapData(X, Y).Graphic(bCapa).GrhIndex = 0
-                        End If
-                    
-                    End If
-                
-                End If
+            End If
             
             ScreenX = ScreenX + 1
         Next X
         
         ScreenX = ScreenX - X + screenminX
         ScreenY = ScreenY + 1
-        If Y > 100 Then Exit For
     Next Y
     
     ScreenY = minYOffset - TileBufferSize
@@ -856,15 +871,15 @@ On Error GoTo RenderScreen_Err
         For X = minX To maxX
         
             If InMapBounds(X, Y) Then
-                PixelOffsetXTemp = ScreenX * 32 + PixelOffsetX
-                PixelOffsetYTemp = ScreenY * 32 + PixelOffsetY
+                PixelOffsetXTemp = ScreenX * 32 + PixelOffsetX - 32
+                PixelOffsetYTemp = ScreenY * 32 + PixelOffsetY - 32
                 
                 If X > 100 Or X < -3 Then Exit For ' 30/05/2006
                 
                 With MapData(X, Y)
                     
                      'Object Layer **********************************
-                     If .OBJInfo.objindex <> 0 And VerObjetos Then
+                     If .OBJInfo.ObjIndex <> 0 And VerObjetos Then
                          Call Draw_Grh(.ObjGrh, _
                                 PixelOffsetXTemp, PixelOffsetYTemp, 1, .Engine_Light(), 1)
                      End If
@@ -890,18 +905,21 @@ On Error GoTo RenderScreen_Err
     
     'Draw blocked tiles and grid
     ScreenY = minYOffset - TileBufferSize
+
     For Y = minY To maxY
-    
+
         ScreenX = minXOffset - TileBufferSize
+
         For X = minX To maxX
+            
+            PixelOffsetXTemp = ScreenX * TilePixelWidth + PixelOffsetX - 32
+            PixelOffsetYTemp = ScreenY * TilePixelHeight + PixelOffsetY - 32
         
             If X < 101 And X > 0 And Y < 101 And Y > 0 Then ' 30/05/2006
             
+                '<----- Layer 4 ----->
                 If MapData(X, Y).Graphic(4).GrhIndex <> 0 And (frmMain.mnuVerCapa4.Checked = True) Then
-                    Call Draw_Grh(MapData(X, Y).Graphic(4), _
-                    ScreenX * 32 + PixelOffsetX, _
-                    ScreenY * 32 + PixelOffsetY, _
-                    1, MapData(X, Y).Engine_Light(), 1)
+                    Call Draw_Grh(MapData(X, Y).Graphic(4), PixelOffsetXTemp, PixelOffsetYTemp, 1, MapData(X, Y).Engine_Light(), 1)
                     
                 End If
 
@@ -909,10 +927,7 @@ On Error GoTo RenderScreen_Err
                     Grh.GrhIndex = 3
                     Grh.FrameCounter = 1
                     Grh.Started = 0
-                    Call Draw_Grh(Grh, _
-                        ScreenX * 32 + PixelOffsetX, _
-                        ScreenY * 32 + PixelOffsetY, _
-                        1, Normal_RGBList(), 1)
+                    Call Draw_Grh(Grh, PixelOffsetXTemp, PixelOffsetYTemp, 1, Normal_RGBList(), 1)
                         
                 End If
                 
@@ -922,7 +937,7 @@ On Error GoTo RenderScreen_Err
                     Grh.FrameCounter = 1
                     Grh.Started = 0
                     
-                    Call Draw_Grh(Grh, ScreenX * 32 + PixelOffsetX, ScreenY * 32 + PixelOffsetY, 1, Normal_RGBList(), 1)
+                    Call Draw_Grh(Grh, PixelOffsetXTemp, PixelOffsetYTemp, 1, Normal_RGBList(), 1)
                         
                 End If
                 
@@ -931,14 +946,13 @@ On Error GoTo RenderScreen_Err
                     Grh.FrameCounter = 1
                     Grh.Started = 0
                     
-                    Call Draw_Grh(Grh, ScreenX * 32 + PixelOffsetX, ScreenY * 32 + PixelOffsetY, 1, Normal_RGBList(), 0)
+                    Call Draw_Grh(Grh, PixelOffsetXTemp, PixelOffsetYTemp, 1, Normal_RGBList(), 0)
                         
                 End If
                 
                 If VerTriggers Then '4978
-                    'If MapData(X, Y).Trigger > 0 Then _
-                        Texto.Engine_Text_Draw ScreenX * 32 + PixelOffsetX, _
-                                ScreenY * 32 + PixelOffsetY, MapData(X, Y).Trigger, vbWhite, , , 3
+                    If MapData(X, Y).Trigger > 0 Then _
+                        Call DrawText(PixelOffsetXTemp, PixelOffsetYTemp, MapData(X, Y).Trigger, vbWhite, 1)
                 End If
                     
                 If Seleccionando Then
@@ -948,7 +962,7 @@ On Error GoTo RenderScreen_Err
                                 Grh.FrameCounter = 1
                                 Grh.Started = 0
                                 
-                                Call Draw_Grh(Grh, ScreenX * 32 + PixelOffsetX, ScreenY * 32 + PixelOffsetY, 1, MapData(X, Y).Engine_Light(), 1)
+                                Call Draw_Grh(Grh, PixelOffsetXTemp, PixelOffsetYTemp, 1, MapData(X, Y).Engine_Light(), 1)
                             End If
                         End If
                 End If
@@ -963,8 +977,50 @@ On Error GoTo RenderScreen_Err
 RenderScreen_Err:
 
     If Err.Number Then
-        Call LogError(Err.Number, Err.Description, "Mod_TileEngine.RenderScreen")
+        Call RegistrarError(Err.Number, Err.Description, "Mod_TileEngine.RenderScreen")
     End If
+End Sub
+
+Public Sub RenderPreview()
+    Dim destRect     As RECT
+    
+    Dim i As Integer, j As Integer
+    Dim Cont As Integer
+    
+    With destRect
+        .Bottom = frmMain.PreviewGrh.Height
+        .Right = frmMain.PreviewGrh.Width
+    End With
+    
+    'Clear the inventory window
+    Call Engine_BeginScene
+    
+    If frmMain.MOSAICO = vbUnchecked Then
+        Call Draw_GrhIndex(CurrentGrh.GrhIndex, frmMain.PreviewGrh.Height / 2, frmMain.PreviewGrh.Width - 50, 1, Normal_RGBList(), 0)
+        
+    Else
+        For i = 1 To CInt(Val(frmMain.mLargo))
+            For j = 1 To CInt(Val(frmMain.mAncho))
+            
+                Call Draw_GrhIndex(CurrentGrh.GrhIndex, (j - 1) * 32, (i - 1) * 32, 1, Normal_RGBList(), 0)
+                
+                If Cont < CInt(Val(frmMain.mLargo)) * CInt(Val(frmMain.mAncho)) Then _
+                    Cont = Cont + 1: CurrentGrh.GrhIndex = CurrentGrh.GrhIndex + 1
+            Next j
+        Next i
+        
+        CurrentGrh.GrhIndex = CurrentGrh.GrhIndex - Cont
+    End If
+    
+    frmMain.PreviewGrh.AutoRedraw = False
+
+    Call Engine_EndScene(destRect, frmMain.PreviewGrh.hWnd)
+
+    Call DrawBuffer.LoadPictureBlt(frmMain.PreviewGrh.hdc)
+
+    frmMain.PreviewGrh.AutoRedraw = True
+
+    Call DrawBuffer.PaintPicture(frmMain.PreviewGrh.hdc, 0, 0, frmMain.PreviewGrh.Width, frmMain.PreviewGrh.Height, 0, 0, vbSrcCopy)
 End Sub
 
 Function HayUserAbajo(X As Integer, Y As Integer, GrhIndex) As Boolean
@@ -1075,7 +1131,7 @@ On Error GoTo 0
     
 ErrorHandler:
 
-    Call LogError(Err.Number, Err.Description, "Mod_TileEngine.InitTileEngine")
+    Call RegistrarError(Err.Number, Err.Description, "Mod_TileEngine.InitTileEngine")
     
     Call CloseClient
     
@@ -1128,7 +1184,8 @@ On Error GoTo ErrorHandler:
 
         ' Calculamos los FPS y los mostramos
         Call Engine_Update_FPS
-        'Call DrawText(510, 5, "FPS: " & mod_TileEngine.FPS, -1, True)
+        Call DrawText(10, 5, "FPS: " & mod_TileEngine.FPS, -1, False)
+        Call DrawText(10, 20, "Mouse: " & MousePos, -1, False)
     
         'Get timing info
         timerElapsedTime = GetElapsedTime()

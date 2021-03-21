@@ -29,10 +29,11 @@ Attribute VB_Name = "modDeclaraciones"
 
 Option Explicit
 
+Public MousePos As String
+
 Public Const MSGMod As String = "Este mapa há sido modificado." & vbCrLf & "Si no lo guardas perderas todos los cambios ¿Deseas guardarlo?"
 Public Const MSGDang As String = "CUIDADO! Este comando puede arruinar el mapa." & vbCrLf & "¿Estas seguro que desea continuar?"
 
-Public Const ENDL As String * 2 = vbCrLf
 '[Loopzer]
 Public SeleccionIX As Integer
 Public SeleccionFX As Integer
@@ -71,9 +72,8 @@ Public Cfg_TrOBJ As Integer
 
 'Path
 Public IniPath As String
-Public DirGraficos As String
+Public DirRecursos As String
 Public DirMidi As String
-Public DirIndex As String
 Public DirDats As String
 
 Public bAutoGuardarMapa As Byte
@@ -94,8 +94,8 @@ Public PantallaY As Integer
 Public ClienteHeight As Integer
 Public ClienteWidth As Integer
 
-Public SobreX As Byte   ' Posicion X bajo el Cursor
-Public SobreY As Byte   ' Posicion Y bajo el Cursor
+Public SobreX As Integer ' Posicion X bajo el Cursor
+Public SobreY As Integer   ' Posicion Y bajo el Cursor
 
 ' Radar
 Public MiRadarX As Integer
@@ -153,12 +153,18 @@ Public Type MapInfo
     MagiaSinEfecto As Byte
     InviSinEfecto As Byte
     ResuSinEfecto As Byte
-    NoEncriptarMP As Byte
+    LuzBase As Long
     Terreno As String
     Zona As String
     Restringir As String
     BackUp As Byte
     Changed As Byte ' flag for WorldEditor
+    RoboNpcsPermitido As Byte
+    InvocarSinEfecto As Byte
+    OcultarSinEfecto As Byte
+    lvlMinimo As Byte
+    ambient As String
+    NoEncriptarMP As Byte
 End Type
 
 '********** CONSTANTS ***********
@@ -191,6 +197,7 @@ End Type
 'Points to a grhData and keeps animation info
 Public Type Grh
     GrhIndex As Long
+    GrhIndexInt As Integer
     FrameCounter As Single
     speed As Single
     Started As Byte
@@ -221,7 +228,7 @@ End Type
 
 ' Cuerpos body.dat
 Public Type tIndiceCuerpo
-    Body(1 To 4) As Integer
+    Body(1 To 4) As Long
     HeadOffsetX As Integer
     HeadOffsetY As Integer
 End Type
@@ -230,13 +237,16 @@ Public Type tBodyData
     Walk(1 To 4) As Grh
     HeadOffset As Position
 End Type
+
 ' body.dat
 Public BodyData() As tBodyData
 Public NumBodies As Integer
+
 'Lista de cabezas
 Public Type tIndiceCabeza
-    Head(1 To 4) As Integer
+    Head(1 To 4) As Long
 End Type
+
 'Heads list
 Public Type tHeadData
     Head(0 To 4) As Grh
@@ -245,7 +255,7 @@ Public HeadData() As tHeadData
 
 'Hold info about a character
 Public Type Char
-    Active As Byte
+    active As Byte
     Heading As Byte
     Pos As Position
 
@@ -259,7 +269,7 @@ End Type
 
 'Holds info about a object
 Public Type Obj
-    objindex As Integer
+    ObjIndex As Integer
     Amount As Integer
 End Type
 
@@ -282,6 +292,17 @@ Public Type MapBlock
     fX As Grh
     FxIndex As Integer
 End Type
+
+Public Enum eTipoMapa
+    tInt
+    tLong
+    tWinter
+    tIAOClasico
+    tIAOnew
+    tIAOold
+End Enum
+
+Public TipoMapaCargado As Byte
 
 '********** Public VARS ***********
 'Where the map borders are.. Set during load

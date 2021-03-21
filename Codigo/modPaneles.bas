@@ -241,7 +241,7 @@ Public Sub Filtrar(ByVal Numero As Byte)
         End Select
         
         For j = 1 To Len(vDatos)
-            If UCase$(mid$(vDatos & Str(i), j, Len(frmMain.cFiltro(Numero).Text))) = UCase$(frmMain.cFiltro(Numero).Text) Or LenB(frmMain.cFiltro(Numero).Text) = 0 Then
+            If UCase$(mid$(vDatos & str(i), j, Len(frmMain.cFiltro(Numero).Text))) = UCase$(frmMain.cFiltro(Numero).Text) Or LenB(frmMain.cFiltro(Numero).Text) = 0 Then
                 frmMain.lListado(Numero).AddItem vDatos & " - #" & NumI
                 Exit For
             End If
@@ -255,19 +255,17 @@ Public Function DameGrhIndex(ByVal GrhIn As Integer) As Integer
 'Last modified: 20/05/06
 '*************************************************
 
-DameGrhIndex = SupData(GrhIn).Grh
-
-If SupData(GrhIn).Width > 0 Then
-    frmConfigSup.MOSAICO.value = vbChecked
-    frmConfigSup.mAncho.Text = SupData(GrhIn).Width
-    frmConfigSup.mLargo.Text = SupData(GrhIn).Height
-Else
-    frmConfigSup.MOSAICO.value = vbUnchecked
-    frmConfigSup.mAncho.Text = "0"
-    frmConfigSup.mLargo.Text = "0"
-End If
-
-
+    DameGrhIndex = SupData(GrhIn).Grh
+    
+    If SupData(GrhIn).Width > 0 Then
+        frmMain.MOSAICO.value = vbChecked
+        frmMain.mAncho.Text = SupData(GrhIn).Width
+        frmMain.mLargo.Text = SupData(GrhIn).Height
+    Else
+        frmMain.MOSAICO.value = vbUnchecked
+        frmMain.mAncho.Text = "0"
+        frmMain.mLargo.Text = "0"
+    End If
 
 End Function
 
@@ -293,55 +291,4 @@ Public Sub fPreviewGrh(ByVal GrhIn As Integer)
     CurrentGrh.FrameCounter = 1
     CurrentGrh.speed = GrhData(CurrentGrh.GrhIndex).speed
 
-End Sub
-
-''
-' Indica la accion de mostrar Vista Previa de la Superficie seleccionada
-'
-
-Public Sub VistaPreviaDeSup()
-'*************************************************
-'Author: ^[GS]^
-'Last modified: 26/05/06
-'*************************************************
-    Dim SR As RECT, DR As RECT
-    
-    Call DirectDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0)
-    
-    If CurrentGrh.GrhIndex = 0 Then Exit Sub
-    
-    If frmConfigSup.MOSAICO = vbUnchecked Then
-        DR.Left = 0
-        DR.Top = 0
-        DR.Bottom = (GrhData(CurrentGrh.GrhIndex).pixelHeight)
-        DR.Right = (GrhData(CurrentGrh.GrhIndex).pixelWidth)
-        SR.Left = GrhData(CurrentGrh.GrhIndex).sX
-        SR.Top = GrhData(CurrentGrh.GrhIndex).sY
-        SR.Bottom = SR.Top + (GrhData(CurrentGrh.GrhIndex).pixelHeight)
-        SR.Right = SR.Left + (GrhData(CurrentGrh.GrhIndex).pixelWidth)
-        
-        Call DrawGrhtoHdc(frmMain.PreviewGrh, CurrentGrh.GrhIndex, 1, 1)
-            
-    Else
-        Dim X As Integer, Y As Integer, j As Integer, i As Integer
-        Dim Cont As Integer
-        For i = 1 To CInt(Val(frmConfigSup.mLargo))
-            For j = 1 To CInt(Val(frmConfigSup.mAncho))
-                DR.Left = (j - 1) * 32
-                DR.Top = (i - 1) * 32
-                DR.Right = j * 32
-                DR.Bottom = i * 32
-                SR.Left = GrhData(CurrentGrh.GrhIndex).sX
-                SR.Top = GrhData(CurrentGrh.GrhIndex).sY
-                SR.Right = SR.Left + GrhData(CurrentGrh.GrhIndex).pixelWidth
-                SR.Bottom = SR.Top + GrhData(CurrentGrh.GrhIndex).pixelHeight
-                
-                Call DrawGrhtoHdc(frmMain.PreviewGrh, CurrentGrh.GrhIndex, DR.Left, DR.Top)
-                
-                If Cont < CInt(Val(frmConfigSup.mLargo)) * CInt(Val(frmConfigSup.mAncho)) Then _
-                    Cont = Cont + 1: CurrentGrh.GrhIndex = CurrentGrh.GrhIndex + 1
-            Next
-        Next
-        CurrentGrh.GrhIndex = CurrentGrh.GrhIndex - Cont
-    End If
 End Sub

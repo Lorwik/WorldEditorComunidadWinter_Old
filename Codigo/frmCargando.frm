@@ -4,26 +4,226 @@ Begin VB.Form frmCargando
    BackColor       =   &H00000000&
    BorderStyle     =   0  'None
    Caption         =   "Argentum"
-   ClientHeight    =   2850
+   ClientHeight    =   3780
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   6060
+   ClientWidth     =   7530
    Icon            =   "frmCargando.frx":0000
    LinkTopic       =   "Form1"
-   ScaleHeight     =   2850
-   ScaleWidth      =   6060
+   ScaleHeight     =   3780
+   ScaleWidth      =   7530
    ShowInTaskbar   =   0   'False
    StartUpPosition =   2  'CenterScreen
    Begin VB.PictureBox Picture1 
-      AutoSize        =   -1  'True
-      BackColor       =   &H000000FF&
-      Height          =   1920
+      Appearance      =   0  'Flat
+      BackColor       =   &H80000005&
+      ForeColor       =   &H80000008&
+      Height          =   3780
       Left            =   0
-      ScaleHeight     =   1860
-      ScaleWidth      =   6060
+      Picture         =   "frmCargando.frx":628A
+      ScaleHeight     =   3750
+      ScaleWidth      =   7500
       TabIndex        =   0
       Top             =   0
-      Width           =   6120
+      Width           =   7530
+      Begin VB.Image P2 
+         Height          =   480
+         Left            =   1320
+         Picture         =   "frmCargando.frx":1AD92
+         ToolTipText     =   "Cuerpos"
+         Top             =   3240
+         Visible         =   0   'False
+         Width           =   480
+      End
+      Begin VB.Image P4 
+         Height          =   480
+         Left            =   3840
+         Picture         =   "frmCargando.frx":1B252
+         ToolTipText     =   "NPC's"
+         Top             =   3240
+         Visible         =   0   'False
+         Width           =   480
+      End
+      Begin VB.Image P3 
+         Height          =   480
+         Left            =   2640
+         Picture         =   "frmCargando.frx":1BE94
+         ToolTipText     =   "Cabezas"
+         Top             =   3240
+         Visible         =   0   'False
+         Width           =   480
+      End
+      Begin VB.Image P1 
+         Height          =   480
+         Left            =   240
+         Picture         =   "frmCargando.frx":1C6D8
+         ToolTipText     =   "Base de Datos"
+         Top             =   3240
+         Visible         =   0   'False
+         Width           =   480
+      End
+      Begin VB.Image P5 
+         Height          =   480
+         Left            =   5040
+         Picture         =   "frmCargando.frx":1CF1C
+         ToolTipText     =   "Objetos"
+         Top             =   3240
+         Visible         =   0   'False
+         Width           =   480
+      End
+      Begin VB.Label L 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "BdD"
+         BeginProperty Font 
+            Name            =   "Verdana"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00FFFFFF&
+         Height          =   195
+         Index           =   0
+         Left            =   720
+         TabIndex        =   8
+         Top             =   3360
+         Visible         =   0   'False
+         Width           =   375
+      End
+      Begin VB.Label L 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Body"
+         BeginProperty Font 
+            Name            =   "Verdana"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00FFFFFF&
+         Height          =   195
+         Index           =   1
+         Left            =   1800
+         TabIndex        =   7
+         Top             =   3360
+         Visible         =   0   'False
+         Width           =   480
+      End
+      Begin VB.Label L 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Head"
+         BeginProperty Font 
+            Name            =   "Verdana"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00FFFFFF&
+         Height          =   195
+         Index           =   2
+         Left            =   3120
+         TabIndex        =   6
+         Top             =   3360
+         Visible         =   0   'False
+         Width           =   495
+      End
+      Begin VB.Label L 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "NPC's"
+         BeginProperty Font 
+            Name            =   "Verdana"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00FFFFFF&
+         Height          =   195
+         Index           =   3
+         Left            =   4320
+         TabIndex        =   5
+         Top             =   3360
+         Visible         =   0   'False
+         Width           =   540
+      End
+      Begin VB.Label L 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "OBJ's"
+         BeginProperty Font 
+            Name            =   "Verdana"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00FFFFFF&
+         Height          =   195
+         Index           =   4
+         Left            =   5520
+         TabIndex        =   4
+         Top             =   3360
+         Visible         =   0   'False
+         Width           =   510
+      End
+      Begin VB.Label L 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Trig."
+         BeginProperty Font 
+            Name            =   "Verdana"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00FFFFFF&
+         Height          =   195
+         Index           =   5
+         Left            =   6720
+         TabIndex        =   3
+         Top             =   3360
+         Visible         =   0   'False
+         Width           =   450
+      End
+      Begin VB.Image P6 
+         Height          =   480
+         Left            =   6240
+         Picture         =   "frmCargando.frx":1D760
+         ToolTipText     =   "Función de Trigger"
+         Top             =   3240
+         Visible         =   0   'False
+         Width           =   480
+      End
+      Begin VB.Label X 
+         Alignment       =   2  'Center
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "..."
+         ForeColor       =   &H00FFFFFF&
+         Height          =   255
+         Left            =   720
+         TabIndex        =   2
+         Top             =   2880
+         Width           =   5655
+      End
       Begin VB.Label verX 
          Alignment       =   2  'Center
          AutoSize        =   -1  'True
@@ -41,12 +241,12 @@ Begin VB.Form frmCargando
          ForeColor       =   &H00FFFFFF&
          Height          =   210
          Left            =   255
-         TabIndex        =   2
+         TabIndex        =   1
          Top             =   0
          Width           =   555
       End
       Begin VB.Shape Shape1 
-         BackColor       =   &H00C0FFC0&
+         BackColor       =   &H00000000&
          BackStyle       =   1  'Opaque
          BorderColor     =   &H00FFFFFF&
          BorderStyle     =   0  'Transparent
@@ -59,203 +259,6 @@ Begin VB.Form frmCargando
          Top             =   -120
          Width           =   1335
       End
-   End
-   Begin VB.Image P6 
-      Height          =   480
-      Left            =   5000
-      Picture         =   "frmCargando.frx":628A
-      ToolTipText     =   "Función de Trigger"
-      Top             =   2280
-      Visible         =   0   'False
-      Width           =   480
-   End
-   Begin VB.Label L 
-      AutoSize        =   -1  'True
-      BackStyle       =   0  'Transparent
-      Caption         =   "Trig."
-      BeginProperty Font 
-         Name            =   "Verdana"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   195
-      Index           =   5
-      Left            =   5520
-      TabIndex        =   8
-      Top             =   2400
-      Visible         =   0   'False
-      Width           =   450
-   End
-   Begin VB.Label L 
-      AutoSize        =   -1  'True
-      BackStyle       =   0  'Transparent
-      Caption         =   "OBJ's"
-      BeginProperty Font 
-         Name            =   "Verdana"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   195
-      Index           =   4
-      Left            =   4440
-      TabIndex        =   7
-      Top             =   2400
-      Visible         =   0   'False
-      Width           =   510
-   End
-   Begin VB.Label L 
-      AutoSize        =   -1  'True
-      BackStyle       =   0  'Transparent
-      Caption         =   "NPC's"
-      BeginProperty Font 
-         Name            =   "Verdana"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   195
-      Index           =   3
-      Left            =   3360
-      TabIndex        =   6
-      Top             =   2400
-      Visible         =   0   'False
-      Width           =   540
-   End
-   Begin VB.Label L 
-      AutoSize        =   -1  'True
-      BackStyle       =   0  'Transparent
-      Caption         =   "Head"
-      BeginProperty Font 
-         Name            =   "Verdana"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   195
-      Index           =   2
-      Left            =   2400
-      TabIndex        =   5
-      Top             =   2400
-      Visible         =   0   'False
-      Width           =   495
-   End
-   Begin VB.Label L 
-      AutoSize        =   -1  'True
-      BackStyle       =   0  'Transparent
-      Caption         =   "Body"
-      BeginProperty Font 
-         Name            =   "Verdana"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   195
-      Index           =   1
-      Left            =   1440
-      TabIndex        =   4
-      Top             =   2400
-      Visible         =   0   'False
-      Width           =   480
-   End
-   Begin VB.Label L 
-      AutoSize        =   -1  'True
-      BackStyle       =   0  'Transparent
-      Caption         =   "BdD"
-      BeginProperty Font 
-         Name            =   "Verdana"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   195
-      Index           =   0
-      Left            =   600
-      TabIndex        =   3
-      Top             =   2400
-      Visible         =   0   'False
-      Width           =   375
-   End
-   Begin VB.Image P5 
-      Height          =   480
-      Left            =   3960
-      Picture         =   "frmCargando.frx":6ECC
-      ToolTipText     =   "Objetos"
-      Top             =   2280
-      Visible         =   0   'False
-      Width           =   480
-   End
-   Begin VB.Image P1 
-      Height          =   480
-      Left            =   120
-      Picture         =   "frmCargando.frx":7710
-      ToolTipText     =   "Base de Datos"
-      Top             =   2280
-      Visible         =   0   'False
-      Width           =   480
-   End
-   Begin VB.Image P3 
-      Height          =   480
-      Left            =   1920
-      Picture         =   "frmCargando.frx":7F54
-      ToolTipText     =   "Cabezas"
-      Top             =   2280
-      Visible         =   0   'False
-      Width           =   480
-   End
-   Begin VB.Image P4 
-      Height          =   480
-      Left            =   2880
-      Picture         =   "frmCargando.frx":8798
-      ToolTipText     =   "NPC's"
-      Top             =   2280
-      Visible         =   0   'False
-      Width           =   480
-   End
-   Begin VB.Image P2 
-      Height          =   480
-      Left            =   960
-      Picture         =   "frmCargando.frx":93DA
-      ToolTipText     =   "Cuerpos"
-      Top             =   2280
-      Visible         =   0   'False
-      Width           =   480
-   End
-   Begin VB.Label X 
-      Alignment       =   2  'Center
-      BackStyle       =   0  'Transparent
-      Caption         =   "..."
-      ForeColor       =   &H00FFFFFF&
-      Height          =   255
-      Left            =   240
-      TabIndex        =   1
-      Top             =   1980
-      Width           =   5655
    End
 End
 Attribute VB_Name = "frmCargando"
@@ -282,3 +285,6 @@ Attribute VB_Exposed = False
 'You can contact the original creator of ORE at aaron@baronsoft.com
 'for more information about ORE please visit http://www.baronsoft.com/
 '**************************************************************
+Private Sub Picture1_Click()
+
+End Sub

@@ -46,6 +46,7 @@ On Local Error GoTo fileErr:
     Call Lector.Initialize(WEConfigDir)
     
     With ClientSetup
+    
         .byMemory = Lector.GetValue("VIDEO", "DynamicMemory")
         .OverrideVertexProcess = CByte(Lector.GetValue("VIDEO", "VertexProcessingOverride"))
         

@@ -175,7 +175,7 @@ Private Sub cmdAplicarYCerrar_Click()
     If Len(MidiActual) >= 5 Then
         MapInfo.Music = Left(MidiActual, Len(MidiActual) - 4)
         frmMapInfo.txtMapMusica.Text = MapInfo.Music
-        frmMain.lblMapMusica = MapInfo.Music
+        frmMain.txtMapMusica = MapInfo.Music
         MidiActual = Empty
     End If
     
@@ -234,7 +234,7 @@ Private Sub fleMusicas_Click()
 'Author: ^[GS]^
 'Last modified: 20/05/06
 '*************************************************
-    MidiActual = fleMusicas.List(fleMusicas.listIndex)
+    MidiActual = fleMusicas.List(fleMusicas.ListIndex)
     'CargarMIDI fleMusicas.Path & "\" & fleMusicas.List(fleMusicas.listIndex)
     cmdAplicarYCerrar.Enabled = True
     If Play = False Then cmdEscuchar.Enabled = True

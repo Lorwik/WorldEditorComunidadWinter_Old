@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "ComDlg32.OCX"
+Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
 Begin VB.Form frmMain 
    Appearance      =   0  'Flat
    BackColor       =   &H00FFFFFF&
@@ -29,6 +30,249 @@ Begin VB.Form frmMain
    ScaleWidth      =   1638
    StartUpPosition =   1  'CenterOwner
    Visible         =   0   'False
+   Begin VB.Frame FraPreview 
+      BackColor       =   &H00FFFFFF&
+      Caption         =   "Preview"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   2415
+      Left            =   22200
+      TabIndex        =   93
+      Top             =   9960
+      Width           =   2295
+      Begin VB.CommandButton cmdDM 
+         Caption         =   "O"
+         BeginProperty Font 
+            Name            =   "Arial"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   240
+         Index           =   4
+         Left            =   360
+         Style           =   1  'Graphical
+         TabIndex        =   104
+         Top             =   480
+         Width           =   240
+      End
+      Begin VB.CommandButton cmdDM 
+         BeginProperty Font 
+            Name            =   "Arial"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   240
+         Index           =   3
+         Left            =   360
+         Picture         =   "frmMain.frx":628A
+         Style           =   1  'Graphical
+         TabIndex        =   103
+         Top             =   720
+         Width           =   240
+      End
+      Begin VB.CommandButton cmdDM 
+         BeginProperty Font 
+            Name            =   "Arial"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   240
+         Index           =   2
+         Left            =   600
+         Picture         =   "frmMain.frx":6571
+         Style           =   1  'Graphical
+         TabIndex        =   102
+         Top             =   480
+         Width           =   240
+      End
+      Begin VB.CommandButton cmdDM 
+         BeginProperty Font 
+            Name            =   "Arial"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   240
+         Index           =   1
+         Left            =   120
+         Picture         =   "frmMain.frx":6860
+         Style           =   1  'Graphical
+         TabIndex        =   101
+         Top             =   480
+         Width           =   240
+      End
+      Begin VB.CommandButton cmdDM 
+         BeginProperty Font 
+            Name            =   "Arial"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   240
+         Index           =   0
+         Left            =   360
+         Picture         =   "frmMain.frx":6B50
+         Style           =   1  'Graphical
+         TabIndex        =   100
+         Top             =   240
+         Width           =   240
+      End
+      Begin VB.TextBox DMLargo 
+         Appearance      =   0  'Flat
+         BackColor       =   &H00FFFFFF&
+         ForeColor       =   &H00000000&
+         Height          =   330
+         Left            =   1560
+         TabIndex        =   99
+         Text            =   "0"
+         Top             =   1320
+         Width           =   420
+      End
+      Begin VB.TextBox DMAncho 
+         Appearance      =   0  'Flat
+         BackColor       =   &H00FFFFFF&
+         ForeColor       =   &H00000000&
+         Height          =   330
+         Left            =   1560
+         TabIndex        =   98
+         Text            =   "0"
+         Top             =   960
+         Width           =   420
+      End
+      Begin VB.TextBox mAncho 
+         Appearance      =   0  'Flat
+         BackColor       =   &H00FFFFFF&
+         ForeColor       =   &H00000000&
+         Height          =   330
+         Left            =   960
+         TabIndex        =   97
+         Text            =   "4"
+         Top             =   960
+         Width           =   420
+      End
+      Begin VB.TextBox mLargo 
+         Appearance      =   0  'Flat
+         BackColor       =   &H00FFFFFF&
+         ForeColor       =   &H00000000&
+         Height          =   330
+         Left            =   960
+         TabIndex        =   96
+         Text            =   "4"
+         Top             =   1320
+         Width           =   420
+      End
+      Begin VB.CheckBox MOSAICO 
+         Appearance      =   0  'Flat
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "Mosaico"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   165
+         Left            =   120
+         TabIndex        =   95
+         Top             =   1800
+         Value           =   1  'Checked
+         Width           =   1095
+      End
+      Begin VB.CheckBox DespMosaic 
+         Appearance      =   0  'Flat
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "Desplz. de Mosaico"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   210
+         Left            =   120
+         TabIndex        =   94
+         Top             =   2040
+         UseMaskColor    =   -1  'True
+         Value           =   1  'Checked
+         Width           =   1920
+      End
+      Begin VB.Label Label5 
+         AutoSize        =   -1  'True
+         BackColor       =   &H8000000D&
+         BackStyle       =   0  'Transparent
+         Caption         =   "Ancho"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   195
+         Index           =   0
+         Left            =   120
+         TabIndex        =   106
+         Top             =   1080
+         Width           =   525
+      End
+      Begin VB.Label Label7 
+         AutoSize        =   -1  'True
+         BackColor       =   &H8000000D&
+         BackStyle       =   0  'Transparent
+         Caption         =   "Largo"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   195
+         Left            =   120
+         TabIndex        =   105
+         Top             =   1440
+         Width           =   480
+      End
+   End
    Begin VB.Frame FraInformaciónDel 
       BackColor       =   &H00FFFFFF&
       Caption         =   "Información del mapa"
@@ -43,24 +287,24 @@ Begin VB.Form frmMain
       EndProperty
       Height          =   4215
       Left            =   22200
-      TabIndex        =   91
+      TabIndex        =   75
       Top             =   5640
       Width           =   2295
-      Begin VB.TextBox lblMapNombre 
+      Begin VB.TextBox txtMapNombre 
          Alignment       =   2  'Center
          Appearance      =   0  'Flat
          Height          =   285
          Left            =   120
-         TabIndex        =   100
+         TabIndex        =   84
          Top             =   600
          Width           =   2055
       End
-      Begin VB.TextBox lblMapMusica 
+      Begin VB.TextBox txtMapMusica 
          Alignment       =   2  'Center
          Appearance      =   0  'Flat
          Height          =   285
          Left            =   840
-         TabIndex        =   99
+         TabIndex        =   83
          Text            =   "0"
          Top             =   1000
          Width           =   495
@@ -70,16 +314,16 @@ Begin VB.Form frmMain
          Appearance      =   0  'Flat
          Height          =   285
          Left            =   840
-         TabIndex        =   98
+         TabIndex        =   82
          Text            =   "0"
          Top             =   1500
          Width           =   495
       End
-      Begin VB.TextBox lblMapVersion 
+      Begin VB.TextBox txtMapVersion 
          Appearance      =   0  'Flat
          Height          =   285
          Left            =   840
-         TabIndex        =   97
+         TabIndex        =   81
          Text            =   "0"
          Top             =   1920
          Width           =   1335
@@ -98,7 +342,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   975
          Left            =   240
-         TabIndex        =   93
+         TabIndex        =   77
          Top             =   2640
          Width           =   1815
          Begin VB.TextBox LuzMapa 
@@ -114,7 +358,7 @@ Begin VB.Form frmMain
             EndProperty
             Height          =   285
             Left            =   600
-            TabIndex        =   96
+            TabIndex        =   80
             Top             =   580
             Width           =   1095
          End
@@ -124,7 +368,7 @@ Begin VB.Form frmMain
             Left            =   120
             ScaleHeight     =   315
             ScaleWidth      =   315
-            TabIndex        =   95
+            TabIndex        =   79
             TabStop         =   0   'False
             Top             =   480
             Width           =   375
@@ -145,7 +389,7 @@ Begin VB.Form frmMain
             Height          =   195
             Left            =   120
             MaskColor       =   &H00404040&
-            TabIndex        =   94
+            TabIndex        =   78
             Top             =   240
             Width           =   1575
          End
@@ -173,7 +417,7 @@ Begin VB.Form frmMain
          EndProperty
          Height          =   255
          Left            =   120
-         TabIndex        =   92
+         TabIndex        =   76
          Top             =   2280
          Width           =   1575
       End
@@ -181,7 +425,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   0
          Left            =   1440
-         TabIndex        =   101
+         TabIndex        =   85
          Top             =   960
          Width           =   735
          _extentx        =   5318
@@ -190,7 +434,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":628A
+         font            =   "frmMain.frx":6E42
          mode            =   0
          value           =   0   'False
          cback           =   -2147483633
@@ -199,7 +443,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   1
          Left            =   1440
-         TabIndex        =   102
+         TabIndex        =   86
          Top             =   1440
          Width           =   735
          _extentx        =   1296
@@ -208,7 +452,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":62AE
+         font            =   "frmMain.frx":6E66
          mode            =   0
          value           =   0   'False
          cback           =   -2147483633
@@ -216,7 +460,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cmdInformacionDelMapa 
          Height          =   375
          Left            =   120
-         TabIndex        =   103
+         TabIndex        =   87
          Top             =   3720
          Width           =   2055
          _extentx        =   5318
@@ -225,7 +469,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":62D2
+         font            =   "frmMain.frx":6E8A
          mode            =   0
          value           =   0   'False
          cback           =   -2147483633
@@ -248,7 +492,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000008&
          Height          =   210
          Left            =   360
-         TabIndex        =   107
+         TabIndex        =   91
          Top             =   360
          Width           =   1290
       End
@@ -268,7 +512,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H00000000&
          Height          =   210
          Left            =   120
-         TabIndex        =   106
+         TabIndex        =   90
          Top             =   1000
          Width           =   555
       End
@@ -288,7 +532,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H00000000&
          Height          =   210
          Left            =   120
-         TabIndex        =   105
+         TabIndex        =   89
          Top             =   1500
          Width           =   630
       End
@@ -308,7 +552,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H00000000&
          Height          =   210
          Left            =   120
-         TabIndex        =   104
+         TabIndex        =   88
          Top             =   1920
          Width           =   615
       End
@@ -327,13 +571,13 @@ Begin VB.Form frmMain
          Strikethrough   =   0   'False
       EndProperty
       ForeColor       =   &H80000008&
-      Height          =   5850
+      Height          =   4380
       Left            =   120
-      ScaleHeight     =   5820
+      ScaleHeight     =   4350
       ScaleWidth      =   4425
-      TabIndex        =   90
+      TabIndex        =   74
       TabStop         =   0   'False
-      Top             =   8100
+      Top             =   9555
       Visible         =   0   'False
       Width           =   4455
    End
@@ -354,7 +598,7 @@ Begin VB.Form frmMain
       ScaleHeight     =   833
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   1169
-      TabIndex        =   89
+      TabIndex        =   73
       TabStop         =   0   'False
       Top             =   1440
       Width           =   17535
@@ -371,55 +615,14 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   1590
+      Height          =   3000
       Left            =   120
-      ScaleHeight     =   106
+      ScaleHeight     =   200
       ScaleMode       =   3  'Pixel
-      ScaleWidth      =   107
-      TabIndex        =   85
+      ScaleWidth      =   200
+      TabIndex        =   71
       Top             =   120
-      Width           =   1605
-      Begin VB.Label FPS 
-         Alignment       =   1  'Right Justify
-         AutoSize        =   -1  'True
-         BackStyle       =   0  'Transparent
-         Caption         =   "FPS: ??"
-         BeginProperty Font 
-            Name            =   "Tahoma"
-            Size            =   6
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H00C0FFFF&
-         Height          =   150
-         Left            =   1065
-         TabIndex        =   87
-         Top             =   1440
-         Width           =   450
-      End
-      Begin VB.Label POSX 
-         AutoSize        =   -1  'True
-         BackStyle       =   0  'Transparent
-         Caption         =   "X: ?? - Y:??"
-         BeginProperty Font 
-            Name            =   "Tahoma"
-            Size            =   6
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H00FFFFFF&
-         Height          =   150
-         Left            =   120
-         TabIndex        =   86
-         Top             =   1440
-         Width           =   675
-      End
+      Width           =   3000
       Begin VB.Shape ApuntadorRadar 
          BackColor       =   &H00FFFFFF&
          BorderColor     =   &H00FFFFFF&
@@ -427,23 +630,23 @@ Begin VB.Form frmMain
          DrawMode        =   6  'Mask Pen Not
          FillColor       =   &H00FFFFFF&
          Height          =   330
-         Left            =   600
-         Top             =   600
+         Left            =   1320
+         Top             =   1440
          Width           =   375
       End
       Begin VB.Shape Shape1 
          BorderColor     =   &H00000000&
-         Height          =   1365
-         Left            =   120
-         Top             =   105
-         Width           =   1365
+         Height          =   2850
+         Left            =   75
+         Top             =   75
+         Width           =   2850
       End
    End
    Begin WorldEditor.lvButtons_H SelectPanel 
       Height          =   1035
       Index           =   6
-      Left            =   11835
-      TabIndex        =   37
+      Left            =   11355
+      TabIndex        =   25
       Top             =   30
       Width           =   1815
       _extentx        =   3201
@@ -453,11 +656,11 @@ Begin VB.Form frmMain
       backstyle       =   2
       shape           =   1
       cgradient       =   8421631
-      font            =   "frmMain.frx":62F6
+      font            =   "frmMain.frx":6EAE
       mode            =   1
       value           =   0   'False
       customclick     =   1
-      image           =   "frmMain.frx":631A
+      image           =   "frmMain.frx":6ED2
       imgsize         =   24
       imgalign        =   5
       cback           =   -2147483633
@@ -466,8 +669,8 @@ Begin VB.Form frmMain
    Begin WorldEditor.lvButtons_H SelectPanel 
       Height          =   1035
       Index           =   5
-      Left            =   10320
-      TabIndex        =   36
+      Left            =   9840
+      TabIndex        =   24
       Top             =   30
       Width           =   2565
       _extentx        =   4524
@@ -477,11 +680,11 @@ Begin VB.Form frmMain
       backstyle       =   2
       shape           =   3
       cgradient       =   8421631
-      font            =   "frmMain.frx":68E0
+      font            =   "frmMain.frx":7498
       mode            =   1
       value           =   0   'False
       customclick     =   1
-      image           =   "frmMain.frx":6904
+      image           =   "frmMain.frx":74BC
       imgsize         =   24
       imgalign        =   5
       cback           =   -2147483633
@@ -490,8 +693,8 @@ Begin VB.Form frmMain
    Begin WorldEditor.lvButtons_H SelectPanel 
       Height          =   1035
       Index           =   3
-      Left            =   8955
-      TabIndex        =   35
+      Left            =   8475
+      TabIndex        =   23
       Top             =   30
       Width           =   2415
       _extentx        =   4260
@@ -501,11 +704,11 @@ Begin VB.Form frmMain
       backstyle       =   2
       shape           =   3
       cgradient       =   8421631
-      font            =   "frmMain.frx":6E06
+      font            =   "frmMain.frx":79BE
       mode            =   1
       value           =   0   'False
       customclick     =   1
-      image           =   "frmMain.frx":6E2A
+      image           =   "frmMain.frx":79E2
       imgsize         =   24
       imgalign        =   5
       cback           =   -2147483633
@@ -514,8 +717,8 @@ Begin VB.Form frmMain
    Begin WorldEditor.lvButtons_H SelectPanel 
       Height          =   1035
       Index           =   2
-      Left            =   7440
-      TabIndex        =   34
+      Left            =   6960
+      TabIndex        =   22
       Top             =   30
       Width           =   2565
       _extentx        =   4524
@@ -525,11 +728,11 @@ Begin VB.Form frmMain
       backstyle       =   2
       shape           =   3
       cgradient       =   8421631
-      font            =   "frmMain.frx":71E0
+      font            =   "frmMain.frx":7D98
       mode            =   1
       value           =   0   'False
       customclick     =   1
-      image           =   "frmMain.frx":720C
+      image           =   "frmMain.frx":7DC4
       imgsize         =   24
       imgalign        =   5
       cback           =   -2147483633
@@ -538,8 +741,8 @@ Begin VB.Form frmMain
    Begin WorldEditor.lvButtons_H SelectPanel 
       Height          =   1035
       Index           =   1
-      Left            =   5925
-      TabIndex        =   33
+      Left            =   5445
+      TabIndex        =   21
       Top             =   30
       Width           =   2565
       _extentx        =   4524
@@ -549,10 +752,10 @@ Begin VB.Form frmMain
       backstyle       =   2
       shape           =   3
       cgradient       =   8421631
-      font            =   "frmMain.frx":758E
+      font            =   "frmMain.frx":8146
       mode            =   1
       value           =   0   'False
-      image           =   "frmMain.frx":75B2
+      image           =   "frmMain.frx":816A
       imgsize         =   24
       imgalign        =   5
       cback           =   -2147483633
@@ -561,8 +764,8 @@ Begin VB.Form frmMain
    Begin WorldEditor.lvButtons_H SelectPanel 
       Height          =   1035
       Index           =   0
-      Left            =   5160
-      TabIndex        =   32
+      Left            =   4680
+      TabIndex        =   20
       Top             =   30
       Width           =   1815
       _extentx        =   3201
@@ -573,10 +776,10 @@ Begin VB.Form frmMain
       shape           =   2
       cgradient       =   8421631
       cfore           =   0
-      font            =   "frmMain.frx":AC14
+      font            =   "frmMain.frx":B7CC
       mode            =   1
       value           =   0   'False
-      image           =   "frmMain.frx":AC38
+      image           =   "frmMain.frx":B7F0
       imgsize         =   24
       imgalign        =   5
       cfhover         =   0
@@ -585,34 +788,8 @@ Begin VB.Form frmMain
    Begin VB.Timer TimAutoGuardarMapa 
       Enabled         =   0   'False
       Interval        =   60000
-      Left            =   3960
-      Top             =   1920
-   End
-   Begin VB.TextBox StatTxt 
-      Alignment       =   2  'Center
-      Appearance      =   0  'Flat
-      BackColor       =   &H00404040&
-      BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   1395
-      Left            =   15120
-      Locked          =   -1  'True
-      MultiLine       =   -1  'True
-      ScrollBars      =   2  'Vertical
-      TabIndex        =   3
-      TabStop         =   0   'False
-      Text            =   "frmMain.frx":E17E
-      Top             =   0
-      Width           =   6960
+      Left            =   22680
+      Top             =   13440
    End
    Begin VB.PictureBox pPaneles 
       Appearance      =   0  'Flat
@@ -630,11 +807,11 @@ Begin VB.Form frmMain
       ForeColor       =   &H80000008&
       Height          =   6255
       Left            =   120
-      Picture         =   "frmMain.frx":E1BE
+      Picture         =   "frmMain.frx":ED36
       ScaleHeight     =   6225
       ScaleWidth      =   4425
       TabIndex        =   2
-      Top             =   1800
+      Top             =   3240
       Width           =   4455
       Begin VB.TextBox tTY 
          BackColor       =   &H80000012&
@@ -650,7 +827,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   315
          Left            =   1200
-         TabIndex        =   76
+         TabIndex        =   62
          Text            =   "1"
          Top             =   960
          Visible         =   0   'False
@@ -670,7 +847,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   315
          Left            =   1200
-         TabIndex        =   75
+         TabIndex        =   61
          Text            =   "1"
          Top             =   600
          Visible         =   0   'False
@@ -690,7 +867,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   315
          Left            =   1200
-         TabIndex        =   74
+         TabIndex        =   60
          Text            =   "1"
          Top             =   240
          Visible         =   0   'False
@@ -699,7 +876,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cInsertarTrans 
          Height          =   375
          Left            =   240
-         TabIndex        =   77
+         TabIndex        =   63
          Top             =   1320
          Visible         =   0   'False
          Width           =   3855
@@ -709,7 +886,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68188
+         font            =   "frmMain.frx":68D00
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -717,7 +894,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cInsertarTransOBJ 
          Height          =   375
          Left            =   240
-         TabIndex        =   78
+         TabIndex        =   64
          Top             =   1680
          Visible         =   0   'False
          Width           =   3855
@@ -727,7 +904,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":681AC
+         font            =   "frmMain.frx":68D24
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -735,7 +912,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cUnionManual 
          Height          =   375
          Left            =   240
-         TabIndex        =   79
+         TabIndex        =   65
          Top             =   2160
          Visible         =   0   'False
          Width           =   3855
@@ -745,7 +922,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":681D0
+         font            =   "frmMain.frx":68D48
          mode            =   0
          value           =   0   'False
          cback           =   -2147483633
@@ -753,7 +930,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cUnionAuto 
          Height          =   375
          Left            =   240
-         TabIndex        =   80
+         TabIndex        =   66
          Top             =   2520
          Visible         =   0   'False
          Width           =   3855
@@ -763,7 +940,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":681F4
+         font            =   "frmMain.frx":68D6C
          mode            =   0
          value           =   0   'False
          cback           =   -2147483633
@@ -771,7 +948,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cQuitarTrans 
          Height          =   375
          Left            =   240
-         TabIndex        =   81
+         TabIndex        =   67
          Top             =   3000
          Visible         =   0   'False
          Width           =   3855
@@ -781,7 +958,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68218
+         font            =   "frmMain.frx":68D90
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -800,9 +977,9 @@ Begin VB.Form frmMain
          EndProperty
          ForeColor       =   &H80000014&
          Height          =   330
-         ItemData        =   "frmMain.frx":6823C
+         ItemData        =   "frmMain.frx":68DB4
          Left            =   1080
-         List            =   "frmMain.frx":6824C
+         List            =   "frmMain.frx":68DC4
          TabIndex        =   1
          TabStop         =   0   'False
          Text            =   "1"
@@ -825,7 +1002,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   330
          Left            =   2880
-         TabIndex        =   63
+         TabIndex        =   49
          Text            =   "1"
          Top             =   3120
          Visible         =   0   'False
@@ -846,7 +1023,7 @@ Begin VB.Form frmMain
          Height          =   330
          Index           =   0
          Left            =   600
-         TabIndex        =   62
+         TabIndex        =   48
          Top             =   2760
          Visible         =   0   'False
          Width           =   3615
@@ -865,11 +1042,11 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   2580
          Index           =   0
-         ItemData        =   "frmMain.frx":6825C
+         ItemData        =   "frmMain.frx":68DD4
          Left            =   120
-         List            =   "frmMain.frx":6825E
+         List            =   "frmMain.frx":68DD6
          Sorted          =   -1  'True
-         TabIndex        =   61
+         TabIndex        =   47
          Tag             =   "-1"
          Top             =   120
          Visible         =   0   'False
@@ -878,7 +1055,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cQuitarEnTodasLasCapas 
          Height          =   375
          Left            =   120
-         TabIndex        =   64
+         TabIndex        =   50
          Top             =   3840
          Visible         =   0   'False
          Width           =   2175
@@ -888,7 +1065,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68260
+         font            =   "frmMain.frx":68DD8
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -896,7 +1073,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cQuitarEnEstaCapa 
          Height          =   375
          Left            =   120
-         TabIndex        =   65
+         TabIndex        =   51
          Top             =   3480
          Visible         =   0   'False
          Width           =   2175
@@ -906,7 +1083,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68284
+         font            =   "frmMain.frx":68DFC
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -914,7 +1091,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cSeleccionarSuperficie 
          Height          =   735
          Left            =   2400
-         TabIndex        =   66
+         TabIndex        =   52
          Top             =   3480
          Visible         =   0   'False
          Width           =   1815
@@ -924,7 +1101,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":682A8
+         font            =   "frmMain.frx":68E20
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -944,10 +1121,10 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   330
          Index           =   2
-         ItemData        =   "frmMain.frx":682CC
+         ItemData        =   "frmMain.frx":68E44
          Left            =   3360
-         List            =   "frmMain.frx":682CE
-         TabIndex        =   57
+         List            =   "frmMain.frx":68E46
+         TabIndex        =   43
          Text            =   "1"
          Top             =   3120
          Visible         =   0   'False
@@ -968,9 +1145,9 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   330
          Index           =   2
-         ItemData        =   "frmMain.frx":682D0
+         ItemData        =   "frmMain.frx":68E48
          Left            =   840
-         List            =   "frmMain.frx":682D2
+         List            =   "frmMain.frx":68E4A
          TabIndex        =   0
          Text            =   "1"
          Top             =   3120
@@ -991,10 +1168,10 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   2580
          Index           =   3
-         ItemData        =   "frmMain.frx":682D4
+         ItemData        =   "frmMain.frx":68E4C
          Left            =   120
-         List            =   "frmMain.frx":682D6
-         TabIndex        =   56
+         List            =   "frmMain.frx":68E4E
+         TabIndex        =   42
          Tag             =   "-1"
          Top             =   120
          Visible         =   0   'False
@@ -1015,7 +1192,7 @@ Begin VB.Form frmMain
          Height          =   330
          Index           =   3
          Left            =   600
-         TabIndex        =   55
+         TabIndex        =   41
          Top             =   2760
          Visible         =   0   'False
          Width           =   3615
@@ -1035,10 +1212,10 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   330
          Index           =   0
-         ItemData        =   "frmMain.frx":682D8
+         ItemData        =   "frmMain.frx":68E50
          Left            =   840
-         List            =   "frmMain.frx":682DA
-         TabIndex        =   48
+         List            =   "frmMain.frx":68E52
+         TabIndex        =   34
          Text            =   "1"
          Top             =   3120
          Visible         =   0   'False
@@ -1059,10 +1236,10 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   330
          Index           =   0
-         ItemData        =   "frmMain.frx":682DC
+         ItemData        =   "frmMain.frx":68E54
          Left            =   3360
-         List            =   "frmMain.frx":682DE
-         TabIndex        =   47
+         List            =   "frmMain.frx":68E56
+         TabIndex        =   33
          Text            =   "1"
          Top             =   3120
          Visible         =   0   'False
@@ -1083,7 +1260,7 @@ Begin VB.Form frmMain
          Height          =   330
          Index           =   1
          Left            =   600
-         TabIndex        =   46
+         TabIndex        =   32
          Top             =   2760
          Visible         =   0   'False
          Width           =   3615
@@ -1102,10 +1279,10 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   2580
          Index           =   1
-         ItemData        =   "frmMain.frx":682E0
+         ItemData        =   "frmMain.frx":68E58
          Left            =   120
-         List            =   "frmMain.frx":682E2
-         TabIndex        =   45
+         List            =   "frmMain.frx":68E5A
+         TabIndex        =   31
          Tag             =   "-1"
          Top             =   120
          Visible         =   0   'False
@@ -1125,10 +1302,10 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   3210
          Index           =   4
-         ItemData        =   "frmMain.frx":682E4
+         ItemData        =   "frmMain.frx":68E5C
          Left            =   120
-         List            =   "frmMain.frx":682E6
-         TabIndex        =   44
+         List            =   "frmMain.frx":68E5E
+         TabIndex        =   30
          Tag             =   "-1"
          Top             =   120
          Visible         =   0   'False
@@ -1148,7 +1325,7 @@ Begin VB.Form frmMain
          Left            =   0
          ScaleHeight     =   0
          ScaleWidth      =   0
-         TabIndex        =   4
+         TabIndex        =   3
          Top             =   0
          Width           =   0
       End
@@ -1166,7 +1343,7 @@ Begin VB.Form frmMain
          Left            =   0
          ScaleHeight     =   0
          ScaleWidth      =   0
-         TabIndex        =   5
+         TabIndex        =   4
          Top             =   0
          Width           =   0
       End
@@ -1184,7 +1361,7 @@ Begin VB.Form frmMain
          Left            =   0
          ScaleHeight     =   0
          ScaleWidth      =   0
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   0
          Width           =   0
       End
@@ -1202,7 +1379,7 @@ Begin VB.Form frmMain
          Left            =   0
          ScaleHeight     =   0
          ScaleWidth      =   0
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   0
          Width           =   0
       End
@@ -1220,7 +1397,7 @@ Begin VB.Form frmMain
          Left            =   0
          ScaleHeight     =   0
          ScaleWidth      =   0
-         TabIndex        =   8
+         TabIndex        =   7
          Top             =   0
          Width           =   0
       End
@@ -1238,14 +1415,14 @@ Begin VB.Form frmMain
          Left            =   0
          ScaleHeight     =   0
          ScaleWidth      =   0
-         TabIndex        =   40
+         TabIndex        =   26
          Top             =   0
          Width           =   0
       End
       Begin WorldEditor.lvButtons_H cQuitarTrigger 
          Height          =   375
          Left            =   120
-         TabIndex        =   41
+         TabIndex        =   27
          Top             =   3840
          Visible         =   0   'False
          Width           =   2175
@@ -1255,7 +1432,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":682E8
+         font            =   "frmMain.frx":68E60
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1263,7 +1440,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cVerTriggers 
          Height          =   375
          Left            =   120
-         TabIndex        =   42
+         TabIndex        =   28
          Top             =   3480
          Visible         =   0   'False
          Width           =   2175
@@ -1273,7 +1450,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":6830C
+         font            =   "frmMain.frx":68E84
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1281,7 +1458,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cInsertarTrigger 
          Height          =   735
          Left            =   2400
-         TabIndex        =   43
+         TabIndex        =   29
          Top             =   3480
          Visible         =   0   'False
          Width           =   1815
@@ -1291,7 +1468,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68330
+         font            =   "frmMain.frx":68EA8
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1300,7 +1477,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   0
          Left            =   120
-         TabIndex        =   49
+         TabIndex        =   35
          Top             =   3480
          Visible         =   0   'False
          Width           =   2175
@@ -1310,7 +1487,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68354
+         font            =   "frmMain.frx":68ECC
          mode            =   0
          value           =   0   'False
          cback           =   -2147483633
@@ -1319,7 +1496,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   0
          Left            =   120
-         TabIndex        =   50
+         TabIndex        =   36
          Top             =   3840
          Visible         =   0   'False
          Width           =   2175
@@ -1329,7 +1506,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68378
+         font            =   "frmMain.frx":68EF0
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1338,7 +1515,7 @@ Begin VB.Form frmMain
          Height          =   735
          Index           =   0
          Left            =   2400
-         TabIndex        =   51
+         TabIndex        =   37
          Top             =   3480
          Visible         =   0   'False
          Width           =   1815
@@ -1348,7 +1525,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":6839C
+         font            =   "frmMain.frx":68F14
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1356,7 +1533,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cVerBloqueos 
          Height          =   495
          Left            =   120
-         TabIndex        =   52
+         TabIndex        =   38
          Top             =   120
          Visible         =   0   'False
          Width           =   4095
@@ -1366,7 +1543,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":683C0
+         font            =   "frmMain.frx":68F38
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1374,7 +1551,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cInsertarBloqueo 
          Height          =   735
          Left            =   120
-         TabIndex        =   53
+         TabIndex        =   39
          Top             =   720
          Visible         =   0   'False
          Width           =   4095
@@ -1384,7 +1561,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":683E4
+         font            =   "frmMain.frx":68F5C
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1392,7 +1569,7 @@ Begin VB.Form frmMain
       Begin WorldEditor.lvButtons_H cQuitarBloqueo 
          Height          =   735
          Left            =   120
-         TabIndex        =   54
+         TabIndex        =   40
          Top             =   1560
          Visible         =   0   'False
          Width           =   4095
@@ -1402,7 +1579,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68408
+         font            =   "frmMain.frx":68F80
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1411,7 +1588,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   2
          Left            =   120
-         TabIndex        =   58
+         TabIndex        =   44
          Top             =   3480
          Visible         =   0   'False
          Width           =   2175
@@ -1421,7 +1598,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":6842C
+         font            =   "frmMain.frx":68FA4
          mode            =   0
          value           =   0   'False
          cback           =   -2147483633
@@ -1430,7 +1607,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   2
          Left            =   120
-         TabIndex        =   59
+         TabIndex        =   45
          Top             =   3840
          Visible         =   0   'False
          Width           =   2175
@@ -1440,7 +1617,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68450
+         font            =   "frmMain.frx":68FC8
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1449,7 +1626,7 @@ Begin VB.Form frmMain
          Height          =   735
          Index           =   2
          Left            =   2400
-         TabIndex        =   60
+         TabIndex        =   46
          Top             =   3480
          Visible         =   0   'False
          Width           =   1815
@@ -1459,7 +1636,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68474
+         font            =   "frmMain.frx":68FEC
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1468,7 +1645,7 @@ Begin VB.Form frmMain
          Height          =   735
          Index           =   1
          Left            =   2400
-         TabIndex        =   73
+         TabIndex        =   59
          Top             =   3480
          Visible         =   0   'False
          Width           =   1815
@@ -1478,7 +1655,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":68498
+         font            =   "frmMain.frx":69010
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1487,7 +1664,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   1
          Left            =   120
-         TabIndex        =   72
+         TabIndex        =   58
          Top             =   3840
          Visible         =   0   'False
          Width           =   2175
@@ -1497,7 +1674,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":684BC
+         font            =   "frmMain.frx":69034
          mode            =   1
          value           =   0   'False
          cback           =   -2147483633
@@ -1506,7 +1683,7 @@ Begin VB.Form frmMain
          Height          =   375
          Index           =   1
          Left            =   120
-         TabIndex        =   71
+         TabIndex        =   57
          Top             =   3480
          Visible         =   0   'False
          Width           =   2175
@@ -1516,7 +1693,7 @@ Begin VB.Form frmMain
          capalign        =   2
          backstyle       =   2
          cgradient       =   0
-         font            =   "frmMain.frx":684E0
+         font            =   "frmMain.frx":69058
          mode            =   0
          value           =   0   'False
          cback           =   -2147483633
@@ -1536,10 +1713,10 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   330
          Index           =   1
-         ItemData        =   "frmMain.frx":68504
+         ItemData        =   "frmMain.frx":6907C
          Left            =   840
-         List            =   "frmMain.frx":68506
-         TabIndex        =   67
+         List            =   "frmMain.frx":6907E
+         TabIndex        =   53
          Text            =   "1"
          Top             =   3120
          Visible         =   0   'False
@@ -1560,7 +1737,7 @@ Begin VB.Form frmMain
          Height          =   330
          Index           =   2
          Left            =   600
-         TabIndex        =   68
+         TabIndex        =   54
          Top             =   2760
          Visible         =   0   'False
          Width           =   3615
@@ -1579,10 +1756,10 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   2580
          Index           =   2
-         ItemData        =   "frmMain.frx":68508
+         ItemData        =   "frmMain.frx":69080
          Left            =   120
-         List            =   "frmMain.frx":6850A
-         TabIndex        =   69
+         List            =   "frmMain.frx":69082
+         TabIndex        =   55
          Tag             =   "-1"
          Top             =   120
          Visible         =   0   'False
@@ -1603,10 +1780,10 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   330
          Index           =   1
-         ItemData        =   "frmMain.frx":6850C
+         ItemData        =   "frmMain.frx":69084
          Left            =   3360
-         List            =   "frmMain.frx":6850E
-         TabIndex        =   70
+         List            =   "frmMain.frx":69086
+         TabIndex        =   56
          Text            =   "500"
          Top             =   3120
          Visible         =   0   'False
@@ -1628,7 +1805,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   210
          Left            =   240
-         TabIndex        =   84
+         TabIndex        =   70
          Top             =   1005
          Visible         =   0   'False
          Width           =   735
@@ -1649,7 +1826,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   210
          Left            =   240
-         TabIndex        =   83
+         TabIndex        =   69
          Top             =   645
          Visible         =   0   'False
          Width           =   900
@@ -1670,7 +1847,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   210
          Left            =   240
-         TabIndex        =   82
+         TabIndex        =   68
          Top             =   285
          Visible         =   0   'False
          Width           =   435
@@ -1692,7 +1869,7 @@ Begin VB.Form frmMain
          Height          =   210
          Index           =   0
          Left            =   120
-         TabIndex        =   20
+         TabIndex        =   19
          Top             =   2820
          Visible         =   0   'False
          Width           =   450
@@ -1713,7 +1890,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   210
          Left            =   120
-         TabIndex        =   19
+         TabIndex        =   18
          Top             =   3195
          Visible         =   0   'False
          Width           =   930
@@ -1734,7 +1911,7 @@ Begin VB.Form frmMain
          ForeColor       =   &H80000014&
          Height          =   210
          Left            =   2040
-         TabIndex        =   18
+         TabIndex        =   17
          Top             =   3195
          Visible         =   0   'False
          Width           =   840
@@ -1756,7 +1933,7 @@ Begin VB.Form frmMain
          Height          =   210
          Index           =   1
          Left            =   2160
-         TabIndex        =   17
+         TabIndex        =   16
          Top             =   3195
          Visible         =   0   'False
          Width           =   1170
@@ -1778,7 +1955,7 @@ Begin VB.Form frmMain
          Height          =   210
          Index           =   1
          Left            =   120
-         TabIndex        =   16
+         TabIndex        =   15
          Top             =   3195
          Visible         =   0   'False
          Width           =   675
@@ -1800,7 +1977,7 @@ Begin VB.Form frmMain
          Height          =   210
          Index           =   2
          Left            =   120
-         TabIndex        =   15
+         TabIndex        =   14
          Top             =   2820
          Visible         =   0   'False
          Width           =   450
@@ -1822,7 +1999,7 @@ Begin VB.Form frmMain
          Height          =   210
          Index           =   2
          Left            =   2160
-         TabIndex        =   14
+         TabIndex        =   13
          Top             =   3195
          Visible         =   0   'False
          Width           =   1170
@@ -1844,7 +2021,7 @@ Begin VB.Form frmMain
          Height          =   210
          Index           =   2
          Left            =   120
-         TabIndex        =   13
+         TabIndex        =   12
          Top             =   3195
          Visible         =   0   'False
          Width           =   675
@@ -1866,7 +2043,7 @@ Begin VB.Form frmMain
          Height          =   210
          Index           =   3
          Left            =   120
-         TabIndex        =   12
+         TabIndex        =   11
          Top             =   2820
          Visible         =   0   'False
          Width           =   450
@@ -1888,7 +2065,7 @@ Begin VB.Form frmMain
          Height          =   210
          Index           =   0
          Left            =   120
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   3195
          Visible         =   0   'False
          Width           =   675
@@ -1910,7 +2087,7 @@ Begin VB.Form frmMain
          Height          =   210
          Index           =   0
          Left            =   2160
-         TabIndex        =   10
+         TabIndex        =   9
          Top             =   3195
          Visible         =   0   'False
          Width           =   1170
@@ -1932,15 +2109,15 @@ Begin VB.Form frmMain
          Height          =   210
          Index           =   1
          Left            =   120
-         TabIndex        =   9
+         TabIndex        =   8
          Top             =   2820
          Visible         =   0   'False
          Width           =   450
       End
    End
    Begin MSComDlg.CommonDialog Dialog 
-      Left            =   2565
-      Top             =   2025
+      Left            =   22200
+      Top             =   13440
       _ExtentX        =   847
       _ExtentY        =   847
       _Version        =   393216
@@ -1948,8 +2125,8 @@ Begin VB.Form frmMain
    Begin WorldEditor.lvButtons_H SelectPanel 
       Height          =   675
       Index           =   4
-      Left            =   9840
-      TabIndex        =   88
+      Left            =   9360
+      TabIndex        =   72
       Top             =   240
       Visible         =   0   'False
       Width           =   900
@@ -1960,50 +2137,49 @@ Begin VB.Form frmMain
       backstyle       =   2
       shape           =   3
       cgradient       =   8421631
-      font            =   "frmMain.frx":68510
+      font            =   "frmMain.frx":69088
       mode            =   1
       value           =   0   'False
       customclick     =   1
-      image           =   "frmMain.frx":68534
+      image           =   "frmMain.frx":690AC
       imgsize         =   24
       imgalign        =   5
       cback           =   -2147483633
       lockhover       =   1
    End
-   Begin VB.Line Separacion1 
-      BorderColor     =   &H00FFFFFF&
-      Index           =   1
-      X1              =   329
-      X2              =   329
-      Y1              =   8
-      Y2              =   88
-   End
-   Begin VB.Line Separacion2 
-      BorderColor     =   &H00FFFFFF&
-      Index           =   1
-      X1              =   337
-      X2              =   337
-      Y1              =   8
-      Y2              =   88
-   End
-   Begin VB.Line Separacion2 
-      BorderColor     =   &H00808080&
-      Index           =   0
-      X1              =   336
-      X2              =   336
-      Y1              =   8
-      Y2              =   88
-   End
-   Begin VB.Line Separacion1 
-      BorderColor     =   &H00808080&
-      Index           =   0
-      X1              =   328
-      X2              =   328
-      Y1              =   8
-      Y2              =   88
+   Begin RichTextLib.RichTextBox StatTxt 
+      Height          =   1425
+      Left            =   17100
+      TabIndex        =   92
+      TabStop         =   0   'False
+      ToolTipText     =   "Mensajes del servidor"
+      Top             =   0
+      Width           =   5055
+      _ExtentX        =   8916
+      _ExtentY        =   2514
+      _Version        =   393217
+      BackColor       =   0
+      BorderStyle     =   0
+      Enabled         =   -1  'True
+      ReadOnly        =   -1  'True
+      ScrollBars      =   2
+      DisableNoScroll =   -1  'True
+      Appearance      =   0
+      TextRTF         =   $"frmMain.frx":69462
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2015,16 +2191,91 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
+      Height          =   255
+      Index           =   15
+      Left            =   16200
+      TabIndex        =   107
+      Top             =   1080
+      Visible         =   0   'False
+      Width           =   750
+   End
+   Begin VB.Label MapPest 
+      Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
+      BorderStyle     =   1  'Fixed Single
+      Caption         =   "Mapa1"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H80000008&
+      Height          =   255
+      Index           =   13
+      Left            =   14640
+      TabIndex        =   108
+      Top             =   1080
+      Visible         =   0   'False
+      Width           =   750
+   End
+   Begin VB.Label MapPest 
+      Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
+      BorderStyle     =   1  'Fixed Single
+      Caption         =   "Mapa1"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H80000008&
+      Height          =   255
+      Index           =   14
+      Left            =   15420
+      TabIndex        =   109
+      Top             =   1080
+      Visible         =   0   'False
+      Width           =   750
+   End
+   Begin VB.Label MapPest 
+      Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
+      BorderStyle     =   1  'Fixed Single
+      Caption         =   "Mapa1"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   12
-      Left            =   14340
-      TabIndex        =   39
+      Left            =   13860
+      TabIndex        =   110
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2036,16 +2287,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   11
-      Left            =   13575
-      TabIndex        =   38
+      Left            =   13095
+      TabIndex        =   111
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2057,16 +2311,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   1
-      Left            =   5925
-      TabIndex        =   31
+      Left            =   5445
+      TabIndex        =   112
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2078,16 +2335,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   2
-      Left            =   6690
-      TabIndex        =   30
+      Left            =   6210
+      TabIndex        =   113
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2099,17 +2359,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   3
-      Left            =   7455
-      TabIndex        =   29
+      Left            =   6975
+      TabIndex        =   114
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
-      BackColor       =   &H00C0FFC0&
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2121,16 +2383,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   4
-      Left            =   8220
-      TabIndex        =   28
+      Left            =   7740
+      TabIndex        =   115
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2142,16 +2407,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   5
-      Left            =   8985
-      TabIndex        =   27
+      Left            =   8505
+      TabIndex        =   116
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2163,16 +2431,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   6
-      Left            =   9750
-      TabIndex        =   26
+      Left            =   9270
+      TabIndex        =   117
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H0080C0FF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2184,16 +2455,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   7
-      Left            =   10515
-      TabIndex        =   25
+      Left            =   10035
+      TabIndex        =   118
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2205,16 +2479,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   8
-      Left            =   11280
-      TabIndex        =   24
+      Left            =   10800
+      TabIndex        =   119
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2226,16 +2503,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   9
-      Left            =   12045
-      TabIndex        =   23
+      Left            =   11565
+      TabIndex        =   120
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2247,16 +2527,19 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   0
-      Left            =   5160
-      TabIndex        =   22
+      Left            =   4680
+      TabIndex        =   121
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
    End
    Begin VB.Label MapPest 
       Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00FFFFFF&
       BorderStyle     =   1  'Fixed Single
       Caption         =   "Mapa1"
       BeginProperty Font 
@@ -2268,10 +2551,11 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ForeColor       =   &H80000008&
       Height          =   255
       Index           =   10
-      Left            =   12810
-      TabIndex        =   21
+      Left            =   12330
+      TabIndex        =   122
       Top             =   1080
       Visible         =   0   'False
       Width           =   750
@@ -2287,7 +2571,12 @@ Begin VB.Form frmMain
       End
       Begin VB.Menu mnuAbrirMapa 
          Caption         =   "&Abrir Mapa"
+         Index           =   0
          Shortcut        =   ^A
+      End
+      Begin VB.Menu mnuAbrirMapa 
+         Caption         =   "&Abrir Mapa (Int)"
+         Index           =   1
       End
       Begin VB.Menu mnuArchivoLine2 
          Caption         =   "-"
@@ -2438,9 +2727,6 @@ Begin VB.Form frmMain
             Caption         =   "Auto-&Quitar Funciones"
             Checked         =   -1  'True
          End
-      End
-      Begin VB.Menu mnuConfigAvanzada 
-         Caption         =   "Configuracion A&vanzada de Superficie"
       End
       Begin VB.Menu mnuLineEdicion4 
          Caption         =   "-"
@@ -2678,7 +2964,7 @@ Private Sub PonerAlAzar(ByVal n As Integer, T As Byte)
 'Author: Unkwown
 'Last modified: 20/05/06 by GS
 '*************************************************
-    Dim objindex As Long
+    Dim ObjIndex As Long
     Dim NPCIndex As Long
     Dim X, Y, i
     Dim Head As Integer
@@ -2695,7 +2981,7 @@ Private Sub PonerAlAzar(ByVal n As Integer, T As Byte)
         
         Select Case T
             Case 0
-                If MapData(X, Y).OBJInfo.objindex = 0 Then
+                If MapData(X, Y).OBJInfo.ObjIndex = 0 Then
                       i = i - 1
                       If cInsertarBloqueo.value = True Then
                         MapData(X, Y).Blocked = 1
@@ -2703,11 +2989,11 @@ Private Sub PonerAlAzar(ByVal n As Integer, T As Byte)
                         MapData(X, Y).Blocked = 0
                       End If
                       If cNumFunc(2).Text > 0 Then
-                          objindex = cNumFunc(2).Text
-                          InitGrh MapData(X, Y).ObjGrh, ObjData(objindex).GrhIndex
-                          MapData(X, Y).OBJInfo.objindex = objindex
+                          ObjIndex = cNumFunc(2).Text
+                          InitGrh MapData(X, Y).ObjGrh, ObjData(ObjIndex).GrhIndex
+                          MapData(X, Y).OBJInfo.ObjIndex = ObjIndex
                           MapData(X, Y).OBJInfo.Amount = Val(cCantFunc(2).Text)
-                          Select Case ObjData(objindex).ObjType ' GS
+                          Select Case ObjData(ObjIndex).ObjType ' GS
                                 Case 4, 8, 10, 22 ' Arboles, Carteles, Foros, Yacimientos
                                     MapData(X, Y).Graphic(3) = MapData(X, Y).ObjGrh
                           End Select
@@ -2886,6 +3172,41 @@ Private Sub cInsertarTrigger_Click()
     End If
 End Sub
 
+
+Private Sub cmdDM_Click(Index As Integer)
+
+    On Error GoTo cmdDM_Click_Err
+    
+    DespMosaic.value = vbChecked
+
+    Select Case Index
+
+        Case 0 'A
+    
+            DMLargo.Text = Val(DMLargo.Text) + 1
+
+        Case 1 '<
+            DMAncho.Text = Val(DMAncho.Text) + 1
+
+        Case 2 '>
+            DMAncho.Text = Val(DMAncho.Text) - 1
+
+        Case 3 'V
+            DMLargo.Text = Val(DMLargo.Text) - 1
+
+        Case 4 '0
+            DMAncho.Text = 0
+            DMLargo.Text = 0
+
+    End Select
+
+    
+    Exit Sub
+
+cmdDM_Click_Err:
+    Call RegistrarError(Err.Number, Err.Description, "FrmMain.cmdDM_Click", Erl)
+    Resume Next
+End Sub
 
 Private Sub cmdInformacionDelMapa_Click()
 '*************************************************
@@ -3338,27 +3659,80 @@ End Sub
 Private Sub MapPest_Click(Index As Integer)
 '*************************************************
 'Author: ^[GS]^
-'Last modified: 20/05/06
+'Last modified: 20/03/2021
+'Lorwik> Ahora distingue entre csm y map
 '*************************************************
+    Dim Formato As String
+
+    Select Case frmMain.Dialog.FilterIndex
+    
+        Case 1
+            Formato = ".csm"
+            
+        Case 2
+            Formato = ".map"
+            
+    End Select
+    
+    
+    If MapInfo.Changed = 1 Then
+        If MsgBox(MSGMod, vbExclamation + vbYesNo) = vbYes Then _
+            Call modMapIO.GuardarMapa(Dialog.filename)
+
+    End If
+        
+        
     If (Index + NumMap_Save - 4) <> NumMap_Save Then
         Dialog.CancelError = True
-        On Error GoTo errhandler
-        Dialog.filename = PATH_Save & NameMap_Save & (Index + NumMap_Save - 4) & ".map"
-        If MapInfo.Changed = 1 Then
-            If MsgBox(MSGMod, vbExclamation + vbYesNo) = vbYes Then
-                modMapIO.GuardarMapa Dialog.filename
-            End If
-        End If
-            Call modMapIO.NuevoMapa
-            DoEvents
-            modMapIO.AbrirMapa Dialog.filename
-            EngineRun = True
-        Exit Sub
+
+        On Error GoTo ErrHandler
+
+        Dialog.filename = PATH_Save & NameMap_Save & (Index + NumMap_Save - 7) & Formato
         
-errhandler:
-        MsgBox Err.Description
-    
+        Call modMapIO.NuevoMapa
+        
+        DoEvents
+        Select Case frmMain.Dialog.FilterIndex
+        
+            Case 1
+                Call modMapWinter.Cargar_CSM(Dialog.filename)
+                
+            Case 2
+                If TipoMapaCargado = eTipoMapa.tInt Then
+                    Call modMapIO.MapaV2_Cargar(Dialog.filename, True)
+                    
+                Else
+                    Call modMapIO.MapaV2_Cargar(Dialog.filename)
+                    
+                End If
+            
+        End Select
+        
+        EngineRun = True
+        
     End If
+    
+        Exit Sub
+    
+ErrHandler:
+        Call MsgBox(Err.Description)
+End Sub
+
+Private Sub mnuAbrirMapa_Click(Index As Integer)
+'*************************************************
+'Author: Lorwik
+'Last modified: 25/04/2020
+'*************************************************
+    Select Case Index
+    
+        Case 0
+            Call AbrirMapa(False)
+            
+        Case 1
+            Call AbrirMapa(True)
+            
+    End Select
+    
 End Sub
 
 Private Sub mnuActualizarCabezas_Click()
@@ -3387,34 +3761,6 @@ Private Sub mnuActualizarSuperficies_Click()
 'Last modified: 20/05/06
 '*************************************************
     Call modIndices.CargarIndicesSuperficie
-End Sub
-
-Private Sub mnuAbrirMapa_Click()
-'*************************************************
-'Author: ^[GS]^
-'Last modified: 20/05/06
-'*************************************************
-    Dialog.CancelError = True
-    On Error GoTo errhandler
-    
-    DeseaGuardarMapa Dialog.filename
-    
-    ObtenerNombreArchivo False
-    
-    If Len(Dialog.filename) < 3 Then Exit Sub
-    
-        If WalkMode = True Then
-            Call modGeneral.ToggleWalkMode
-        End If
-        
-        Call modMapIO.NuevoMapa
-        modMapIO.AbrirMapa Dialog.filename
-        DoEvents
-        mnuReAbrirMapa.Enabled = True
-        EngineRun = True
-    
-    Exit Sub
-errhandler:
 End Sub
 
 Private Sub mnuacercade_Click()
@@ -3533,14 +3879,6 @@ Private Sub mnuBloquearS_Click()
 '*************************************************
     Call modEdicion.Deshacer_Add("Bloquear Selección")
     Call BlockearSeleccion
-End Sub
-
-Private Sub mnuConfigAvanzada_Click()
-'*************************************************
-'Author: ^[GS]^
-'Last modified: 20/05/06
-'*************************************************
-    frmConfigSup.Show
 End Sub
 
 Private Sub mnuConfigObjTrans_Click()
@@ -3985,7 +4323,7 @@ Private Sub mnuReAbrirMapa_Click()
 'Author: ^[GS]^
 'Last modified: 20/05/06
 '*************************************************
-On Error GoTo errhandler
+On Error GoTo ErrHandler
     If FileExist(Dialog.filename, vbArchive) = False Then Exit Sub
     
     If MapInfo.Changed = 1 Then
@@ -4002,7 +4340,7 @@ On Error GoTo errhandler
     EngineRun = True
     
     Exit Sub
-errhandler:
+ErrHandler:
 End Sub
 
 Private Sub mnuRealizarOperacion_Click()
@@ -4221,8 +4559,10 @@ Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y A
         Seleccionando = True
         SeleccionIX = tX '+ UserPos.X
         SeleccionIY = tY '+ UserPos.Y
+        
     Else
         ClickEdit Button, tX, tY
+        
     End If
 
 End Sub
@@ -4246,15 +4586,7 @@ Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y A
     
     Call ConvertCPtoTP(MouseX, MouseY, tX, tY)
     
-    POSX.Caption = "X: " & tX & " - Y: " & tY
-    
-    If tX < 10 Or tY < 10 Or tX > 90 Or tY > 90 Then
-        POSX.ForeColor = vbRed
-        
-    Else
-        POSX.ForeColor = vbWhite
-        
-    End If
+    MousePos = "X: " & tX & " - Y: " & tY
     
     If Shift = 1 And Button = 1 Then
         Seleccionando = True
@@ -4345,9 +4677,9 @@ Public Sub ObtenerNombreArchivo(ByVal Guardar As Boolean)
 'Author: Unkwown
 'Last modified: 20/05/06
 '*************************************************
-
+On Error Resume Next
     With Dialog
-        .Filter = "Mapas de Argentum Online (*.map)|*.map"
+        .Filter = "Mapas del nuevo formato (*.csm)|*.csm|Mapas clasicos de Argentum Online (*.map)|*.map"
         If Guardar Then
                 .DialogTitle = "Guardar"
                 .DefaultExt = ".txt"

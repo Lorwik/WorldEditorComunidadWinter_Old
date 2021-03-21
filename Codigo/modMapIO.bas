@@ -69,28 +69,13 @@ Public Function FileExist(ByVal File As String, ByVal FileType As VbFileAttribut
 'Author: Unkwown
 'Last modified: 26/05/06
 '*************************************************
-If LenB(Dir(File, FileType)) = 0 Then
-    FileExist = False
-Else
-    FileExist = True
-End If
+    If LenB(Dir(File, FileType)) = 0 Then
+        FileExist = False
+    Else
+        FileExist = True
+    End If
 
 End Function
-
-''
-' Abre un Mapa
-'
-' @param Path Especifica el path del mapa
-
-Public Sub AbrirMapa(ByVal Path As String)
-'*************************************************
-'Author: ^[GS]^
-'Last modified: 01/11/08
-'*************************************************
-
-Call MapaV2_Cargar(Path)
-
-End Sub
 
 ''
 ' Guarda el Mapa
@@ -103,16 +88,16 @@ Public Sub GuardarMapa(Optional Path As String)
 'Last modified: 01/11/08
 '*************************************************
 
-frmMain.Dialog.CancelError = True
-On Error GoTo errhandler
-
-If LenB(Path) = 0 Then
-    frmMain.ObtenerNombreArchivo True
-    Path = frmMain.Dialog.filename
-    If LenB(Path) = 0 Then Exit Sub
-End If
-
-Call MapaV2_Guardar(Path)
+    frmMain.Dialog.CancelError = True
+    On Error GoTo errhandler
+    
+    If LenB(Path) = 0 Then
+        frmMain.ObtenerNombreArchivo True
+        Path = frmMain.Dialog.filename
+        If LenB(Path) = 0 Then Exit Sub
+    End If
+    
+    Call MapaV2_Guardar(Path)
 
 errhandler:
 End Sub
@@ -128,11 +113,11 @@ Public Sub DeseaGuardarMapa(Optional Path As String)
 'Last modified: 20/05/06
 '*************************************************
 
-If MapInfo.Changed = 1 Then
-    If MsgBox(MSGMod, vbExclamation + vbYesNo) = vbYes Then
-        GuardarMapa Path
+    If MapInfo.Changed = 1 Then
+        If MsgBox(MSGMod, vbExclamation + vbYesNo) = vbYes Then
+            GuardarMapa Path
+        End If
     End If
-End If
 End Sub
 
 ''
@@ -157,7 +142,7 @@ Public Sub NuevoMapa()
     'frmMain.mnuUtirialNuevoFormato.Checked = True
     frmMain.mnuReAbrirMapa.Enabled = False
     frmMain.TimAutoGuardarMapa.Enabled = False
-    frmMain.lblMapVersion.Text = 0
+    frmMain.txtMapVersion.Text = 0
     
     MapaCargado = False
     
@@ -190,7 +175,7 @@ Public Sub NuevoMapa()
                 End If
         
                 ' OBJs
-                .OBJInfo.objindex = 0
+                .OBJInfo.ObjIndex = 0
                 .OBJInfo.Amount = 0
                 .ObjGrh.GrhIndex = 0
         
@@ -250,57 +235,67 @@ End Sub
 '
 ' @param SaveAs Especifica donde guardar el mapa
 
-Public Sub MapaV2_Guardar(ByVal SaveAs As String)
-'*************************************************
-'Author: ^[GS]^
-'Last modified: 20/05/06
-'*************************************************
+Public Sub MapaV2_Guardar(ByVal SaveAs As String, Optional ByVal Preguntar As Boolean = True)
+    '*************************************************
+    'Author: ^[GS]^
+    'Last modified: 20/05/06
+    '*************************************************
 
-On Error GoTo ErrorSave
-Dim FreeFileMap As Long
-Dim FreeFileInf As Long
-Dim loopc As Long
-Dim TempInt As Integer
-Dim Y As Long
-Dim X As Long
-Dim ByFlags As Byte
+    On Error GoTo ErrorSave
 
-If FileExist(SaveAs, vbNormal) = True Then
-    If MsgBox("¿Desea sobrescribir " & SaveAs & "?", vbCritical + vbYesNo) = vbNo Then
-        Exit Sub
-    Else
-        Kill SaveAs
+    Dim FreeFileMap As Long
+    Dim FreeFileInf As Long
+    Dim loopc       As Long
+    Dim TempInt     As Integer
+    Dim Y           As Long
+    Dim X           As Long
+    Dim ByFlags     As Byte
+
+    If FileExist(SaveAs, vbNormal) = True Then
+        
+        If Preguntar Then
+            If MsgBox("¿Desea sobrescribir " & SaveAs & "?", vbCritical + vbYesNo) = vbNo Then
+                Exit Sub
+            Else
+                Call Kill(SaveAs)
+            End If
+        
+        Else
+            Call Kill(SaveAs)
+            
+        End If
+        
     End If
-End If
 
-frmMain.MousePointer = 11
+    frmMain.MousePointer = 11
 
-' y borramos el .inf tambien
-If FileExist(Left(SaveAs, Len(SaveAs) - 4) & ".inf", vbNormal) = True Then
-    Kill Left(SaveAs, Len(SaveAs) - 4) & ".inf"
-End If
+    ' y borramos el .inf tambien
+    If FileExist(Left$(SaveAs, Len(SaveAs) - 4) & ".inf", vbNormal) = True Then
+        Call Kill(Left$(SaveAs, Len(SaveAs) - 4) & ".inf")
+    End If
 
-'Open .map file
-FreeFileMap = FreeFile
-Open SaveAs For Binary As FreeFileMap
-Seek FreeFileMap, 1
+    'Open .map file
+    FreeFileMap = FreeFile
+    Open SaveAs For Binary As FreeFileMap
+    Seek FreeFileMap, 1
 
-SaveAs = Left(SaveAs, Len(SaveAs) - 4)
-SaveAs = SaveAs & ".inf"
+    SaveAs = Left$(SaveAs, Len(SaveAs) - 4)
+    SaveAs = SaveAs & ".inf"
 
-'Open .inf file
-FreeFileInf = FreeFile
-Open SaveAs For Binary As FreeFileInf
-Seek FreeFileInf, 1
+    'Open .inf file
+    FreeFileInf = FreeFile
+    Open SaveAs For Binary As FreeFileInf
+    Seek FreeFileInf, 1
 
     'map Header
     
     ' Version del Mapa
-    If frmMain.lblMapVersion.Text < 32767 Then
-        frmMain.lblMapVersion.Text = frmMain.lblMapVersion + 1
-        frmMapInfo.txtMapVersion = frmMain.lblMapVersion.Text
+    If frmMain.txtMapVersion.Text < 32767 Then
+        frmMain.txtMapVersion.Text = frmMain.txtMapVersion + 1
+        frmMapInfo.txtMapVersion = frmMain.txtMapVersion.Text
     End If
-    Put FreeFileMap, , CInt(frmMain.lblMapVersion.Text)
+
+    Put FreeFileMap, , CInt(frmMain.txtMapVersion.Text)
     Put FreeFileMap, , MiCabecera
     Put FreeFileMap, , TempInt
     Put FreeFileMap, , TempInt
@@ -318,51 +313,66 @@ Seek FreeFileInf, 1
     For Y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
             
+            With MapData(X, Y)
+            
                 ByFlags = 0
                 
-                If MapData(X, Y).Blocked = 1 Then ByFlags = ByFlags Or 1
-                If MapData(X, Y).Graphic(2).GrhIndex Then ByFlags = ByFlags Or 2
-                If MapData(X, Y).Graphic(3).GrhIndex Then ByFlags = ByFlags Or 4
-                If MapData(X, Y).Graphic(4).GrhIndex Then ByFlags = ByFlags Or 8
-                If MapData(X, Y).Trigger Then ByFlags = ByFlags Or 16
+                If .Blocked = 1 Then ByFlags = ByFlags Or 1
                 
+                If .Graphic(2).GrhIndex Then ByFlags = ByFlags Or 2
+                If .Graphic(3).GrhIndex Then ByFlags = ByFlags Or 4
+                If .Graphic(4).GrhIndex Then ByFlags = ByFlags Or 8
+
+                If .Trigger Then ByFlags = ByFlags Or 16
+                    
                 Put FreeFileMap, , ByFlags
-                
-                Put FreeFileMap, , MapData(X, Y).Graphic(1).GrhIndex
+                    
+                If TipoMapaCargado = eTipoMapa.tInt Then
+                    Put FreeFileMap, , .Graphic(1).GrhIndexInt
+                Else
+                    Put FreeFileMap, , .Graphic(1).GrhIndex
+                End If
                 
                 For loopc = 2 To 4
-                    If MapData(X, Y).Graphic(loopc).GrhIndex Then _
-                        Put FreeFileMap, , MapData(X, Y).Graphic(loopc).GrhIndex
+                    
+                    If TipoMapaCargado = eTipoMapa.tInt Then
+                        If .Graphic(loopc).GrhIndex Then Put FreeFileMap, , .Graphic(loopc).GrhIndexInt
+                    Else
+                        If .Graphic(loopc).GrhIndex Then Put FreeFileMap, , .Graphic(loopc).GrhIndex
+                    End If
+
                 Next loopc
+                    
+                If .Trigger Then Put FreeFileMap, , .Trigger
                 
-                If MapData(X, Y).Trigger Then _
-                    Put FreeFileMap, , MapData(X, Y).Trigger
-                
-                '.inf file
-                
+                'Escribimos el archivo ".INF"
                 ByFlags = 0
+                    
+                If .TileExit.Map Then ByFlags = ByFlags Or 1
                 
-                If MapData(X, Y).TileExit.Map Then ByFlags = ByFlags Or 1
-                If MapData(X, Y).NPCIndex Then ByFlags = ByFlags Or 2
-                If MapData(X, Y).OBJInfo.objindex Then ByFlags = ByFlags Or 4
+                If .NPCIndex Then ByFlags = ByFlags Or 2
                 
+                If .OBJInfo.ObjIndex Then ByFlags = ByFlags Or 4
+                    
                 Put FreeFileInf, , ByFlags
-                
-                If MapData(X, Y).TileExit.Map Then
-                    Put FreeFileInf, , MapData(X, Y).TileExit.Map
-                    Put FreeFileInf, , MapData(X, Y).TileExit.X
-                    Put FreeFileInf, , MapData(X, Y).TileExit.Y
+                    
+                If .TileExit.Map Then
+                    Put FreeFileInf, , .TileExit.Map
+                    Put FreeFileInf, , .TileExit.X
+                    Put FreeFileInf, , .TileExit.Y
                 End If
-                
-                If MapData(X, Y).NPCIndex Then
-                
-                    Put FreeFileInf, , CInt(MapData(X, Y).NPCIndex)
+                    
+                If .NPCIndex Then
+                    Put FreeFileInf, , CInt(.NPCIndex)
                 End If
-                
-                If MapData(X, Y).OBJInfo.objindex Then
-                    Put FreeFileInf, , MapData(X, Y).OBJInfo.objindex
-                    Put FreeFileInf, , MapData(X, Y).OBJInfo.Amount
+                    
+                If .OBJInfo.ObjIndex Then
+                    Put FreeFileInf, , .OBJInfo.ObjIndex
+                    Put FreeFileInf, , .OBJInfo.Amount
                 End If
+            
+            End With
+            
             
         Next X
     Next Y
@@ -373,22 +383,23 @@ Seek FreeFileInf, 1
     'Close .inf file
     Close FreeFileInf
 
+    Call Pestanas(SaveAs, ".map")
 
-Call Pestañas(SaveAs)
+    'write .dat file
+    SaveAs = Left$(SaveAs, Len(SaveAs) - 4) & ".dat"
+    Call MapInfo_Guardar(SaveAs)
 
-'write .dat file
-SaveAs = Left$(SaveAs, Len(SaveAs) - 4) & ".dat"
-MapInfo_Guardar SaveAs
+    'Change mouse icon
+    frmMain.MousePointer = 0
+    MapInfo.Changed = 0
 
-'Change mouse icon
-frmMain.MousePointer = 0
-MapInfo.Changed = 0
-
-Exit Sub
+    Exit Sub
 
 ErrorSave:
     MsgBox "Error en GuardarV2, nro. " & Err.Number & " - " & Err.Description
+
 End Sub
+
 
 ''
 ' Guardar Mapa con el formato V1
@@ -438,11 +449,11 @@ On Error GoTo ErrorSave
     Open SaveAs For Binary As FreeFileInf
     Seek FreeFileInf, 1
     'map Header
-    If frmMain.lblMapVersion.Text < 32767 Then
-        frmMain.lblMapVersion.Text = frmMain.lblMapVersion + 1
-        frmMapInfo.txtMapVersion = frmMain.lblMapVersion.Text
+    If frmMain.txtMapVersion.Text < 32767 Then
+        frmMain.txtMapVersion.Text = frmMain.txtMapVersion + 1
+        frmMapInfo.txtMapVersion = frmMain.txtMapVersion.Text
     End If
-    Put FreeFileMap, , CInt(frmMain.lblMapVersion.Text)
+    Put FreeFileMap, , CInt(frmMain.txtMapVersion.Text)
     Put FreeFileMap, , MiCabecera
     
     Put FreeFileMap, , TempInt
@@ -486,7 +497,7 @@ On Error GoTo ErrorSave
             Put FreeFileInf, , MapData(X, Y).NPCIndex
             
             'Object
-            Put FreeFileInf, , MapData(X, Y).OBJInfo.objindex
+            Put FreeFileInf, , MapData(X, Y).OBJInfo.ObjIndex
             Put FreeFileInf, , MapData(X, Y).OBJInfo.Amount
             
             'Empty place holders for future expansion
@@ -504,7 +515,7 @@ On Error GoTo ErrorSave
     Open T & "2" For Binary Access Write As FreeFileMap
         Put FreeFileMap, , MapData
     Close FreeFileMap
-    Call Pestañas(SaveAs)
+    Call Pestanas(SaveAs)
     
     'write .dat file
     SaveAs = Left(SaveAs, Len(SaveAs) - 4) & ".dat"
@@ -513,6 +524,8 @@ On Error GoTo ErrorSave
     'Change mouse icon
     frmMain.MousePointer = 0
     MapInfo.Changed = 0
+    
+    Call AddtoRichTextBox(frmMain.StatTxt, "Mapa " & Map & " guardado.", 0, 255, 0)
     
 Exit Sub
 ErrorSave:
@@ -524,34 +537,45 @@ End Sub
 '
 ' @param Map Especifica el Path del mapa
 
-Public Sub MapaV2_Cargar(ByVal Map As String)
-'*************************************************
-'Author: ^[GS]^
-'Last modified: 20/05/06
-'*************************************************
+Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolean = False)
+    '*************************************************
+    'Author: ^[GS]^
+    'Last modified: 20/05/06
+    '*************************************************
 
-On Error Resume Next
-    Dim loopc As Integer
-    Dim TempInt As Integer
-    Dim Body As Integer
-    Dim Head As Integer
-    Dim Heading As Byte
-    Dim Y As Integer
-    Dim X As Integer
-    Dim ByFlags As Byte
+    On Error Resume Next
+
+    Dim loopc       As Integer
+    Dim TempInt     As Integer
+    Dim Body        As Integer
+    Dim Head        As Integer
+    Dim Heading     As Byte
+    Dim Y           As Integer
+    Dim X           As Integer
+    Dim i           As Byte
+    Dim ByFlags     As Byte
     Dim FreeFileMap As Long
     Dim FreeFileInf As Long
+
     DoEvents
     
     'Change mouse icon
     frmMain.MousePointer = 11
        
+    'Con esto, le digo al WE que estamos usando mapas de tipo integer,
+    'lo uso mas que nada para que no crashee cargar los mapas siguientes en las Pestañas.
+    If EsInteger Then
+        TipoMapaCargado = eTipoMapa.tInt
+    Else
+        TipoMapaCargado = eTipoMapa.tLong
+    End If
+    
     'Open files
     FreeFileMap = FreeFile
     Open Map For Binary As FreeFileMap
     Seek FreeFileMap, 1
     
-    Map = Left(Map, Len(Map) - 4)
+    Map = Left$(Map, Len(Map) - 4)
     Map = Map & ".inf"
     
     FreeFileInf = FreeFile
@@ -572,82 +596,131 @@ On Error Resume Next
     Get FreeFileInf, , TempInt
     Get FreeFileInf, , TempInt
     Get FreeFileInf, , TempInt
-    
-    
+
+    'Vamos a limpiar las luces y particulas del mapa anterior
+    'Engine.Particle_Group_Remove_All
+
     'Load arrays
     For Y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
-    
-            Get FreeFileMap, , ByFlags
             
-            MapData(X, Y).Blocked = (ByFlags And 1)
+            With MapData(X, Y)
             
-            Get FreeFileMap, , MapData(X, Y).Graphic(1).GrhIndex
-            InitGrh MapData(X, Y).Graphic(1), MapData(X, Y).Graphic(1).GrhIndex
+                Get FreeFileMap, , ByFlags
+                .Blocked = (ByFlags And 1)
             
-            'Layer 2 used?
-            If ByFlags And 2 Then
-                Get FreeFileMap, , MapData(X, Y).Graphic(2).GrhIndex
-                InitGrh MapData(X, Y).Graphic(2), MapData(X, Y).Graphic(2).GrhIndex
-            Else
-                MapData(X, Y).Graphic(2).GrhIndex = 0
-            End If
-                
-            'Layer 3 used?
-            If ByFlags And 4 Then
-                Get FreeFileMap, , MapData(X, Y).Graphic(3).GrhIndex
-                InitGrh MapData(X, Y).Graphic(3), MapData(X, Y).Graphic(3).GrhIndex
-            Else
-                MapData(X, Y).Graphic(3).GrhIndex = 0
-            End If
-                
-            'Layer 4 used?
-            If ByFlags And 8 Then
-                Get FreeFileMap, , MapData(X, Y).Graphic(4).GrhIndex
-                InitGrh MapData(X, Y).Graphic(4), MapData(X, Y).Graphic(4).GrhIndex
-            Else
-                MapData(X, Y).Graphic(4).GrhIndex = 0
-            End If
-            
-             
-            'Trigger used?
-            If ByFlags And 16 Then
-                Get FreeFileMap, , MapData(X, Y).Trigger
-            Else
-                MapData(X, Y).Trigger = 0
-            End If
-            
-            '.inf file
-            Get FreeFileInf, , ByFlags
-            
-            If ByFlags And 1 Then
-                Get FreeFileInf, , MapData(X, Y).TileExit.Map
-                Get FreeFileInf, , MapData(X, Y).TileExit.X
-                Get FreeFileInf, , MapData(X, Y).TileExit.Y
-            End If
-    
-            If ByFlags And 2 Then
-                'Get and make NPC
-                Get FreeFileInf, , MapData(X, Y).NPCIndex
-    
-                If MapData(X, Y).NPCIndex < 0 Then
-                    MapData(X, Y).NPCIndex = 0
+                'Layer 1
+                If EsInteger Then
+                    Get FreeFileMap, , .Graphic(1).GrhIndexInt
+                    Call InitGrh(.Graphic(1), .Graphic(1).GrhIndexInt)
                 Else
-                    Body = NpcData(MapData(X, Y).NPCIndex).Body
-                    Head = NpcData(MapData(X, Y).NPCIndex).Head
-                    Heading = NpcData(MapData(X, Y).NPCIndex).Heading
-                    Call MakeChar(NextOpenChar(), Body, Head, Heading, X, Y)
+                    Get FreeFileMap, , .Graphic(1).GrhIndex
+                    Call InitGrh(.Graphic(1), .Graphic(1).GrhIndex)
                 End If
-            End If
+            
+                'Layer 2 used?
+                If ByFlags And 2 Then
+                    
+                    If EsInteger Then
+                        Get FreeFileMap, , .Graphic(2).GrhIndexInt
+                        Call InitGrh(.Graphic(2), .Graphic(2).GrhIndexInt)
+                    Else
+                        Get FreeFileMap, , .Graphic(2).GrhIndex
+                        Call InitGrh(.Graphic(2), .Graphic(2).GrhIndex)
+                    End If
+ 
+                Else
+                
+                    .Graphic(2).GrhIndex = 0
+                    
+                End If
+                
+                'Layer 3 used?
+                If ByFlags And 4 Then
+                    
+                    If EsInteger Then
+                        Get FreeFileMap, , .Graphic(3).GrhIndexInt
+                        Call InitGrh(.Graphic(3), .Graphic(3).GrhIndexInt)
+                    Else
+                        Get FreeFileMap, , .Graphic(3).GrhIndex
+                        Call InitGrh(.Graphic(3), .Graphic(3).GrhIndex)
+                    End If
+
+                Else
+                
+                    .Graphic(3).GrhIndex = 0
+                    
+                End If
+                
+                'Layer 4 used?
+                If ByFlags And 8 Then
+                    
+                    If EsInteger Then
+                        Get FreeFileMap, , .Graphic(4).GrhIndexInt
+                        Call InitGrh(.Graphic(3), .Graphic(3).GrhIndexInt)
+                    Else
+                        Get FreeFileMap, , .Graphic(4).GrhIndex
+                        Call InitGrh(.Graphic(4), .Graphic(4).GrhIndex)
+                    End If
+
+                Else
+                    
+                    .Graphic(4).GrhIndex = 0
+
+                End If
+             
+                'Trigger used?
+                If ByFlags And 16 Then
+                    Get FreeFileMap, , .Trigger
+                Else
+                    .Trigger = 0
+                End If
+            
+                'Cargamos el archivo ".INF"
+                Get FreeFileInf, , ByFlags
+            
+                If ByFlags And 1 Then
+                    
+                    With .TileExit
+                    
+                        Get FreeFileInf, , .Map
+                        Get FreeFileInf, , .X
+                        Get FreeFileInf, , .Y
+                    
+                    End With
+                    
+
+                End If
     
-            If ByFlags And 4 Then
-                'Get and make Object
-                Get FreeFileInf, , MapData(X, Y).OBJInfo.objindex
-                Get FreeFileInf, , MapData(X, Y).OBJInfo.Amount
-                If MapData(X, Y).OBJInfo.objindex > 0 Then
-                    InitGrh MapData(X, Y).ObjGrh, ObjData(MapData(X, Y).OBJInfo.objindex).GrhIndex
+                If ByFlags And 2 Then
+                
+                    'Get and make NPC
+                    Get FreeFileInf, , .NPCIndex
+    
+                    If .NPCIndex < 0 Then
+                        .NPCIndex = 0
+                    Else
+                        Body = NpcData(.NPCIndex).Body
+                        Head = NpcData(.NPCIndex).Head
+                        Heading = NpcData(.NPCIndex).Heading
+                        Call MakeChar(NextOpenChar(), Body, Head, Heading, X, Y)
+                    End If
+
                 End If
-            End If
+    
+                If ByFlags And 4 Then
+                    
+                    'Get and make Object
+                    Get FreeFileInf, , .OBJInfo.ObjIndex
+                    Get FreeFileInf, , .OBJInfo.Amount
+
+                    If .OBJInfo.ObjIndex > 0 Then
+                        Call InitGrh(.ObjGrh, ObjData(.OBJInfo.ObjIndex).GrhIndex)
+                    End If
+
+                End If
+            
+            End With
     
         Next X
     Next Y
@@ -656,25 +729,36 @@ On Error Resume Next
     Close FreeFileMap
     Close FreeFileInf
     
-    Call Pestañas(Map)
-    
-    bRefreshRadar = True ' Radar
+    Call Pestanas(Map, ".map")
     
     Map = Left$(Map, Len(Map) - 4) & ".dat"
     
-    MapInfo_Cargar Map
-    frmMain.lblMapVersion.Text = MapInfo.MapVersion
+    Call MapInfo_Cargar(Map)
     
-    'Set changed flag
-    MapInfo.Changed = 0
+    With frmMain
     
-    ' Vacia el Deshacer
-    modEdicion.Deshacer_Clear
+        frmMain.txtMapVersion.Text = MapInfo.MapVersion
     
-    'Change mouse icon
-    frmMain.MousePointer = 0
+        ' Avisamos que estamos trabajando con un mapa de tipo integer.
+        If EsInteger Then
+            .Caption = App.Title & " - Mapa Integer"
+        Else
+            .Caption = App.Title & " - Mapa Long"
+        End If
+        
+        'Set changed flag
+        MapInfo.Changed = 0
+        
+        ' Vacia el Deshacer
+        Call modEdicion.Deshacer_Clear
+        
+        'Change mouse icon
+        .MousePointer = 0
+    
+    End With
+    
     MapaCargado = True
-    
+
 End Sub
 
 ''
@@ -766,10 +850,10 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
             End If
             
             'Make obj
-            Get FreeFileInf, , MapData(X, Y).OBJInfo.objindex
+            Get FreeFileInf, , MapData(X, Y).OBJInfo.ObjIndex
             Get FreeFileInf, , MapData(X, Y).OBJInfo.Amount
-            If MapData(X, Y).OBJInfo.objindex > 0 Then
-                InitGrh MapData(X, Y).ObjGrh, ObjData(MapData(X, Y).OBJInfo.objindex).GrhIndex
+            If MapData(X, Y).OBJInfo.ObjIndex > 0 Then
+                InitGrh MapData(X, Y).ObjGrh, ObjData(MapData(X, Y).OBJInfo.ObjIndex).GrhIndex
             End If
             
             'Empty place holders for future expansion
@@ -783,20 +867,22 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
     Close FreeFileMap
     Close FreeFileInf
      
-    Call Pestañas(Map)
+    Call Pestanas(Map)
     
     bRefreshRadar = True ' Radar
     
     Map = Left(Map, Len(Map) - 4) & ".dat"
         
     MapInfo_Cargar Map
-    frmMain.lblMapVersion.Text = MapInfo.MapVersion
+    frmMain.txtMapVersion.Text = MapInfo.MapVersion
     
     'Set changed flag
     MapInfo.Changed = 0
     
     ' Vacia el Deshacer
     modEdicion.Deshacer_Clear
+    
+    Call AddtoRichTextBox(frmMain.StatTxt, "Mapa " & Map & " cargado...", 0, 255, 0)
     
     'Change mouse icon
     frmMain.MousePointer = 0
@@ -832,20 +918,22 @@ Public Sub MapaV3_Cargar(ByVal Map As String)
         Get FreeFileMap, , MapData
     Close FreeFileMap
     
-    Call Pestañas(Map)
+    Call Pestanas(Map)
     
     bRefreshRadar = True ' Radar
     
     Map = Left(Map, Len(Map) - 4) & ".dat"
         
     MapInfo_Cargar Map
-    frmMain.lblMapVersion.Text = MapInfo.MapVersion
+    frmMain.txtMapVersion.Text = MapInfo.MapVersion
     
     'Set changed flag
     MapInfo.Changed = 0
     
     ' Vacia el Deshacer
     modEdicion.Deshacer_Clear
+    
+    Call AddtoRichTextBox(frmMain.StatTxt, "Mapa " & Map & " cargado...", 0, 255, 0)
     
     'Change mouse icon
     frmMain.MousePointer = 0
@@ -881,11 +969,13 @@ On Error GoTo ErrorSave
     Open Mapa For Binary Access Write As FreeFileMap
         Put FreeFileMap, , MapData
     Close FreeFileMap
-    Call Pestañas(Mapa)
+    Call Pestanas(Mapa)
     
     
     Mapa = Left(Mapa, Len(Mapa) - 4) & ".dat"
     MapInfo_Guardar Mapa
+    
+    Call AddtoRichTextBox(frmMain.StatTxt, "Mapa " & Map & " guardado.", 0, 255, 0)
     
     'Change mouse icon
     frmMain.MousePointer = 0
@@ -928,7 +1018,7 @@ Public Sub MapInfo_Guardar(ByVal Archivo As String)
     Call WriteVar(Archivo, MapTitulo, "Terreno", MapInfo.Terreno)
     Call WriteVar(Archivo, MapTitulo, "Zona", MapInfo.Zona)
     Call WriteVar(Archivo, MapTitulo, "Restringir", MapInfo.Restringir)
-    Call WriteVar(Archivo, MapTitulo, "BackUp", Str(MapInfo.BackUp))
+    Call WriteVar(Archivo, MapTitulo, "BackUp", str(MapInfo.BackUp))
 
     If MapInfo.PK Then
         Call WriteVar(Archivo, MapTitulo, "Pk", "0")
@@ -997,62 +1087,98 @@ Public Sub MapInfo_Actualizar()
 '*************************************************
 
 On Error Resume Next
-    ' Mostrar en Formularios
     frmMapInfo.txtMapNombre.Text = MapInfo.name
     frmMapInfo.txtMapMusica.Text = MapInfo.Music
     frmMapInfo.txtMapTerreno.Text = MapInfo.Terreno
     frmMapInfo.txtMapZona.Text = MapInfo.Zona
     frmMapInfo.txtMapRestringir.Text = MapInfo.Restringir
-    frmMapInfo.chkMapBackup.value = MapInfo.BackUp
-    frmMapInfo.chkMapMagiaSinEfecto.value = MapInfo.MagiaSinEfecto
-    frmMapInfo.chkMapInviSinEfecto.value = MapInfo.InviSinEfecto
-    frmMapInfo.chkMapResuSinEfecto.value = MapInfo.ResuSinEfecto
-    frmMapInfo.chkMapNoEncriptarMP.value = MapInfo.NoEncriptarMP
+'    frmMapInfo.chkMapBackup.value = MapInfo.BackUp
     frmMapInfo.chkMapPK.value = IIf(MapInfo.PK = True, 1, 0)
+    frmMain.chkPKInseguro.value = IIf(MapInfo.PK = True, 1, 0)
+    frmMain.txtMapNombre.Text = MapInfo.name
+    frmMain.txtMapMusica.Text = MapInfo.Music
+    frmMain.txtAmbient.Text = MapInfo.ambient
+    frmMapInfo.txtAmbient.Text = MapInfo.ambient
+    frmMapInfo.TxtlvlMinimo = MapInfo.lvlMinimo
+    frmMapInfo.chkMapMagiaSinEfecto.value = MapInfo.MagiaSinEfecto
+    frmMapInfo.chkMapInviSinEfecto.value = IIf(MapInfo.InviSinEfecto, vbChecked, vbUnchecked)
+    frmMapInfo.chkInvocarSin.value = MapInfo.InvocarSinEfecto
+    frmMapInfo.chkOcultarSin.value = MapInfo.OcultarSinEfecto
+    frmMapInfo.chkMapResuSinEfecto.value = IIf(MapInfo.ResuSinEfecto, vbChecked, vbUnchecked)
     frmMapInfo.txtMapVersion = MapInfo.MapVersion
-    frmMain.lblMapNombre = MapInfo.name
-    frmMain.lblMapMusica = MapInfo.Music
+    frmMapInfo.ChkMapNpc.value = MapInfo.RoboNpcsPermitido
 
 End Sub
 
 ''
-' Calcula la orden de Pestañas
+' Calcula la orden de Pestanas
 '
 ' @param Map Especifica path del mapa
 
-Public Sub Pestañas(ByVal Map As String)
+Public Sub Pestanas(ByVal Map As String, Optional ByVal MapFormat As String = ".map")
 '*************************************************
 'Author: ^[GS]^
 'Last modified: 28/05/06
 '*************************************************
 On Error Resume Next
-Dim loopc As Integer
-
-For loopc = Len(Map) To 1 Step -1
-    If mid(Map, loopc, 1) = "\" Then
-        PATH_Save = Left(Map, loopc)
-        Exit For
-    End If
-Next
-Map = Right(Map, Len(Map) - (Len(PATH_Save)))
-For loopc = Len(Left(Map, Len(Map) - 4)) To 1 Step -1
-    If IsNumeric(mid(Left(Map, Len(Map) - 4), loopc, 1)) = False Then
-        NumMap_Save = Right(Left(Map, Len(Map) - 4), Len(Left(Map, Len(Map) - 4)) - loopc)
-        NameMap_Save = Left(Map, loopc)
-        Exit For
-    End If
-Next
-For loopc = (NumMap_Save - 4) To (NumMap_Save + 8)
-        If FileExist(PATH_Save & NameMap_Save & loopc & ".map", vbArchive) = True Then
-            frmMain.MapPest(loopc - NumMap_Save + 4).Visible = True
-            frmMain.MapPest(loopc - NumMap_Save + 4).Enabled = True
-            frmMain.MapPest(loopc - NumMap_Save + 4).Caption = NameMap_Save & loopc
-        Else
-            frmMain.MapPest(loopc - NumMap_Save + 4).Visible = False
+    Dim loopc As Integer
+    
+    For loopc = Len(Map) To 1 Step -1
+        If mid(Map, loopc, 1) = "\" Then
+            PATH_Save = Left(Map, loopc)
+            Exit For
         End If
-Next
+    Next
+    
+    Map = Right(Map, Len(Map) - (Len(PATH_Save)))
+    
+    For loopc = Len(Left(Map, Len(Map) - 4)) To 1 Step -1
+        If IsNumeric(mid(Left(Map, Len(Map) - 4), loopc, 1)) = False Then
+            NumMap_Save = Right(Left(Map, Len(Map) - 4), Len(Left(Map, Len(Map) - 4)) - loopc)
+            NameMap_Save = Left(Map, loopc)
+            Exit For
+        End If
+    Next
+    
+    For loopc = (NumMap_Save - 4) To (NumMap_Save + 8)
+            If FileExist(PATH_Save & NameMap_Save & loopc & MapFormat, vbArchive) = True Then
+                frmMain.MapPest(loopc - NumMap_Save + 4).Visible = True
+                frmMain.MapPest(loopc - NumMap_Save + 4).Enabled = True
+                frmMain.MapPest(loopc - NumMap_Save + 4).Caption = NameMap_Save & loopc
+            Else
+                frmMain.MapPest(loopc - NumMap_Save + 4).Visible = False
+            End If
+    Next
+    
 End Sub
 
-
-
-
+Public Sub AbrirMapa(Optional ByVal IntMode As Boolean = False)
+    frmMain.Dialog.CancelError = True
+    On Error GoTo errhandler
+    
+    DeseaGuardarMapa frmMain.Dialog.filename
+    
+    frmMain.ObtenerNombreArchivo False
+    
+    If Len(frmMain.Dialog.filename) < 3 Then Exit Sub
+    
+        If WalkMode = True Then
+            Call modGeneral.ToggleWalkMode
+        End If
+        
+        Call modMapIO.NuevoMapa
+        
+        If frmMain.Dialog.FilterIndex = 1 Then
+            Call modMapWinter.Cargar_CSM(frmMain.Dialog.filename)
+        Else
+            Call MapaV2_Cargar(frmMain.Dialog.filename, IntMode)
+            
+        End If
+        
+        DoEvents
+        frmMain.mnuReAbrirMapa.Enabled = True
+        EngineRun = True
+    
+    Exit Sub
+errhandler:
+End Sub
