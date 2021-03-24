@@ -50,7 +50,7 @@ Public MainScreenRect As RECT
 
 Public Type TLVERTEX
     X As Single
-    y As Single
+    Y As Single
     Z As Single
     rhw As Single
     color As Long
@@ -111,6 +111,8 @@ Public Sub Engine_DirectX8_Init()
             End If
         End If
     End If
+
+    Call SimpleLogError("Modo de procesado elegido.")
 
     'Seteamos la matriz de proyeccion.
     Call D3DXMatrixOrthoOffCenterLH(Projection, 0, ScreenWidth, ScreenHeight, 0, -1#, 1#)
@@ -323,13 +325,13 @@ Public Function Engine_PixelPosX(ByVal X As Integer) As Integer
     
 End Function
 
-Public Function Engine_PixelPosY(ByVal y As Integer) As Integer
+Public Function Engine_PixelPosY(ByVal Y As Integer) As Integer
 '*****************************************************************
 'Converts a tile position to a screen position
 'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_PixelPosY
 '*****************************************************************
 
-    Engine_PixelPosY = (y - 1) * 32
+    Engine_PixelPosY = (Y - 1) * 32
     
 End Function
 

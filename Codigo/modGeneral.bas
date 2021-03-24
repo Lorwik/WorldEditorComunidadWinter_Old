@@ -58,14 +58,14 @@ If HotKeysAllow = False Then Exit Sub
     
     
     If GetKeyState(vbKeyUp) < 0 Then
-        If UserPos.y < YMinMapSize Then Exit Sub ' 10
-        If LegalPos(UserPos.X, UserPos.y - 1) And WalkMode = True Then
+        If UserPos.Y < YMinMapSize Then Exit Sub ' 10
+        If LegalPos(UserPos.X, UserPos.Y - 1) And WalkMode = True Then
             If dLastWalk + 50 > GetTickCount Then Exit Sub
-            UserPos.y = UserPos.y - 1
-            MoveCharbyPos UserCharIndex, UserPos.X, UserPos.y
+            UserPos.Y = UserPos.Y - 1
+            MoveCharbyPos UserCharIndex, UserPos.X, UserPos.Y
             dLastWalk = GetTickCount
         ElseIf WalkMode = False Then
-            UserPos.y = UserPos.y - 1
+            UserPos.Y = UserPos.Y - 1
         End If
         bRefreshRadar = True ' Radar
         frmMain.SetFocus
@@ -74,10 +74,10 @@ If HotKeysAllow = False Then Exit Sub
 
     If GetKeyState(vbKeyRight) < 0 Then
         If UserPos.X > XMaxMapSize Then Exit Sub ' 89
-        If LegalPos(UserPos.X + 1, UserPos.y) And WalkMode = True Then
+        If LegalPos(UserPos.X + 1, UserPos.Y) And WalkMode = True Then
             If dLastWalk + 50 > GetTickCount Then Exit Sub
             UserPos.X = UserPos.X + 1
-            MoveCharbyPos UserCharIndex, UserPos.X, UserPos.y
+            MoveCharbyPos UserCharIndex, UserPos.X, UserPos.Y
             dLastWalk = GetTickCount
             
         ElseIf WalkMode = False Then
@@ -91,16 +91,16 @@ If HotKeysAllow = False Then Exit Sub
     End If
 
     If GetKeyState(vbKeyDown) < 0 Then
-        If UserPos.y > YMaxMapSize Then Exit Sub ' 92
+        If UserPos.Y > YMaxMapSize Then Exit Sub ' 92
         
-        If LegalPos(UserPos.X, UserPos.y + 1) And WalkMode = True Then
+        If LegalPos(UserPos.X, UserPos.Y + 1) And WalkMode = True Then
             If dLastWalk + 50 > GetTickCount Then Exit Sub
-            UserPos.y = UserPos.y + 1
-            MoveCharbyPos UserCharIndex, UserPos.X, UserPos.y
+            UserPos.Y = UserPos.Y + 1
+            MoveCharbyPos UserCharIndex, UserPos.X, UserPos.Y
             dLastWalk = GetTickCount
             
         ElseIf WalkMode = False Then
-            UserPos.y = UserPos.y + 1
+            UserPos.Y = UserPos.Y + 1
             
         End If
         
@@ -112,10 +112,10 @@ If HotKeysAllow = False Then Exit Sub
 
     If GetKeyState(vbKeyLeft) < 0 Then
         If UserPos.X < XMinMapSize Then Exit Sub ' 12
-        If LegalPos(UserPos.X - 1, UserPos.y) And WalkMode = True Then
+        If LegalPos(UserPos.X - 1, UserPos.Y) And WalkMode = True Then
             If dLastWalk + 50 > GetTickCount Then Exit Sub
             UserPos.X = UserPos.X - 1
-            MoveCharbyPos UserCharIndex, UserPos.X, UserPos.y
+            MoveCharbyPos UserCharIndex, UserPos.X, UserPos.Y
             dLastWalk = GetTickCount
         ElseIf WalkMode = False Then
             UserPos.X = UserPos.X - 1
@@ -183,6 +183,7 @@ On Error Resume Next
         DoEvents
     Loop
     
+    Call SimpleLogError("Iniciando...")
     Call GenerateContra
     Call CargarMapIni
     Call IniciarCabecera
@@ -195,25 +196,29 @@ On Error Resume Next
     DoEvents
     
     frmCargando.X.Caption = "Iniciando DirectSound..."
+    Call SimpleLogError("DirectoSound Iniciado.")
     'IniciarDirectSound
     DoEvents
     
     frmCargando.X.Caption = "Cargando Indice de Superficies..."
     modCarga.CargarIndicesSuperficie
-    DoEvents
-    
-    frmCargando.X.Caption = "Indexando Cargado de Imagenes..."
+    Call SimpleLogError("Indice de Superficies cargado.")
     DoEvents
 
     frmCargando.X.Caption = "Iniciando motor grafico..."
+    Call SimpleLogError("Iniciando motor grafico 1/4...")
     DoEvents
     'Iniciamos el Engine de DirectX 8
     Call mDx8_Engine.Engine_DirectX8_Init
+    Call SimpleLogError("Iniciando motor grafico 2/4...")
     
     'Tile Engine
     Call InitTileEngine(32, 32, 8, 8)
+    Call SimpleLogError("Iniciando motor grafico 3/4...")
     
     Call mDx8_Engine.Engine_DirectX8_Aditional_Init
+    Call SimpleLogError("Iniciando motor grafico 4/4...")
+    
     
     frmCargando.SetFocus
     frmCargando.X.Caption = "Iniciando Ventana de Edición..."
@@ -305,12 +310,12 @@ On Error GoTo fin:
     If WalkMode = False Then
         'Erase character
         Call EraseChar(UserCharIndex)
-        MapData(UserPos.X, UserPos.y).CharIndex = 0
+        MapData(UserPos.X, UserPos.Y).CharIndex = 0
     Else
         'MakeCharacter
-        If LegalPos(UserPos.X, UserPos.y) Then
-            Call MakeChar(NextOpenChar(), 1, 1, SOUTH, UserPos.X, UserPos.y)
-            UserCharIndex = MapData(UserPos.X, UserPos.y).CharIndex
+        If LegalPos(UserPos.X, UserPos.Y) Then
+            Call MakeChar(NextOpenChar(), 1, 1, SOUTH, UserPos.X, UserPos.Y)
+            UserCharIndex = MapData(UserPos.X, UserPos.Y).CharIndex
             frmMain.mnuModoCaminata.Checked = True
         Else
             MsgBox "ERROR: Ubicacion ilegal."
@@ -320,7 +325,7 @@ On Error GoTo fin:
 fin:
 End Sub
 
-Public Sub FixCoasts(ByVal GrhIndex As Long, ByVal X As Integer, ByVal y As Integer)
+Public Sub FixCoasts(ByVal GrhIndex As Long, ByVal X As Integer, ByVal Y As Integer)
 '*************************************************
 'Author: Unkwown
 'Last modified: 20/05/06
@@ -338,7 +343,7 @@ Public Sub FixCoasts(ByVal GrhIndex As Long, ByVal X As Integer, ByVal y As Inte
        GrhIndex = 7354 Or GrhIndex = 7357 Or GrhIndex = 7358 Or GrhIndex = 7360 Or _
        GrhIndex = 7362 Or GrhIndex = 7363 Or GrhIndex = 7365 Or GrhIndex = 7366 Or _
        GrhIndex = 7367 Or GrhIndex = 7368 Or GrhIndex = 7369 Or GrhIndex = 7371 Or _
-       GrhIndex = 7373 Or GrhIndex = 7375 Or GrhIndex = 7376 Then MapData(X, y).Graphic(2).GrhIndex = 0
+       GrhIndex = 7373 Or GrhIndex = 7375 Or GrhIndex = 7376 Then MapData(X, Y).Graphic(2).GrhIndex = 0
 
 End Sub
 
@@ -365,15 +370,15 @@ Public Sub RefreshAllChars()
 '*************************************************
     On Error Resume Next
     Dim loopc As Integer
-    frmMain.ApuntadorRadar.Move UserPos.X - 12, UserPos.y - 10
+    frmMain.ApuntadorRadar.Move UserPos.X - 12, UserPos.Y - 10
     frmMain.picRadar.Cls
     For loopc = 1 To LastChar
         If CharList(loopc).active = 1 Then
-            MapData(CharList(loopc).Pos.X, CharList(loopc).Pos.y).CharIndex = loopc
+            MapData(CharList(loopc).Pos.X, CharList(loopc).Pos.Y).CharIndex = loopc
             If CharList(loopc).Heading <> 0 Then
                 frmMain.picRadar.ForeColor = vbGreen
-                frmMain.picRadar.Line (0 + CharList(loopc).Pos.X, 0 + CharList(loopc).Pos.y)-(2 + CharList(loopc).Pos.X, 0 + CharList(loopc).Pos.y)
-                frmMain.picRadar.Line (0 + CharList(loopc).Pos.X, 1 + CharList(loopc).Pos.y)-(2 + CharList(loopc).Pos.X, 1 + CharList(loopc).Pos.y)
+                frmMain.picRadar.Line (0 + CharList(loopc).Pos.X, 0 + CharList(loopc).Pos.Y)-(2 + CharList(loopc).Pos.X, 0 + CharList(loopc).Pos.Y)
+                frmMain.picRadar.Line (0 + CharList(loopc).Pos.X, 1 + CharList(loopc).Pos.Y)-(2 + CharList(loopc).Pos.X, 1 + CharList(loopc).Pos.Y)
             End If
         End If
     Next loopc

@@ -46,7 +46,7 @@ Begin VB.Form frmModo
          Top             =   930
          Width           =   3015
       End
-      Begin VB.ComboBox cmbprocesado 
+      Begin VB.ComboBox cmbProcesado 
          Height          =   315
          ItemData        =   "frmModo.frx":0000
          Left            =   1920
@@ -172,7 +172,7 @@ Private Sub Form_Load()
     'Marcamos la opcion
     OptModo(ClientSetup.WeMode).value = True
     
-    cmbprocesado.ListIndex = ClientSetup.OverrideVertexProcess
+    cmbProcesado.ListIndex = ClientSetup.OverrideVertexProcess
     
     If ClientSetup.LimiteFPS Then
         chkvSync.value = Checked
@@ -193,10 +193,6 @@ Private Sub chkvSync_Click()
     End If
 End Sub
 
-Private Sub cmbprocesado_Change()
-     ClientSetup.OverrideVertexProcess = cmbprocesado.ListIndex
-End Sub
-
 Private Sub LvBBoton_Click(index As Integer)
     Select Case index
     
@@ -207,11 +203,13 @@ Private Sub LvBBoton_Click(index As Integer)
         Case 1
             ModoElegido = True
             
+            ClientSetup.OverrideVertexProcess = cmbProcesado.ListIndex
+            
             Call WriteVar(WEConfigDir, "CONFIGURACION", "WeMode", CStr(ClientSetup.WeMode))
             Call WriteVar(WEConfigDir, "VIDEO", "VertexProcessingOverride", CByte(ClientSetup.OverrideVertexProcess))
-            Call WriteVar(WEConfigDir, "Video", "LimitarFPS", CByte(ClientSetup.LimiteFPS))
+            Call WriteVar(WEConfigDir, "VIDEO", "LimitarFPS", IIf(ClientSetup.LimiteFPS, "1", "0"))
             
-            Call SimpleLogError("Modo " & OptModo(ClientSetup.WeMode).value & " elegido.")
+            Call SimpleLogError("Modo " & OptModo(ClientSetup.WeMode).Caption & " elegido.")
             
             Unload Me
     End Select

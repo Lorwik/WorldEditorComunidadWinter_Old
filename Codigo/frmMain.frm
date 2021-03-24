@@ -2642,7 +2642,6 @@ Begin VB.Form frmMain
       _Version        =   393217
       BackColor       =   0
       BorderStyle     =   0
-      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -3700,7 +3699,7 @@ Private Sub PonerAlAzar(ByVal n As Integer, T As Byte)
     Dim ObjIndex As Long
     Dim NPCIndex As Long
     Dim X As Integer
-    Dim y As Integer
+    Dim Y As Integer
     Dim i As Long
     Dim Head As Integer
     Dim Body As Integer
@@ -3710,50 +3709,50 @@ Private Sub PonerAlAzar(ByVal n As Integer, T As Byte)
     
     Do While i > 0
         X = CInt(RandomNumber(XMinMapSize, XMaxMapSize - 1))
-        y = CInt(RandomNumber(YMinMapSize, YMaxMapSize - 1))
+        Y = CInt(RandomNumber(YMinMapSize, YMaxMapSize - 1))
         
         Select Case T
             Case 0
-                If MapData(X, y).OBJInfo.ObjIndex = 0 Then
+                If MapData(X, Y).OBJInfo.ObjIndex = 0 Then
                       i = i - 1
                       If cInsertarBloqueo.value = True Then
-                        MapData(X, y).Blocked = 1
+                        MapData(X, Y).Blocked = 1
                       Else
-                        MapData(X, y).Blocked = 0
+                        MapData(X, Y).Blocked = 0
                       End If
                       If cNumFunc(2).Text > 0 Then
                           ObjIndex = cNumFunc(2).Text
-                          InitGrh MapData(X, y).ObjGrh, ObjData(ObjIndex).GrhIndex
-                          MapData(X, y).OBJInfo.ObjIndex = ObjIndex
-                          MapData(X, y).OBJInfo.Amount = Val(cCantFunc(2).Text)
+                          InitGrh MapData(X, Y).ObjGrh, ObjData(ObjIndex).GrhIndex
+                          MapData(X, Y).OBJInfo.ObjIndex = ObjIndex
+                          MapData(X, Y).OBJInfo.Amount = Val(cCantFunc(2).Text)
                           Select Case ObjData(ObjIndex).ObjType ' GS
                                 Case 4, 8, 10, 22 ' Arboles, Carteles, Foros, Yacimientos
-                                    MapData(X, y).Graphic(3) = MapData(X, y).ObjGrh
+                                    MapData(X, Y).Graphic(3) = MapData(X, Y).ObjGrh
                           End Select
                       End If
                 End If
             Case 1
-               If MapData(X, y).Blocked = 0 Then
+               If MapData(X, Y).Blocked = 0 Then
                       i = i - 1
                       If cNumFunc(T - 1).Text > 0 Then
                             NPCIndex = cNumFunc(T - 1).Text
                             Body = NpcData(NPCIndex).Body
                             Head = NpcData(NPCIndex).Head
                             Heading = NpcData(NPCIndex).Heading
-                            Call MakeChar(NextOpenChar(), Body, Head, Heading, CInt(X), CInt(y))
-                            MapData(X, y).NPCIndex = NPCIndex
+                            Call MakeChar(NextOpenChar(), Body, Head, Heading, CInt(X), CInt(Y))
+                            MapData(X, Y).NPCIndex = NPCIndex
                       End If
                 End If
             Case 2
-               If MapData(X, y).Blocked = 0 Then
+               If MapData(X, Y).Blocked = 0 Then
                       i = i - 1
                       If cNumFunc(T - 1).Text >= 0 Then
                             NPCIndex = cNumFunc(T - 1).Text
                             Body = NpcData(NPCIndex).Body
                             Head = NpcData(NPCIndex).Head
                             Heading = NpcData(NPCIndex).Heading
-                            Call MakeChar(NextOpenChar(), Body, Head, Heading, CInt(X), CInt(y))
-                            MapData(X, y).NPCIndex = NPCIndex
+                            Call MakeChar(NextOpenChar(), Body, Head, Heading, CInt(X), CInt(Y))
+                            MapData(X, Y).NPCIndex = NPCIndex
                       End If
                End If
             End Select
@@ -4365,9 +4364,9 @@ Private Sub Form_KeyPress(KeyAscii As Integer)
     End Select
 End Sub
 
-Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, y As Single)
+Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
     clicX = X
-    clicY = y
+    clicY = Y
 End Sub
 
 Private Sub lListado_Click(index As Integer)
@@ -4416,7 +4415,7 @@ Private Sub lListado_Click(index As Integer)
 
 End Sub
 
-Private Sub lListado_MouseDown(index As Integer, Button As Integer, Shift As Integer, X As Single, y As Single)
+Private Sub lListado_MouseDown(index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 '*************************************************
 'Author: ^[GS]^
 'Last modified: 29/05/06
@@ -4426,7 +4425,7 @@ Private Sub lListado_MouseDown(index As Integer, Button As Integer, Shift As Int
     End If
 End Sub
 
-Private Sub lListado_MouseMove(index As Integer, Button As Integer, Shift As Integer, X As Single, y As Single)
+Private Sub lListado_MouseMove(index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 '*************************************************
 'Author: ^[GS]^
 'Last modified: 22/05/06
@@ -4544,17 +4543,17 @@ End Sub
 Private Sub MainViewPic_MouseMove(Button As Integer, _
                                   Shift As Integer, _
                                   X As Single, _
-                                  y As Single)
+                                  Y As Single)
                                   
-    Call Form_MouseMove(Button, Shift, X, y)
+    Call Form_MouseMove(Button, Shift, X, Y)
 End Sub
 
 Private Sub MainViewPic_MouseDown(Button As Integer, _
                                 Shift As Integer, _
                                 X As Single, _
-                                y As Single)
+                                Y As Single)
                                 
-    Call Form_MouseDown(Button, Shift, X, y)
+    Call Form_MouseDown(Button, Shift, X, Y)
 End Sub
 
 Private Sub MainViewPic_DblClick()
@@ -5256,13 +5255,13 @@ Private Sub mnuQuitarParticulas_Click()
     On Error GoTo mnuQuitarParticulas_Click_Err
     
     Dim X As Byte
-    Dim y As Byte
+    Dim Y As Byte
     Dim i As Long
 
     For X = 1 To XMaxMapSize
-        For y = 1 To YMaxMapSize
-            MapData(X, y).Particle_Index = 0
-        Next y
+        For Y = 1 To YMaxMapSize
+            MapData(X, Y).Particle_Index = 0
+        Next Y
     Next X
 
     Particle_Group_Remove_All
@@ -5530,31 +5529,31 @@ PicColorMap_Err:
     Resume Next
 End Sub
 
-Private Sub picRadar_MouseDown(Button As Integer, Shift As Integer, X As Single, y As Single)
+Private Sub picRadar_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '*************************************************
 'Author: ^[GS]^
 'Last modified: 29/05/06
 '*************************************************
     If X < 11 Then X = 11
     If X > 89 Then X = 89
-    If y < 10 Then y = 10
-    If y > 92 Then y = 92
+    If Y < 10 Then Y = 10
+    If Y > 92 Then Y = 92
     
     UserPos.X = X
-    UserPos.y = y
+    UserPos.Y = Y
     bRefreshRadar = True
 End Sub
 
-Private Sub picRadar_MouseMove(Button As Integer, Shift As Integer, X As Single, y As Single)
+Private Sub picRadar_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '*************************************************
 'Author: ^[GS]^
 'Last modified: 28/05/06
 '*************************************************
     MiRadarX = X
-    MiRadarY = y
+    MiRadarY = Y
 End Sub
 
-Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, y As Single)
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '*************************************************
 'Author: Unkwown
 'Last modified: 20/05/06 - GS
@@ -5570,7 +5569,7 @@ Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, y A
     '    Exit Sub
     'End If
     
-    Call ConvertCPtoTP(X, y, tX, tY)
+    Call ConvertCPtoTP(X, Y, tX, tY)
     
     'If Shift = 1 And Button = 2 Then PegarSeleccion tX, tY: Exit Sub
     If Shift = 1 And Button = 1 Then
@@ -5585,7 +5584,7 @@ Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, y A
 
 End Sub
 
-Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, y As Single)
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '*************************************************
 'Author: Unkwown
 'Last modified: 20/05/06 - GS
@@ -5602,7 +5601,7 @@ Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, y A
     '    Exit Sub
     'End If
     
-    Call ConvertCPtoTP(X, y, tX, tY)
+    Call ConvertCPtoTP(X, Y, tX, tY)
     
     MousePos = "X: " & tX & " - Y: " & tY
     
@@ -5638,7 +5637,7 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
         WriteVar WEConfigDir, "MOSTRAR", "Triggers", IIf(frmMain.mnuVerTriggers.Checked = True, "1", "0")
         WriteVar WEConfigDir, "MOSTRAR", "Grilla", IIf(frmMain.mnuVerGrilla.Checked = True, "1", "0")
         WriteVar WEConfigDir, "MOSTRAR", "Bloqueos", IIf(frmMain.mnuVerBloqueos.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "LastPos", UserPos.X & "-" & UserPos.y
+        WriteVar WEConfigDir, "MOSTRAR", "LastPos", UserPos.X & "-" & UserPos.Y
         WriteVar WEConfigDir, "CONFIGURACION", "UtilizarDeshacer", IIf(frmMain.mnuUtilizarDeshacer.Checked = True, "1", "0")
         WriteVar WEConfigDir, "CONFIGURACION", "AutoCapturarTrans", IIf(frmMain.mnuAutoCapturarTranslados.Checked = True, "1", "0")
         WriteVar WEConfigDir, "CONFIGURACION", "AutoCapturarSup", IIf(frmMain.mnuAutoCapturarSuperficie.Checked = True, "1", "0")
@@ -5717,11 +5716,11 @@ Private Sub txtAmbient_Change()
     
     Dim ambient As Integer
 
-    If Not IsNumeric(TxtAmbient) Then Exit Sub
-    ambient = CInt(TxtAmbient)
+    If Not IsNumeric(txtAmbient) Then Exit Sub
+    ambient = CInt(txtAmbient)
     MapInfo.ambient = ambient
     
-    frmMapInfo.TxtAmbient = ambient
+    frmMapInfo.txtAmbient = ambient
     
     MapInfo.Changed = 1
     
