@@ -98,7 +98,23 @@ On Error GoTo ErrHandler
     End If
     
     If frmMain.Dialog.FilterIndex = 1 Then
-        Call Save_CSM(Path)
+        
+        Select Case ClientSetup.WeMode
+        
+            Case eWeMode.WinterAO
+                Call Save_CSM(Path)
+                
+            Case eWeMode.ImperiumClasico
+                If TipoMapaCargado = eTipoMapa.tIAOClasico Then
+                    Call modMapImpC.Save_MapImpClasico(Path)
+                
+                ElseIf TipoMapaCargado = eTipoMapa.tIAOnew Or TipoMapaCargado = eTipoMapa.tIAOold Then
+                    Call modMapImpC.Save_MapIAO(Path)
+                    
+                End If
+                
+        End Select
+        
             
     ElseIf frmMain.Dialog.FilterIndex = 2 Then
         Call MapaV2_Guardar(Path)
@@ -139,7 +155,7 @@ Public Sub NuevoMapa()
     On Error Resume Next
 
     Dim loopc As Integer
-    Dim Y As Integer
+    Dim y As Integer
     Dim X As Integer
     Dim i As Byte
     
@@ -149,6 +165,7 @@ Public Sub NuevoMapa()
     frmMain.mnuReAbrirMapa.Enabled = False
     frmMain.TimAutoGuardarMapa.Enabled = False
     frmMain.txtMapVersion.Text = 0
+    frmMain.TxtAmbient.Text = 0
     
     MapaCargado = False
     
@@ -158,10 +175,13 @@ Public Sub NuevoMapa()
     
     frmMain.MousePointer = 11
     
-    For Y = YMinMapSize To YMaxMapSize
+    'Volvemos a setear el tamaño del mapa
+    Call setMapSize
+    
+    For y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
         
-            With MapData(X, Y)
+            With MapData(X, y)
         
                 ' Capa 1
                 .Graphic(1).GrhIndex = 1
@@ -188,7 +208,7 @@ Public Sub NuevoMapa()
                 ' Translados
                 .TileExit.Map = 0
                 .TileExit.X = 0
-                .TileExit.Y = 0
+                .TileExit.y = 0
                 
                 ' Triggers
                 .Trigger = 0
@@ -196,7 +216,7 @@ Public Sub NuevoMapa()
                 .Particle_Group_Index = 0
                 'Particle_Group_Remove .Particle_Group_Index
 
-                Call Engine_Long_To_RGB_List(MapData(X, Y).Engine_Light(), -1)
+                Call Engine_Long_To_RGB_List(MapData(X, y).Engine_Light(), -1)
                 
                 .Light.active = False
                 .Light.range = 0
@@ -215,7 +235,7 @@ Public Sub NuevoMapa()
         
             End With
         Next X
-    Next Y
+    Next y
     
     'Borramos todas las luces
     Call LightRemoveAll
@@ -235,6 +255,8 @@ Public Sub NuevoMapa()
     
     Call MapInfo_Actualizar
     
+    Call CaptionWorldEditor("", False, "Estandar")
+    
     bRefreshRadar = True ' Radar
     
     Estado_Actual = Estados(e_estados.MedioDia)
@@ -243,6 +265,9 @@ Public Sub NuevoMapa()
     'Set changed flag
     MapInfo.Changed = 0
     frmMain.MousePointer = 0
+        
+    ' Vacia el Deshacer
+    Call modEdicion.Deshacer_Clear
     
     MapaCargado = True
     EngineRun = True
@@ -256,7 +281,7 @@ End Sub
 '
 ' @param SaveAs Especifica donde guardar el mapa
 
-Public Sub MapaV2_Guardar(ByVal SaveAs As String, Optional ByVal Preguntar As Boolean = True)
+Public Sub MapaV2_Guardar(ByVal SaveAs As String)
     '*************************************************
     'Author: ^[GS]^
     'Last modified: 20/05/06
@@ -268,13 +293,13 @@ Public Sub MapaV2_Guardar(ByVal SaveAs As String, Optional ByVal Preguntar As Bo
     Dim FreeFileInf As Long
     Dim loopc       As Long
     Dim TempInt     As Integer
-    Dim Y           As Long
+    Dim y           As Long
     Dim X           As Long
     Dim ByFlags     As Byte
 
     If FileExist(SaveAs, vbNormal) = True Then
         
-        If Preguntar Then
+        If NoSobreescribir = False Then
             If MsgBox("¿Desea sobrescribir " & SaveAs & "?", vbCritical + vbYesNo) = vbNo Then
                 Exit Sub
             Else
@@ -331,10 +356,10 @@ Public Sub MapaV2_Guardar(ByVal SaveAs As String, Optional ByVal Preguntar As Bo
     Put FreeFileInf, , TempInt
     
     'Write .map file
-    For Y = YMinMapSize To YMaxMapSize
+    For y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
             
-            With MapData(X, Y)
+            With MapData(X, y)
             
                 ByFlags = 0
                 
@@ -380,7 +405,7 @@ Public Sub MapaV2_Guardar(ByVal SaveAs As String, Optional ByVal Preguntar As Bo
                 If .TileExit.Map Then
                     Put FreeFileInf, , .TileExit.Map
                     Put FreeFileInf, , .TileExit.X
-                    Put FreeFileInf, , .TileExit.Y
+                    Put FreeFileInf, , .TileExit.y
                 End If
                     
                 If .NPCIndex Then
@@ -396,7 +421,7 @@ Public Sub MapaV2_Guardar(ByVal SaveAs As String, Optional ByVal Preguntar As Bo
             
             
         Next X
-    Next Y
+    Next y
     
     'Close .map file
     Close FreeFileMap
@@ -413,6 +438,8 @@ Public Sub MapaV2_Guardar(ByVal SaveAs As String, Optional ByVal Preguntar As Bo
     'Change mouse icon
     frmMain.MousePointer = 0
     MapInfo.Changed = 0
+    
+    NoSobreescribir = False
 
     Exit Sub
 
@@ -439,14 +466,16 @@ On Error GoTo ErrorSave
     Dim loopc As Long
     Dim TempInt As Integer
     Dim T As String
-    Dim Y As Long
+    Dim y As Long
     Dim X As Long
     
-    If FileExist(SaveAs, vbNormal) = True Then
-        If MsgBox("¿Desea sobrescribir " & SaveAs & "?", vbCritical + vbYesNo) = vbNo Then
-            Exit Sub
-        Else
-            Kill SaveAs
+    If NoSobreescribir = False Then
+        If FileExist(SaveAs, vbNormal) = True Then
+            If MsgBox("¿Desea sobrescribir " & SaveAs & "?", vbCritical + vbYesNo) = vbNo Then
+                Exit Sub
+            Else
+                'Kill SaveAs
+            End If
         End If
     End If
     
@@ -490,43 +519,43 @@ On Error GoTo ErrorSave
     Put FreeFileInf, , TempInt
     
     'Write .map file
-    For Y = YMinMapSize To YMaxMapSize
+    For y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
             
             '.map file
             
             ' Bloqueos
-            Put FreeFileMap, , MapData(X, Y).Blocked
+            Put FreeFileMap, , MapData(X, y).Blocked
             
             ' Capas
             For loopc = 1 To 4
-                If loopc = 2 Then Call FixCoasts(MapData(X, Y).Graphic(loopc).GrhIndex, X, Y)
-                Put FreeFileMap, , MapData(X, Y).Graphic(loopc).GrhIndex
+                If loopc = 2 Then Call FixCoasts(MapData(X, y).Graphic(loopc).GrhIndex, X, y)
+                Put FreeFileMap, , MapData(X, y).Graphic(loopc).GrhIndex
             Next loopc
             
             ' Triggers
-            Put FreeFileMap, , MapData(X, Y).Trigger
+            Put FreeFileMap, , MapData(X, y).Trigger
             Put FreeFileMap, , TempInt
             
             '.inf file
             'Tile exit
-            Put FreeFileInf, , MapData(X, Y).TileExit.Map
-            Put FreeFileInf, , MapData(X, Y).TileExit.X
-            Put FreeFileInf, , MapData(X, Y).TileExit.Y
+            Put FreeFileInf, , MapData(X, y).TileExit.Map
+            Put FreeFileInf, , MapData(X, y).TileExit.X
+            Put FreeFileInf, , MapData(X, y).TileExit.y
             
             'NPC
-            Put FreeFileInf, , MapData(X, Y).NPCIndex
+            Put FreeFileInf, , MapData(X, y).NPCIndex
             
             'Object
-            Put FreeFileInf, , MapData(X, Y).OBJInfo.ObjIndex
-            Put FreeFileInf, , MapData(X, Y).OBJInfo.Amount
+            Put FreeFileInf, , MapData(X, y).OBJInfo.ObjIndex
+            Put FreeFileInf, , MapData(X, y).OBJInfo.Amount
             
             'Empty place holders for future expansion
             Put FreeFileInf, , TempInt
             Put FreeFileInf, , TempInt
             
         Next X
-    Next Y
+    Next y
     
     'Close .map file
     Close FreeFileMap
@@ -545,6 +574,8 @@ On Error GoTo ErrorSave
     'Change mouse icon
     frmMain.MousePointer = 0
     MapInfo.Changed = 0
+    
+    NoSobreescribir = False
     
     Call AddtoRichTextBox(frmMain.StatTxt, "Mapa " & Map & " guardado.", 0, 255, 0)
     
@@ -571,7 +602,7 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
     Dim Body        As Integer
     Dim Head        As Integer
     Dim Heading     As Byte
-    Dim Y           As Integer
+    Dim y           As Integer
     Dim X           As Integer
     Dim i           As Byte
     Dim ByFlags     As Byte
@@ -619,10 +650,10 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
     Get FreeFileInf, , TempInt
 
     'Load arrays
-    For Y = YMinMapSize To YMaxMapSize
+    For y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
             
-            With MapData(X, Y)
+            With MapData(X, y)
             
                 Get FreeFileMap, , ByFlags
                 .Blocked = (ByFlags And 1)
@@ -703,7 +734,7 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
                     
                         Get FreeFileInf, , .Map
                         Get FreeFileInf, , .X
-                        Get FreeFileInf, , .Y
+                        Get FreeFileInf, , .y
                     
                     End With
                     
@@ -721,7 +752,7 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
                         Body = NpcData(.NPCIndex).Body
                         Head = NpcData(.NPCIndex).Head
                         Heading = NpcData(.NPCIndex).Heading
-                        Call MakeChar(NextOpenChar(), Body, Head, Heading, X, Y)
+                        Call MakeChar(NextOpenChar(), Body, Head, Heading, X, y)
                     End If
 
                 End If
@@ -741,7 +772,7 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
             End With
     
         Next X
-    Next Y
+    Next y
     
     'Close files
     Close FreeFileMap
@@ -766,6 +797,9 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
         
         'Set changed flag
         MapInfo.Changed = 0
+        
+        ' Vacia el Deshacer
+        Call modEdicion.Deshacer_Clear
         
         'Change mouse icon
         .MousePointer = 0
@@ -794,7 +828,7 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
     Dim Body As Integer
     Dim Head As Integer
     Dim Heading As Byte
-    Dim Y As Integer
+    Dim y As Integer
     Dim X As Integer
     Dim FreeFileMap As Long
     Dim FreeFileInf As Long
@@ -831,44 +865,44 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
     
     
     'Load arrays
-    For Y = YMinMapSize To YMaxMapSize
+    For y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
     
             '.map file
-            Get FreeFileMap, , MapData(X, Y).Blocked
+            Get FreeFileMap, , MapData(X, y).Blocked
             
             For loopc = 1 To 4
-                Get FreeFileMap, , MapData(X, Y).Graphic(loopc).GrhIndex
+                Get FreeFileMap, , MapData(X, y).Graphic(loopc).GrhIndex
                 'Set up GRH
-                If MapData(X, Y).Graphic(loopc).GrhIndex > 0 Then
-                    InitGrh MapData(X, Y).Graphic(loopc), MapData(X, Y).Graphic(loopc).GrhIndex
+                If MapData(X, y).Graphic(loopc).GrhIndex > 0 Then
+                    InitGrh MapData(X, y).Graphic(loopc), MapData(X, y).Graphic(loopc).GrhIndex
                 End If
             Next loopc
             'Trigger
-            Get FreeFileMap, , MapData(X, Y).Trigger
+            Get FreeFileMap, , MapData(X, y).Trigger
             
             Get FreeFileMap, , TempInt
             '.inf file
             
             'Tile exit
-            Get FreeFileInf, , MapData(X, Y).TileExit.Map
-            Get FreeFileInf, , MapData(X, Y).TileExit.X
-            Get FreeFileInf, , MapData(X, Y).TileExit.Y
+            Get FreeFileInf, , MapData(X, y).TileExit.Map
+            Get FreeFileInf, , MapData(X, y).TileExit.X
+            Get FreeFileInf, , MapData(X, y).TileExit.y
                           
             'make NPC
-            Get FreeFileInf, , MapData(X, Y).NPCIndex
-            If MapData(X, Y).NPCIndex > 0 Then
-                Body = NpcData(MapData(X, Y).NPCIndex).Body
-                Head = NpcData(MapData(X, Y).NPCIndex).Head
-                Heading = NpcData(MapData(X, Y).NPCIndex).Heading
-                Call MakeChar(NextOpenChar(), Body, Head, Heading, X, Y)
+            Get FreeFileInf, , MapData(X, y).NPCIndex
+            If MapData(X, y).NPCIndex > 0 Then
+                Body = NpcData(MapData(X, y).NPCIndex).Body
+                Head = NpcData(MapData(X, y).NPCIndex).Head
+                Heading = NpcData(MapData(X, y).NPCIndex).Heading
+                Call MakeChar(NextOpenChar(), Body, Head, Heading, X, y)
             End If
             
             'Make obj
-            Get FreeFileInf, , MapData(X, Y).OBJInfo.ObjIndex
-            Get FreeFileInf, , MapData(X, Y).OBJInfo.Amount
-            If MapData(X, Y).OBJInfo.ObjIndex > 0 Then
-                InitGrh MapData(X, Y).ObjGrh, ObjData(MapData(X, Y).OBJInfo.ObjIndex).GrhIndex
+            Get FreeFileInf, , MapData(X, y).OBJInfo.ObjIndex
+            Get FreeFileInf, , MapData(X, y).OBJInfo.Amount
+            If MapData(X, y).OBJInfo.ObjIndex > 0 Then
+                InitGrh MapData(X, y).ObjGrh, ObjData(MapData(X, y).OBJInfo.ObjIndex).GrhIndex
             End If
             
             'Empty place holders for future expansion
@@ -876,7 +910,7 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
             Get FreeFileInf, , TempInt
                  
         Next X
-    Next Y
+    Next y
     
     'Close files
     Close FreeFileMap
@@ -893,6 +927,9 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
     
     'Set changed flag
     MapInfo.Changed = 0
+        
+    ' Vacia el Deshacer
+    Call modEdicion.Deshacer_Clear
     
     Call AddtoRichTextBox(frmMain.StatTxt, "Mapa " & Map & " cargado...", 0, 255, 0)
     
@@ -916,7 +953,7 @@ Public Sub MapaV3_Cargar(ByVal Map As String)
     Dim Body As Integer
     Dim Head As Integer
     Dim Heading As Byte
-    Dim Y As Integer
+    Dim y As Integer
     Dim X As Integer
     Dim FreeFileMap As Long
     Dim FreeFileInf As Long
@@ -941,6 +978,9 @@ Public Sub MapaV3_Cargar(ByVal Map As String)
     
     'Set changed flag
     MapInfo.Changed = 0
+        
+    ' Vacia el Deshacer
+    Call modEdicion.Deshacer_Clear
     
     Call AddtoRichTextBox(frmMain.StatTxt, "Mapa " & Map & " cargado...", 0, 255, 0)
     
@@ -961,14 +1001,16 @@ On Error GoTo ErrorSave
     Dim loopc As Long
     Dim TempInt As Integer
     Dim T As String
-    Dim Y As Long
+    Dim y As Long
     Dim X As Long
     
-    If FileExist(Mapa, vbNormal) = True Then
-        If MsgBox("¿Desea sobrescribir " & Mapa & "?", vbCritical + vbYesNo) = vbNo Then
-            Exit Sub
-        Else
-            Kill Mapa
+    If NoSobreescribir = False Then
+        If FileExist(Mapa, vbNormal) = True Then
+            If MsgBox("¿Desea sobrescribir " & Mapa & "?", vbCritical + vbYesNo) = vbNo Then
+                Exit Sub
+            Else
+                Kill Mapa
+            End If
         End If
     End If
     
@@ -989,6 +1031,7 @@ On Error GoTo ErrorSave
     'Change mouse icon
     frmMain.MousePointer = 0
     MapInfo.Changed = 0
+    NoSobreescribir = False
     
 Exit Sub
 ErrorSave:
@@ -1096,26 +1139,32 @@ Public Sub MapInfo_Actualizar()
 '*************************************************
 
 On Error Resume Next
-    frmMapInfo.txtMapNombre.Text = MapInfo.name
-    frmMapInfo.txtMapMusica.Text = MapInfo.Music
-    frmMapInfo.txtMapTerreno.Text = MapInfo.Terreno
-    frmMapInfo.txtMapZona.Text = MapInfo.Zona
-    frmMapInfo.txtMapRestringir.Text = MapInfo.Restringir
-'    frmMapInfo.chkMapBackup.value = MapInfo.BackUp
-    frmMapInfo.chkMapPK.value = IIf(MapInfo.PK = True, 1, 0)
-    frmMain.chkPKInseguro.value = IIf(MapInfo.PK = True, 1, 0)
-    frmMain.txtMapNombre.Text = MapInfo.name
-    frmMain.txtMapMusica.Text = MapInfo.Music
-    frmMain.TxtAmbient.Text = MapInfo.ambient
-    frmMapInfo.TxtAmbient.Text = MapInfo.ambient
-    frmMapInfo.TxtlvlMinimo = MapInfo.lvlMinimo
-    frmMapInfo.chkMapMagiaSinEfecto.value = MapInfo.MagiaSinEfecto
-    frmMapInfo.chkMapInviSinEfecto.value = IIf(MapInfo.InviSinEfecto, vbChecked, vbUnchecked)
-    frmMapInfo.chkInvocarSin.value = MapInfo.InvocarSinEfecto
-    frmMapInfo.chkOcultarSin.value = MapInfo.OcultarSinEfecto
-    frmMapInfo.chkMapResuSinEfecto.value = IIf(MapInfo.ResuSinEfecto, vbChecked, vbUnchecked)
-    frmMapInfo.txtMapVersion = MapInfo.MapVersion
-    frmMapInfo.ChkMapNpc.value = MapInfo.RoboNpcsPermitido
+
+    With frmMapInfo
+        .txtMapNombre.Text = MapInfo.name
+        .txtMapMusica.Text = MapInfo.Music
+        .txtMapTerreno.Text = MapInfo.Terreno
+        .txtMapZona.Text = MapInfo.Zona
+        .txtMapRestringir.Text = MapInfo.Restringir
+    '   .chkMapBackup.value = MapInfo.BackUp
+        .chkMapPK.value = IIf(MapInfo.PK = True, 1, 0)
+        .TxtAmbient.Text = MapInfo.ambient
+        .TxtlvlMinimo = MapInfo.lvlMinimo
+        .chkMapMagiaSinEfecto.value = MapInfo.MagiaSinEfecto
+        .chkMapInviSinEfecto.value = IIf(MapInfo.InviSinEfecto, vbChecked, vbUnchecked)
+        .chkInvocarSin.value = MapInfo.InvocarSinEfecto
+        .chkOcultarSin.value = MapInfo.OcultarSinEfecto
+        .chkMapResuSinEfecto.value = IIf(MapInfo.ResuSinEfecto, vbChecked, vbUnchecked)
+        .txtMapVersion = MapInfo.MapVersion
+        .ChkMapNpc.value = MapInfo.RoboNpcsPermitido
+    End With
+    
+    With frmMain
+        .chkPKInseguro.value = IIf(MapInfo.PK = True, 1, 0)
+        .txtMapNombre.Text = MapInfo.name
+        .txtMapMusica.Text = MapInfo.Music
+        .TxtAmbient.Text = MapInfo.ambient
+    End With
 
 End Sub
 
@@ -1141,6 +1190,9 @@ On Error Resume Next
     
     Map = Right(Map, Len(Map) - (Len(PATH_Save)))
     
+    MapaActual = ReadField(1, Right(Map, Len(Map) - 4), Asc("."))
+    If frmCopiarBordes.Visible Then Call frmCopiarBordes.Inicializar
+    
     For loopc = Len(Left(Map, Len(Map) - 4)) To 1 Step -1
         If IsNumeric(mid(Left(Map, Len(Map) - 4), loopc, 1)) = False Then
             NumMap_Save = Right(Left(Map, Len(Map) - 4), Len(Left(Map, Len(Map) - 4)) - loopc)
@@ -1149,13 +1201,13 @@ On Error Resume Next
         End If
     Next
     
-    For loopc = (NumMap_Save - 8) To (NumMap_Save + 8)
+    For loopc = (NumMap_Save - 7) To (NumMap_Save + 7)
             If FileExist(PATH_Save & NameMap_Save & loopc & MapFormat, vbArchive) = True Then
-                frmMain.MapPest(loopc - NumMap_Save + 8).Visible = True
-                frmMain.MapPest(loopc - NumMap_Save + 8).Enabled = True
-                frmMain.MapPest(loopc - NumMap_Save + 8).Caption = NameMap_Save & loopc
+                frmMain.MapPest(loopc - NumMap_Save + 7).Visible = True
+                frmMain.MapPest(loopc - NumMap_Save + 7).Enabled = True
+                frmMain.MapPest(loopc - NumMap_Save + 7).Caption = NameMap_Save & loopc
             Else
-                frmMain.MapPest(loopc - NumMap_Save + 8).Visible = False
+                frmMain.MapPest(loopc - NumMap_Save + 7).Visible = False
             End If
     Next
     
@@ -1177,12 +1229,7 @@ Public Sub AbrirMapa(Optional ByVal IntMode As Boolean = False)
         
         Call modMapIO.NuevoMapa
         
-        If frmMain.Dialog.FilterIndex = 1 Then
-            Call modMapWinter.Cargar_CSM(frmMain.Dialog.filename)
-        Else
-            Call MapaV2_Cargar(frmMain.Dialog.filename, IntMode)
-            
-        End If
+        Call AbrirunMapa(frmMain.Dialog.filename, IntMode)
         
         DoEvents
         frmMain.mnuReAbrirMapa.Enabled = True
@@ -1191,3 +1238,24 @@ Public Sub AbrirMapa(Optional ByVal IntMode As Boolean = False)
     Exit Sub
 ErrHandler:
 End Sub
+
+Public Sub AbrirunMapa(ByVal Path As String, Optional ByVal IntMode As Boolean = False)
+'********************************
+'Autor: Lorwik
+'Fecha: 23/03/2021
+'********************************
+
+    If frmMain.Dialog.FilterIndex = 1 Then
+        If ClientSetup.WeMode = eWeMode.WinterAO Then
+            Call modMapWinter.Cargar_CSM(Path)
+                
+        ElseIf ClientSetup.WeMode = eWeMode.ImperiumClasico Then
+            Call modMapImpC.Cargar_MapImpClasico(Path)
+                
+        End If
+    Else
+        Call MapaV2_Cargar(Path, IntMode)
+            
+    End If
+End Sub
+

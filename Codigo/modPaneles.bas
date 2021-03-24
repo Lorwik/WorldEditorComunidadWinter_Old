@@ -121,6 +121,8 @@ Public Sub VerFuncion(ByVal Numero As Byte, ByVal Ver As Boolean, Optional Norma
             frmMain.lbGrh.Visible = Ver
             frmMain.PreviewGrh.Visible = Ver
             frmMain.FraRellenar.Visible = Ver
+            frmMain.chkActivarPreview.Visible = Ver
+            frmMain.lblActivarPreview.Visible = Ver
             
         Case 1 ' Translados
             frmMain.lMapN.Visible = Ver
@@ -181,6 +183,10 @@ Public Sub VerFuncion(ByVal Numero As Byte, ByVal Ver As Boolean, Optional Norma
             frmMain.cInsertarTrigger.Visible = Ver
             frmMain.cVerTriggers.Visible = Ver
             frmMain.lListado(4).Visible = Ver
+            
+        Case 7 'Copiar Bordes
+            Call frmCopiarBordes.Inicializar
+            frmCopiarBordes.Visible = Ver
             
         Case 8 ' Particulas
             frmParticle.Visible = Ver

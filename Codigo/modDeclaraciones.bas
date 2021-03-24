@@ -29,6 +29,13 @@ Attribute VB_Name = "modDeclaraciones"
 
 Option Explicit
 
+Public NoSobreescribir As Boolean
+
+Public Radio As Byte
+Public ToWorldMap2 As Boolean
+
+Public MapaActual As Integer
+
 Public MousePos As String
 
 Public Const MSGMod As String = "Este mapa há sido modificado." & vbCrLf & "Si no lo guardas perderas todos los cambios ¿Deseas guardarlo?"
@@ -184,14 +191,14 @@ End Enum
 'Holds a local position
 Public Type Position
     X As Integer
-    Y As Integer
+    y As Integer
 End Type
 
 'Holds a world position
 Public Type WorldPos
     Map As Integer
     X As Integer
-    Y As Integer
+    y As Integer
 End Type
 
 'Points to a grhData and keeps animation info
@@ -255,7 +262,7 @@ Public HeadData() As tHeadData
 
 'Hold info about a character
 Public Type Char
-    Active As Byte
+    active As Byte
     Heading As Byte
     Pos As Position
 
@@ -275,7 +282,7 @@ End Type
 
 Private Type tLight
     RGBCOLOR As D3DCOLORVALUE
-    Active As Boolean
+    active As Boolean
     map_x As Byte
     map_y As Byte
     range As Byte
@@ -297,6 +304,7 @@ Public Type MapBlock
     Engine_Light(0 To 3) As Long
     Light As tLight
     
+    Particle_Index As Integer
     Particle_Group_Index As Long 'Particle Engine
     
     fX As Grh
@@ -317,9 +325,9 @@ Public TipoMapaCargado As Byte
 '********** Public VARS ***********
 
 'Map sizes in tiles
-Public Const XMaxMapSize As Integer = 100
+Public XMaxMapSize As Integer
+Public YMaxMapSize As Integer
 Public Const XMinMapSize As Integer = 1
-Public Const YMaxMapSize As Integer = 100
 Public Const YMinMapSize As Integer = 1
 
 'Where the map borders are.. Set during load
@@ -331,6 +339,7 @@ Public MaxYBorder As Integer
 '********** Public ARRAYS ***********
 Public GrhData() As GrhData 'Holds all the grh data
 Public MapData() As MapBlock 'Holds map data for current map
+Public SuperMapData() As MapBlock
 Public MapInfo As MapInfo 'Holds map info for current map
 Public CharList(1 To 10000) As Char 'Holds info about all characters on map
 

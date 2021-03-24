@@ -2,16 +2,84 @@ VERSION 5.00
 Begin VB.Form frmMapInfo 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Información del Mapa"
-   ClientHeight    =   5040
+   ClientHeight    =   6240
    ClientLeft      =   45
    ClientTop       =   435
    ClientWidth     =   4425
+   ControlBox      =   0   'False
    Icon            =   "frmMapInfo.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   5040
+   MinButton       =   0   'False
+   ScaleHeight     =   6240
    ScaleWidth      =   4425
    StartUpPosition =   2  'CenterScreen
+   Begin VB.Frame FraLuzBase 
+      Caption         =   "Luz base"
+      BeginProperty Font 
+         Name            =   "Verdana"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   1215
+      Left            =   120
+      TabIndex        =   26
+      Top             =   4440
+      Width           =   4215
+      Begin VB.CheckBox chkLuzClimatica 
+         Caption         =   "Desactivado"
+         BeginProperty Font 
+            Name            =   "Verdana"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00000000&
+         Height          =   195
+         Left            =   1080
+         MaskColor       =   &H00404040&
+         TabIndex        =   29
+         Top             =   360
+         Width           =   1575
+      End
+      Begin VB.PictureBox PicColorMap 
+         BackColor       =   &H00FFFFFF&
+         Height          =   735
+         Left            =   120
+         ScaleHeight     =   675
+         ScaleWidth      =   795
+         TabIndex        =   28
+         TabStop         =   0   'False
+         Top             =   360
+         Width           =   855
+      End
+      Begin VB.TextBox LuzMapa 
+         Appearance      =   0  'Flat
+         Enabled         =   0   'False
+         BeginProperty Font 
+            Name            =   "Verdana"
+            Size            =   12
+            Charset         =   0
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   405
+         Left            =   1080
+         TabIndex        =   27
+         Text            =   "0-0-0"
+         Top             =   600
+         Width           =   1935
+      End
+   End
    Begin VB.CheckBox chkOcultarSin 
       Caption         =   "Ocultar sin Efecto"
       BeginProperty DataFormat 
@@ -171,14 +239,14 @@ Begin VB.Form frmMapInfo
       cgradient       =   0
       font            =   "frmMapInfo.frx":628A
       mode            =   0
-      value           =   0   'False
+      value           =   0
       cback           =   -2147483633
    End
    Begin WorldEditor.lvButtons_H cmdCerrar 
       Height          =   375
       Left            =   2640
       TabIndex        =   13
-      Top             =   4560
+      Top             =   5760
       Width           =   1695
       _extentx        =   2990
       _extenty        =   661
@@ -188,7 +256,7 @@ Begin VB.Form frmMapInfo
       cgradient       =   0
       font            =   "frmMapInfo.frx":62B6
       mode            =   0
-      value           =   0   'False
+      value           =   0
       cback           =   -2147483633
    End
    Begin VB.ComboBox txtMapRestringir 
@@ -398,8 +466,8 @@ Begin VB.Form frmMapInfo
       Index           =   1
       X1              =   120
       X2              =   4300
-      Y1              =   4440
-      Y2              =   4440
+      Y1              =   4320
+      Y2              =   4320
    End
    Begin VB.Label Label5 
       Caption         =   "Restringir:"
@@ -532,6 +600,10 @@ Private Sub chkInvocarSin_LostFocus()
  
 End Sub
 
+Private Sub chkLuzClimatica_Click()
+    frmMain.chkLuzClimatica.value = chkLuzClimatica.value
+End Sub
+
 Private Sub chkMapBackup_LostFocus()
 '*************************************************
 'Author: ^[GS]^
@@ -630,6 +702,12 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
         Me.Hide
     End If
     
+End Sub
+
+Private Sub PicColorMap_Click()
+    If chkLuzClimatica.value = False Then Exit Sub
+    
+    frmColorPicker.Show
 End Sub
 
 Private Sub txtAmbient_Change()

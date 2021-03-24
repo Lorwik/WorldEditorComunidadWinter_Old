@@ -464,7 +464,7 @@ Private Declare Function SetPixelV _
                 Lib "gdi32" (ByVal hDC As Long, _
                              ByVal X As Long, _
                              ByVal Y As Long, _
-                             ByVal Color As Long) As Byte 'Painting by API is good and fast.
+                             ByVal color As Long) As Byte 'Painting by API is good and fast.
 
 'FINDS THE REAL PATH FOR MyDocuments
 Private Declare Function SHGetFolderPath _
@@ -541,8 +541,9 @@ End Function
 
 Private Sub Command1_Click()
     MapInfo.LuzBase = RGB(Text1(3), Text1(4), Text1(5))
-
+    
     frmMain.LuzMapa.Text = frmColorPicker.Text1(3) & "-" & frmColorPicker.Text1(4) & "-" & frmColorPicker.Text1(5)
+    frmMapInfo.LuzMapa.Text = frmMain.LuzMapa.Text
 
     Call AddtoRichTextBox(frmMain.StatTxt, "Luz de mapa aceptada. Luz: " & MapInfo.LuzBase & ".", 255, 255, 255, False, True, True)
         

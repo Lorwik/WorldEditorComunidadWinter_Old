@@ -50,10 +50,10 @@ Public MainScreenRect As RECT
 
 Public Type TLVERTEX
     X As Single
-    Y As Single
+    y As Single
     Z As Single
     rhw As Single
-    Color As Long
+    color As Long
     Specular As Long
     tu As Single
     tv As Single
@@ -144,8 +144,8 @@ End Sub
 Private Function Engine_Init_DirectDevice(D3DCREATEFLAGS As CONST_D3DCREATEFLAGS) As Boolean
 
     'Establecemos cual va a ser el tamano del render.
-    ScreenWidth = frmMain.MainViewPic.ScaleWidth
-    ScreenHeight = frmMain.MainViewPic.ScaleHeight
+    ScreenWidth = 6400
+    ScreenHeight = 6400
     
     ' Retrieve the information about your current display adapter.
     Call DirectD3D.GetAdapterDisplayMode(D3DADAPTER_DEFAULT, DispMode)
@@ -267,7 +267,7 @@ Public Sub Engine_DirectX8_Aditional_Init()
     FPS = 101
     FramesPerSecCounter = 101
 
-    TileBufferSize = 12
+    TileBufferSize = 5
     
     Engine_BaseSpeed = 0.018
     
@@ -323,23 +323,23 @@ Public Function Engine_PixelPosX(ByVal X As Integer) As Integer
     
 End Function
 
-Public Function Engine_PixelPosY(ByVal Y As Integer) As Integer
+Public Function Engine_PixelPosY(ByVal y As Integer) As Integer
 '*****************************************************************
 'Converts a tile position to a screen position
 'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_PixelPosY
 '*****************************************************************
 
-    Engine_PixelPosY = (Y - 1) * 32
+    Engine_PixelPosY = (y - 1) * 32
     
 End Function
 
-Public Sub Engine_D3DColor_To_RGB_List(rgb_list() As Long, Color As D3DCOLORVALUE)
+Public Sub Engine_D3DColor_To_RGB_List(rgb_list() As Long, color As D3DCOLORVALUE)
 '***************************************************
 'Author: Ezequiel Juarez (Standelf)
 'Last Modification: 14/05/10
 'Blisse-AO | Set a D3DColorValue to a RGB List
 '***************************************************
-    rgb_list(0) = D3DColorARGB(Color.a, Color.r, Color.g, Color.b)
+    rgb_list(0) = D3DColorARGB(color.a, color.R, color.G, color.B)
     rgb_list(1) = rgb_list(0)
     rgb_list(2) = rgb_list(0)
     rgb_list(3) = rgb_list(0)
@@ -403,7 +403,7 @@ Private Function Engine_Collision_Between(ByVal value As Single, ByVal Bound1 As
     
 End Function
 
-Public Sub Engine_BeginScene(Optional ByVal Color As Long = 0)
+Public Sub Engine_BeginScene(Optional ByVal color As Long = 0)
 '***************************************************
 'Author: Ezequiel Juarez (Standelf)
 'Last Modification: 29/12/10
@@ -411,7 +411,7 @@ Public Sub Engine_BeginScene(Optional ByVal Color As Long = 0)
 '***************************************************
 
     Call DirectDevice.BeginScene
-    Call DirectDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, Color, 1#, 0)
+    Call DirectDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, color, 1#, 0)
     Call SpriteBatch.Begin
     
 End Sub
@@ -484,29 +484,29 @@ Public Sub Engine_Update_FPS()
 
 End Sub
 
-Public Sub Engine_Get_ARGB(Color As Long, Data As D3DCOLORVALUE)
+Public Sub Engine_Get_ARGB(color As Long, Data As D3DCOLORVALUE)
 '**************************************************************
 'Author: Standelf
 'Last Modify Date: 18/10/2012
 '**************************************************************
     
-    Dim a As Long, r As Long, g As Long, b As Long
+    Dim a As Long, R As Long, G As Long, B As Long
         
-    If Color < 0 Then
-        a = ((Color And (&H7F000000)) / (2 ^ 24)) Or &H80&
+    If color < 0 Then
+        a = ((color And (&H7F000000)) / (2 ^ 24)) Or &H80&
     Else
-        a = Color / (2 ^ 24)
+        a = color / (2 ^ 24)
     End If
     
-    r = (Color And &HFF0000) / (2 ^ 16)
-    g = (Color And &HFF00&) / (2 ^ 8)
-    b = (Color And &HFF&)
+    R = (color And &HFF0000) / (2 ^ 16)
+    G = (color And &HFF00&) / (2 ^ 8)
+    B = (color And &HFF&)
     
     With Data
         .a = a
-        .r = r
-        .g = g
-        .b = b
+        .R = R
+        .G = G
+        .B = B
     End With
         
 End Sub

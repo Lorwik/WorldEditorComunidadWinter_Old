@@ -71,11 +71,7 @@ Public Function GetTexture(ByVal filename As Integer, _
                            ByRef TextureWidth As Long, _
                            ByRef TextureHeight As Long) As Direct3DTexture8
 
-    If filename = 0 Then
-        Debug.Print "0 GRH ATTEMPT TO BE LOADED"
-        Exit Function
-
-    End If
+    If filename = 0 Then Exit Function
  
     Dim i As Long
 
@@ -126,16 +122,22 @@ Private Function CrearGrafico(ByVal Archivo As Integer, _
 
     Dim surface_desc As D3DSURFACE_DESC
     Dim texture_info As D3DXIMAGE_INFO
-    Dim Index        As Integer
+    Dim index        As Integer
     Dim Extension    As String
     Dim buffer()     As Byte
     Dim InfoHead As INFOHEADER
     
-    Index = Archivo Mod HASH_TABLE_SIZE
+    index = Archivo Mod HASH_TABLE_SIZE
     
-    Extension = ".png"
+    If ClientSetup.WeMode = eWeMode.WinterAO Then
+        Extension = ".png"
+        
+    Else
+        Extension = ".bmp"
+        
+    End If
 
-    With TexList(Index)
+    With TexList(index)
     
         .surfaceCount = .surfaceCount + 1
         

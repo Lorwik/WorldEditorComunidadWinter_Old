@@ -367,11 +367,10 @@ Public Sub Actualizar_Estado()
 'Last Modification: 09/08/2020
 'Actualiza el estado del clima y del dia
 '***************************************************
-    Dim X As Byte, Y As Byte
+    Dim X As Integer, Y As Integer
 
     '¿El mapa tiene su propia luz?
     If MapInfo.LuzBase <> -1 Then
-        Debug.Print "MapInfo.LuzBase: " & MapInfo.LuzBase
         For X = XMinMapSize To XMaxMapSize
             For Y = YMinMapSize To YMaxMapSize
                 Call Engine_D3DColor_To_RGB_List(MapData(X, Y).Engine_Light(), Estado_Custom)
