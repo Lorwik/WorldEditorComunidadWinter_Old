@@ -560,7 +560,7 @@ Public Sub CortarSeleccion()
     Seleccionando = False
 End Sub
 
-Public Sub CopiarSeleccion()
+Public Sub CopiarSeleccion(Optional ByVal Borde As Boolean = False)
 '*************************************************
 'Author: Loopzer
 'Last modified: 21/11/07
@@ -568,17 +568,47 @@ Public Sub CopiarSeleccion()
     'podria usar copy mem , pero por las dudas no XD
     Dim X As Integer
     Dim Y As Integer
+    Dim i As Byte
     
     Seleccionando = False
     SeleccionAncho = Abs(SeleccionIX - SeleccionFX) + 1
     SeleccionAlto = Abs(SeleccionIY - SeleccionFY) + 1
     ReDim SeleccionMap(SeleccionAncho, SeleccionAlto) As MapBlock
     
-    For X = 0 To SeleccionAncho - 1
-        For Y = 0 To SeleccionAlto - 1
-            SeleccionMap(X, Y) = MapData(X + SeleccionIX, Y + SeleccionIY)
+    If Not Borde Then
+        For X = 0 To SeleccionAncho - 1
+            For Y = 0 To SeleccionAlto - 1
+                SeleccionMap(X, Y) = MapData(X + SeleccionIX, Y + SeleccionIY)
+            Next
         Next
-    Next
+        
+    Else
+    
+        For X = 0 To SeleccionAncho - 1
+            For Y = 0 To SeleccionAlto - 1
+                With SeleccionMap(X, Y)
+                    .Blocked = MapData(X + SeleccionIX, Y + SeleccionIY).Blocked
+                    .Trigger = MapData(X + SeleccionIX, Y + SeleccionIY).Trigger
+                    .Particle_Index = MapData(X + SeleccionIX, Y + SeleccionIY).Particle_Index
+                    .Particle_Group_Index = MapData(X + SeleccionIX, Y + SeleccionIY).Particle_Group_Index
+                    .OBJInfo = MapData(X + SeleccionIX, Y + SeleccionIY).OBJInfo
+                    .ObjGrh = MapData(X + SeleccionIX, Y + SeleccionIY).ObjGrh
+                    .NPCIndex = MapData(X + SeleccionIX, Y + SeleccionIY).NPCIndex
+                    .Light = MapData(X + SeleccionIX, Y + SeleccionIY).Light
+                    For i = 1 To 4
+                        .Graphic(i) = MapData(X + SeleccionIX, Y + SeleccionIY).Graphic(i)
+                    Next i
+                    .FxIndex = MapData(X + SeleccionIX, Y + SeleccionIY).FxIndex
+                    .fX = MapData(X + SeleccionIX, Y + SeleccionIY).fX
+                    For i = 0 To 3
+                        .Engine_Light(i) = MapData(X + SeleccionIX, Y + SeleccionIY).Engine_Light(i)
+                    Next i
+                    .CharIndex = MapData(X + SeleccionIX, Y + SeleccionIY).CharIndex
+                End With
+            Next
+        Next
+        
+    End If
 End Sub
 
 Public Sub GenerarVista()
@@ -794,8 +824,10 @@ On Error GoTo RenderScreen_Err
                                 PixelOffsetXTemp, PixelOffsetYTemp, 1, .Engine_Light(), 1)
                                 
                     'Particulas *****************************************
-                    If .Particle_Group_Index Then _
-                        Call mDx8_Particulas.Particle_Group_Render(.Particle_Group_Index, PixelOffsetXTemp + 16, PixelOffsetYTemp + 16)
+                    If VerParticulas Then
+                        If .Particle_Group_Index Then _
+                            Call mDx8_Particulas.Particle_Group_Render(.Particle_Group_Index, PixelOffsetXTemp + 16, PixelOffsetYTemp + 16)
+                    End If
                          
                 End With
                 

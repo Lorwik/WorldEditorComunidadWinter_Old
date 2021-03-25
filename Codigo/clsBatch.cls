@@ -212,7 +212,16 @@ Public Sub Draw(ByVal X As Long, _
     End If
    
 End Sub
-  
+ 
+Public Sub Finish()
+
+    '
+    ' Flush the batch since we're finished
+    '
+    Call Flush
+ 
+End Sub
+ 
 Public Sub Flush()
  
     '

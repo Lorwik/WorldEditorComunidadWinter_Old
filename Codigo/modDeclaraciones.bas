@@ -65,6 +65,7 @@ Public DeSeleccionMap() As MapBlock
 Public VerBlockeados As Boolean
 Public VerTriggers As Boolean
 Public VerGrilla As Boolean ' grilla
+Public VerParticulas As Boolean
 Public VerCapa1 As Boolean
 Public VerCapa2 As Boolean
 Public VerCapa3 As Boolean
@@ -191,14 +192,14 @@ End Enum
 'Holds a local position
 Public Type Position
     X As Integer
-    y As Integer
+    Y As Integer
 End Type
 
 'Holds a world position
 Public Type WorldPos
     Map As Integer
     X As Integer
-    y As Integer
+    Y As Integer
 End Type
 
 'Points to a grhData and keeps animation info

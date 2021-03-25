@@ -511,11 +511,11 @@ Public Function Selected_Color()
         ' initial default color selection.
         .flags = cdlCCFullOpen + cdlCCRGBInit
       
-        .color = RGB(255, 255, 255)
+        .Color = RGB(255, 255, 255)
       
         ' Display the full color palette
         .ShowColor
-        c = .color
+        c = .Color
                       
     End With
 

@@ -122,7 +122,7 @@ Public Sub CargarMapIni()
         DirDats = IniPath & "DATS\"
         MaxGrhs = 15000
         UserPos.X = 50
-        UserPos.y = 50
+        UserPos.Y = 50
         PantallaX = 19
         PantallaY = 22
         MsgBox "Falta el archivo 'WorldEditor.ini' de configuración.", vbInformation
@@ -199,14 +199,14 @@ Public Sub CargarMapIni()
     
     tStr = Leer.GetValue("MOSTRAR", "LastPos") ' x-y
     UserPos.X = Val(ReadField(1, tStr, Asc("-")))
-    UserPos.y = Val(ReadField(2, tStr, Asc("-")))
+    UserPos.Y = Val(ReadField(2, tStr, Asc("-")))
     
     If UserPos.X < XMinMapSize Or UserPos.X > XMaxMapSize Then
         UserPos.X = 50
     End If
     
-    If UserPos.y < YMinMapSize Or UserPos.y > YMaxMapSize Then
-        UserPos.y = 50
+    If UserPos.Y < YMinMapSize Or UserPos.Y > YMaxMapSize Then
+        UserPos.Y = 50
     End If
     
     ' Menu Mostrar
@@ -220,6 +220,8 @@ Public Sub CargarMapIni()
     frmMain.mnuVerTriggers.Checked = Val(Leer.GetValue("MOSTRAR", "Triggers"))
     frmMain.mnuVerGrilla.Checked = Val(Leer.GetValue("MOSTRAR", "Grilla")) ' Grilla
     VerGrilla = frmMain.mnuVerGrilla.Checked
+    frmMain.mnuVerParticulas.Checked = Val(Leer.GetValue("MOSTRAR", "Particulas"))
+    VerParticulas = frmMain.mnuVerParticulas.Checked
     frmMain.mnuVerBloqueos.Checked = Val(Leer.GetValue("MOSTRAR", "Bloqueos"))
     frmMain.cVerTriggers.value = frmMain.mnuVerTriggers.Checked
     frmMain.cVerBloqueos.value = frmMain.mnuVerBloqueos.Checked
@@ -411,7 +413,7 @@ On Error GoTo ErrHandler:
                 Call InitGrh(BodyData(i).Walk(4), MisCuerpos(i).Body(4), 0)
                 
                 BodyData(i).HeadOffset.X = MisCuerpos(i).HeadOffsetX
-                BodyData(i).HeadOffset.y = MisCuerpos(i).HeadOffsetY
+                BodyData(i).HeadOffset.Y = MisCuerpos(i).HeadOffsetY
             End If
         Next i
     

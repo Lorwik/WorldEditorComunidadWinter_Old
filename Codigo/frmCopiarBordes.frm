@@ -3,7 +3,7 @@ Begin VB.Form frmCopiarBordes
    BackColor       =   &H00404040&
    BorderStyle     =   4  'Fixed ToolWindow
    Caption         =   "Copiar Translados Automaticos"
-   ClientHeight    =   7530
+   ClientHeight    =   6765
    ClientLeft      =   7185
    ClientTop       =   7845
    ClientWidth     =   4695
@@ -20,7 +20,7 @@ Begin VB.Form frmCopiarBordes
    LinkTopic       =   "Form3"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   502
+   ScaleHeight     =   451
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   313
    ShowInTaskbar   =   0   'False
@@ -40,7 +40,7 @@ Begin VB.Form frmCopiarBordes
       Height          =   3015
       Left            =   120
       TabIndex        =   12
-      Top             =   4440
+      Top             =   3600
       Width           =   4455
       Begin WorldEditor.lvButtons_H LvBPegar 
          Height          =   975
@@ -193,14 +193,25 @@ Begin VB.Form frmCopiarBordes
       Width           =   4455
       Begin VB.OptionButton OptMapa 
          BackColor       =   &H00404040&
+         Caption         =   "Perimetro"
+         ForeColor       =   &H00FFFFFF&
+         Height          =   255
+         Index           =   2
+         Left            =   3120
+         TabIndex        =   20
+         Top             =   2400
+         Width           =   1095
+      End
+      Begin VB.OptionButton OptMapa 
+         BackColor       =   &H00404040&
          Caption         =   "En Linea"
          ForeColor       =   &H00FFFFFF&
          Height          =   255
          Index           =   1
-         Left            =   2520
-         TabIndex        =   21
+         Left            =   1800
+         TabIndex        =   19
          Top             =   2400
-         Width           =   1455
+         Width           =   1335
       End
       Begin VB.OptionButton OptMapa 
          BackColor       =   &H00404040&
@@ -208,23 +219,24 @@ Begin VB.Form frmCopiarBordes
          ForeColor       =   &H00FFFFFF&
          Height          =   255
          Index           =   0
-         Left            =   480
-         TabIndex        =   20
+         Left            =   240
+         TabIndex        =   18
          Top             =   2400
          Value           =   -1  'True
          Width           =   1455
       End
-      Begin VB.CheckBox Superior 
+      Begin VB.CheckBox chkAutoCopy 
          BackColor       =   &H00404040&
          Caption         =   "Norte"
          ForeColor       =   &H00FFFFFF&
          Height          =   255
-         Left            =   1680
+         Index           =   0
+         Left            =   1800
          TabIndex        =   4
          Top             =   480
          Width           =   1095
       End
-      Begin VB.CheckBox Inferior 
+      Begin VB.CheckBox chkAutoCopy 
          BackColor       =   &H00404040&
          Caption         =   "Sur"
          BeginProperty Font 
@@ -238,26 +250,29 @@ Begin VB.Form frmCopiarBordes
          EndProperty
          ForeColor       =   &H00FFFFFF&
          Height          =   255
-         Left            =   1560
+         Index           =   3
+         Left            =   1800
          TabIndex        =   3
          Top             =   1920
          Width           =   1095
       End
-      Begin VB.CheckBox Derecho 
+      Begin VB.CheckBox chkAutoCopy 
          BackColor       =   &H00404040&
          Caption         =   "Este"
          ForeColor       =   &H00FFFFFF&
          Height          =   255
-         Left            =   3000
+         Index           =   2
+         Left            =   3240
          TabIndex        =   2
          Top             =   1200
          Width           =   1095
       End
-      Begin VB.CheckBox Izquierdo 
+      Begin VB.CheckBox chkAutoCopy 
          BackColor       =   &H00404040&
          Caption         =   "Oeste"
          ForeColor       =   &H00FFFFFF&
          Height          =   255
+         Index           =   1
          Left            =   240
          TabIndex        =   1
          Top             =   1200
@@ -312,7 +327,7 @@ Begin VB.Form frmCopiarBordes
          Caption         =   "Sin Traslados"
          ForeColor       =   &H00FFFFFF&
          Height          =   195
-         Left            =   1680
+         Left            =   1800
          TabIndex        =   9
          Top             =   240
          Width           =   945
@@ -323,7 +338,7 @@ Begin VB.Form frmCopiarBordes
          Caption         =   "Sin Traslados"
          ForeColor       =   &H00FFFFFF&
          Height          =   195
-         Left            =   3000
+         Left            =   3240
          TabIndex        =   8
          Top             =   960
          Width           =   945
@@ -334,7 +349,7 @@ Begin VB.Form frmCopiarBordes
          Caption         =   "Sin Traslados"
          ForeColor       =   &H00FFFFFF&
          Height          =   195
-         Left            =   1560
+         Left            =   1680
          TabIndex        =   7
          Top             =   1680
          Width           =   945
@@ -354,7 +369,7 @@ Begin VB.Form frmCopiarBordes
          EndProperty
          ForeColor       =   &H00FFFFFF&
          Height          =   435
-         Left            =   1320
+         Left            =   1560
          TabIndex        =   6
          Top             =   1080
          Width           =   1215
@@ -375,47 +390,11 @@ Begin VB.Form frmCopiarBordes
          EndProperty
          ForeColor       =   &H00FFFFFF&
          Height          =   195
-         Left            =   1485
+         Left            =   1680
          TabIndex        =   5
          Top             =   840
          Width           =   1065
       End
-   End
-   Begin WorldEditor.lvButtons_H LvBCopiarY 
-      Height          =   375
-      Left            =   720
-      TabIndex        =   18
-      Top             =   3600
-      Width           =   3015
-      _ExtentX        =   5318
-      _ExtentY        =   661
-      Caption         =   "&Magic Mapas"
-      CapAlign        =   2
-      BackStyle       =   2
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      cGradient       =   0
-      Mode            =   0
-      Value           =   0   'False
-      cBack           =   -2147483633
-   End
-   Begin VB.Label lblCopiaY 
-      Alignment       =   2  'Center
-      BackStyle       =   0  'Transparent
-      Caption         =   "Copia y optimiza todos los mapas alrededor del actual. No funcionan si no estan todos los mapas conectados."
-      ForeColor       =   &H00FFFFFF&
-      Height          =   435
-      Left            =   120
-      TabIndex        =   19
-      Top             =   3960
-      Width           =   4485
    End
 End
 Attribute VB_Name = "frmCopiarBordes"
@@ -425,12 +404,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private Izq As Integer
-Private Arr As Integer
-Private Der As Integer
-Private Abj As Integer
-
-Private Copiando As Byte
 Private EnCopia As Boolean
 
 Private MapaNorte As Integer
@@ -439,6 +412,7 @@ Private MapaEste As Integer
 Private MapaSur As Integer
 
 Private NuevoMapa As Integer
+Private DireccionCopia As Byte
 
 Public Sub Inicializar()
 
@@ -447,11 +421,6 @@ Public Sub Inicializar()
     Dim X           As Integer
     Dim Y           As Integer
     Dim i           As Byte
-    
-    Izq = 9
-    Arr = 7
-    Der = 92
-    Abj = 94
     
     If Not EnCopia Then
         For i = 0 To 3
@@ -493,53 +462,82 @@ Private Sub CopiarBorde(ByVal Direccion As Byte)
     Select Case Direccion
     
         Case eDireccion.NORTH
-            SeleccionIX = XMinMapSize                                   'Minimo
-            SeleccionFX = XMaxMapSize                                   'Maximo
-            SeleccionIY = MinYBorder + 1                                'Minimo
-            SeleccionFY = (MinYBorder + 1) + (MinYBorder - YMinMapSize) 'Maximo
+            SeleccionIX = XMinMapSize                                'Minimo
+            SeleccionFX = XMaxMapSize                                'Maximo
+            SeleccionIY = MinYBorder                                 'Minimo
+            SeleccionFY = (MinYBorder) + (MinYBorder - YMinMapSize)  'Maximo
+            
+            DireccionCopia = eDireccion.SOUTH
             
             Call AddtoRichTextBox(frmMain.StatTxt, "Copiando el Norte del mapa " & MapaActual & ".", 0, 255, 0)
         
         Case eDireccion.WEST
-            SeleccionIX = MinXBorder + 1                                'Minimo
-            SeleccionFX = (MinXBorder + 1) + (MinXBorder - XMinMapSize) 'Maximo
-            SeleccionIY = YMinMapSize                                   'Minimo
-            SeleccionFY = YMaxMapSize                                   'Maximo
+            SeleccionIX = MinXBorder                                 'Minimo
+            SeleccionFX = (MinXBorder) + (MinXBorder - XMinMapSize) 'Maximo
+            SeleccionIY = YMinMapSize                                'Minimo
+            SeleccionFY = YMaxMapSize                                'Maximo
+            
+            DireccionCopia = eDireccion.EAST
             
             Call AddtoRichTextBox(frmMain.StatTxt, "Copiando el Oeste del mapa " & MapaActual & ".", 0, 255, 0)
             
         Case eDireccion.EAST
-            SeleccionIX = MinXBorder + 1                                'Minimo
-            SeleccionFX = (MinXBorder + 1) - (MinXBorder - XMinMapSize) 'Maximo
-            SeleccionIY = YMinMapSize                                   'Minimo
-            SeleccionFY = YMaxMapSize                                   'Maximo
+            SeleccionIX = MinXBorder                                'Minimo
+            SeleccionFX = (MinXBorder) - (MinXBorder - XMinMapSize) 'Maximo
+            SeleccionIY = YMinMapSize                               'Minimo
+            SeleccionFY = YMaxMapSize                               'Maximo
+            
+            DireccionCopia = eDireccion.WEST
             
             Call AddtoRichTextBox(frmMain.StatTxt, "Copiando el Este del mapa " & MapaActual & ".", 0, 255, 0)
             
         Case eDireccion.SOUTH
-            SeleccionIX = XMinMapSize                                   'Minimo
-            SeleccionFX = XMaxMapSize                                   'Maximo
-            SeleccionIY = MaxYBorder + 1                                'Minimo
-            SeleccionFY = (MaxYBorder + 1) - (MaxYBorder - YMaxMapSize) 'Maximo
+            SeleccionIX = XMinMapSize                               'Minimo
+            SeleccionFX = XMaxMapSize                               'Maximo
+            SeleccionIY = MaxYBorder                                'Minimo
+            SeleccionFY = (MaxYBorder) - (MaxYBorder - YMaxMapSize) 'Maximo
+            
+            DireccionCopia = eDireccion.NORTH
             
             Call AddtoRichTextBox(frmMain.StatTxt, "Copiando el Sur del mapa " & MapaActual & ".", 0, 255, 0)
     
     End Select
     
-    Call CopiarSeleccion
+    Call CopiarSeleccion(True)
     
     EnCopia = True
 
 End Sub
 
-Private Sub PegarBorde()
+Private Sub PegarBorde(Optional ByVal Direccion As Byte = 255)
 '****************************************
 'Lorwik
 'Fecha: 24/03/2021
 'Descripción: Pega el borde del mapa
 '****************************************
 
+    'Quizas queremos pegar en otra direccion
+    If Direccion = 255 Then Direccion = DireccionCopia
+
+    Select Case Direccion
     
+        Case eDireccion.NORTH
+            SobreX = 1
+            SobreY = 1
+            
+        Case eDireccion.WEST
+            SobreX = 1
+            SobreY = 1
+            
+        Case eDireccion.EAST
+            SobreX = MaxXBorder
+            SobreY = 1
+        
+        Case eDireccion.SOUTH
+            SobreX = 1
+            SobreY = MaxYBorder
+    
+    End Select
 
     Call PegarSeleccion
     Call modEdicion.Bloquear_Bordes
@@ -561,7 +559,7 @@ Private Sub VerMapaTraslado()
     Dim Y As Integer
 
     'Izquierda
-    X = Izq
+    X = MinXBorder
 
     For Y = (MinYBorder + 1) To (MaxYBorder - 1)
 
@@ -575,7 +573,7 @@ Private Sub VerMapaTraslado()
     Next
     
     'arriba
-    Y = Arr
+    Y = MinYBorder
 
     For X = (MinXBorder + 1) To (MaxXBorder - 1)
 
@@ -589,7 +587,7 @@ Private Sub VerMapaTraslado()
     Next
     
     'Derecha
-    X = Der
+    X = MaxXBorder
 
     For Y = (MinYBorder + 1) To (MaxYBorder - 1)
 
@@ -603,7 +601,7 @@ Private Sub VerMapaTraslado()
     Next
     
     'Abajo
-    Y = Abj
+    Y = MaxYBorder
 
     For X = (MinXBorder + 1) To (MaxXBorder - 1)
 
@@ -624,7 +622,185 @@ VerMapaTraslado_Err:
     
 End Sub
 
+Private Sub LvBComenzar_Click()
+'****************************************
+'Lorwik
+'Fecha: 24/03/2021
+'****************************************
+    
+    '¿No selecciono ninguna direccion?
+    If OptMapa(2).value = False And chkAutoCopy(0).value = Unchecked And chkAutoCopy(1).value = Unchecked _
+        And chkAutoCopy(2).value = Unchecked And chkAutoCopy(3).value = Unchecked Then
+        
+        MsgBox "No has seleccionado ninguna dirección."
+        Exit Sub
+        
+    End If
+    
+    'Copia el mapa actual, pasa al siguiente y lo pega
+    If OptMapa(0).value Then
+    
+        'Norte
+        If chkAutoCopy(0).value = Checked Then
+            If MapaNorte = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.NORTH)
+            If GuardaryAbrir(MapaNorte, False) Then Call PegarBorde
+            Exit Sub
+        End If
+        
+        'Norte
+        If chkAutoCopy(1).value = Checked Then
+            If MapaOeste = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.WEST)
+            If GuardaryAbrir(MapaOeste, False) Then Call PegarBorde
+            Exit Sub
+        End If
+        
+        'Norte
+        If chkAutoCopy(2).value = Checked Then
+            If MapaEste = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.EAST)
+            If GuardaryAbrir(MapaEste, False) Then Call PegarBorde
+            Exit Sub
+        End If
+        
+        'Sur
+        If chkAutoCopy(3).value = Checked Then
+            If MapaSur = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.SOUTH)
+            If GuardaryAbrir(MapaSur, False) Then Call PegarBorde
+            Exit Sub
+        End If
+    
+    ElseIf OptMapa(1).value Then 'Copia el mapa actual, pasa al siguiente, lo pega y asi hasta que no hay mas mapas siguientes.
+    
+        'Norte
+        If chkAutoCopy(0).value = Checked Then
+            Do While MapaNorte <> 0
+                Call CopiarBorde(eDireccion.NORTH)
+                If GuardaryAbrir(MapaNorte, False) Then Call PegarBorde
+            Loop
+            Exit Sub
+        End If
+        
+        'Norte
+        If chkAutoCopy(1).value = Checked Then
+            Do While MapaOeste <> 0
+                Call CopiarBorde(eDireccion.WEST)
+                If GuardaryAbrir(MapaOeste, False) Then Call PegarBorde
+            Loop
+            Exit Sub
+        End If
+        
+        'Norte
+        If chkAutoCopy(2).value = Checked Then
+            Do While MapaEste <> 0
+                Call CopiarBorde(eDireccion.EAST)
+                If GuardaryAbrir(MapaEste, False) Then Call PegarBorde
+            Loop
+            Exit Sub
+        End If
+        
+        'Sur
+        If chkAutoCopy(3).value = Checked Then
+            Do While MapaSur <> 0
+                Call CopiarBorde(eDireccion.SOUTH)
+                If GuardaryAbrir(MapaSur, False) Then Call PegarBorde
+            Loop
+        End If
+    
+    ElseIf OptMapa(2).value Then 'Copia el mapa actual y todos los mapas que componen su perimetro
+    
+        'Norte
+            If MapaNorte = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.NORTH)
+            If GuardaryAbrir(MapaNorte, True) Then Call PegarBorde
+            
+        'Oeste
+            If MapaOeste = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.WEST)
+            If GuardaryAbrir(MapaOeste, True) Then Call PegarBorde
+        
+        'Este
+            If MapaEste = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.EAST)
+            If GuardaryAbrir(MapaEste, True) Then Call PegarBorde
+        
+        'Sur
+            If MapaSur = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.SOUTH)
+            If GuardaryAbrir(MapaSur, True) Then Call PegarBorde
+        
+        'Oeste
+            If MapaOeste = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.WEST)
+            If GuardaryAbrir(MapaOeste, True) Then Call PegarBorde
+            
+        'Sur
+            If MapaSur = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.SOUTH)
+            If GuardaryAbrir(MapaSur, True) Then Call PegarBorde
+            
+        'Norte
+            If MapaNorte = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.NORTH)
+            If GuardaryAbrir(MapaNorte, True) Then Call PegarBorde
+            
+        'Este
+            If MapaEste = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.EAST)
+            If GuardaryAbrir(MapaEste, True) Then Call PegarBorde
+            
+        'Este
+            If MapaEste = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.EAST)
+            If GuardaryAbrir(MapaEste, True) Then Call PegarBorde
+            
+        'Norte
+            If MapaNorte = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.NORTH)
+            If GuardaryAbrir(MapaNorte, True) Then Call PegarBorde
+            
+        'Sur
+            If MapaSur = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.SOUTH)
+            If GuardaryAbrir(MapaSur, True) Then Call PegarBorde
+            
+        'Oeste
+            If MapaOeste = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.WEST)
+            If GuardaryAbrir(MapaOeste, True) Then Call PegarBorde
+            
+        'Sur
+            If MapaSur = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.SOUTH)
+            If GuardaryAbrir(MapaSur, True) Then Call PegarBorde
+            
+        'Este
+            If MapaEste = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.EAST)
+            If GuardaryAbrir(MapaEste, True) Then Call PegarBorde
+            
+        'Oeste
+            If MapaOeste = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.WEST)
+            If GuardaryAbrir(MapaOeste, True) Then Call PegarBorde
+            
+        'Morte
+            If MapaNorte = 0 Then Exit Sub
+            Call CopiarBorde(eDireccion.NORTH)
+            If GuardaryAbrir(MapaNorte, True) Then Call PegarBorde
+
+    
+    End If
+
+End Sub
+
 Private Sub LvBCopiarAl_Click(Index As Integer)
+'****************************************
+'Lorwik
+'Fecha: 24/03/2021
+'****************************************
     Dim i As Byte
 
     Select Case Index
@@ -652,6 +828,10 @@ Private Sub LvBCopiarAl_Click(Index As Integer)
 End Sub
 
 Private Sub LvBPegar_Click()
+'****************************************
+'Lorwik
+'Fecha: 24/03/2021
+'****************************************
     Dim i As Byte
     
     Call PegarBorde
@@ -663,3 +843,22 @@ Private Sub LvBPegar_Click()
     LvBPegar.Enabled = False
     
 End Sub
+
+Private Function GuardaryAbrir(ByVal newMap As Integer, ByVal Guardar As Boolean) As Boolean
+
+    If Guardar Then
+        NoSobreescribir = True
+        frmMain.mnuGuardarMapa_Click
+    End If
+
+    '¿El mapa al que nos dirigimos existe?
+    If FileExist(PATH_Save & NameMap_Save & newMap & ".csm", vbArchive) = True Then
+        Call modMapIO.NuevoMapa
+        frmMain.Dialog.filename = PATH_Save & NameMap_Save & newMap & ".csm"
+        modMapIO.AbrirunMapa frmMain.Dialog.filename
+        
+        GuardaryAbrir = True
+        
+        Exit Function
+    End If
+End Function
