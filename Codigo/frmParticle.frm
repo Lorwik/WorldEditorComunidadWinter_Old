@@ -3,23 +3,36 @@ Begin VB.Form frmParticle
    BackColor       =   &H00404040&
    BorderStyle     =   4  'Fixed ToolWindow
    Caption         =   "Agregar Particulas"
-   ClientHeight    =   3960
+   ClientHeight    =   3120
    ClientLeft      =   8280
    ClientTop       =   7845
-   ClientWidth     =   1815
+   ClientWidth     =   4080
    ControlBox      =   0   'False
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   3960
-   ScaleWidth      =   1815
+   ScaleHeight     =   3120
+   ScaleWidth      =   4080
    ShowInTaskbar   =   0   'False
    Visible         =   0   'False
+   Begin VB.PictureBox ParticlePic 
+      Appearance      =   0  'Flat
+      BackColor       =   &H00000000&
+      ForeColor       =   &H80000008&
+      Height          =   2295
+      Left            =   1800
+      ScaleHeight     =   2265
+      ScaleWidth      =   2145
+      TabIndex        =   5
+      TabStop         =   0   'False
+      Top             =   120
+      Width           =   2175
+   End
    Begin WorldEditor.lvButtons_H cmdAdd 
       Height          =   375
-      Left            =   120
+      Left            =   2160
       TabIndex        =   3
-      Top             =   2760
+      Top             =   2640
       Width           =   1575
       _ExtentX        =   2778
       _ExtentY        =   661
@@ -68,9 +81,9 @@ Begin VB.Form frmParticle
    End
    Begin WorldEditor.lvButtons_H cmdDel 
       Height          =   375
-      Left            =   120
+      Left            =   360
       TabIndex        =   4
-      Top             =   3120
+      Top             =   2640
       Width           =   1575
       _ExtentX        =   2778
       _ExtentY        =   661
@@ -153,3 +166,11 @@ Public Sub AccionParticulas()
     Call cmdDel_Click
 End Sub
 
+Private Sub lstParticle_Click()
+    Dim Index As Integer
+    
+    Index = lstParticle.ListIndex + 1
+    
+    ParticlePreview = General_Particle_Create(Index, -1, -1)
+    Debug.Print ParticlePreview
+End Sub

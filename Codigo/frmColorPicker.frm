@@ -3,7 +3,7 @@ Begin VB.Form frmColorPicker
    BackColor       =   &H00404040&
    BorderStyle     =   4  'Fixed ToolWindow
    Caption         =   "Color ambiental"
-   ClientHeight    =   4920
+   ClientHeight    =   5370
    ClientLeft      =   23550
    ClientTop       =   8445
    ClientWidth     =   6330
@@ -12,7 +12,7 @@ Begin VB.Form frmColorPicker
    MaxButton       =   0   'False
    MinButton       =   0   'False
    MousePointer    =   1  'Arrow
-   ScaleHeight     =   328
+   ScaleHeight     =   358
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   422
    ShowInTaskbar   =   0   'False
@@ -20,7 +20,7 @@ Begin VB.Form frmColorPicker
       Height          =   375
       Left            =   1800
       TabIndex        =   25
-      Top             =   4440
+      Top             =   4920
       Width           =   2295
       _ExtentX        =   4048
       _ExtentY        =   661
@@ -249,6 +249,25 @@ Begin VB.Form frmColorPicker
       TabIndex        =   0
       Top             =   1785
       Width           =   465
+   End
+   Begin VB.Label lblElColor 
+      BackStyle       =   0  'Transparent
+      Caption         =   "El color negro #000000 es ignorado por el sistema, si quieres establecer un negro, elige uno menos puro."
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   435
+      Left            =   240
+      TabIndex        =   26
+      Top             =   4440
+      Width           =   4515
    End
    Begin VB.Line linTriang2Falling 
       BorderColor     =   &H00FFFFFF&
@@ -540,20 +559,19 @@ Function Shell(Program As String, _
 End Function
 
 Private Sub Command1_Click()
-    MapInfo.LuzBase = RGB(Text1(3), Text1(4), Text1(5))
+    If ClientSetup.WeMode = eWeMode.WinterAO Then
+        MapZonas(frmMain.LstZona.ListIndex + 1).LuzBase = RGB(Text1(3), Text1(4), Text1(5))
+        
+    Else
+        MapInfo.LuzBase = RGB(Text1(3), Text1(4), Text1(5))
+        
+    End If
     
     frmMain.LuzMapa.Text = frmColorPicker.Text1(3) & "-" & frmColorPicker.Text1(4) & "-" & frmColorPicker.Text1(5)
     frmMapInfo.LuzMapa.Text = frmMain.LuzMapa.Text
 
-    Call AddtoRichTextBox(frmMain.StatTxt, "Luz de mapa aceptada. Luz: " & MapInfo.LuzBase & ".", 255, 255, 255, False, True, True)
-        
-    With Estado_Custom
-        .a = 255
-        .R = frmColorPicker.Text1(3)
-        .G = frmColorPicker.Text1(4)
-        .B = frmColorPicker.Text1(5)
-    End With
-        
+    Call AddtoRichTextBox(frmMain.StatTxt, "Luz de mapa aceptada. Luz: " & RGB(Text1(3), Text1(4), Text1(5)) & ".", 255, 255, 255, False, True, True)
+
     Call Actualizar_Estado
 
     Call frmMain.CambiarColorMap
@@ -574,7 +592,7 @@ Public Sub Form_Load()
     mBlnRecentThinBoxPress = True 'TO GET RID OF GREY SQUARES IN THE PICTURE.
     'frmColorPicker.ScaleMode = vbPixels 'RESEMBLING PIXELS.
     frmColorPicker.Width = 6420
-    frmColorPicker.Height = 5355
+    frmColorPicker.Height = 5805
     
     For Ctr = 0 To 2
         Text1(Ctr).Move 351, 117 + Ctr * 25, 30, 21

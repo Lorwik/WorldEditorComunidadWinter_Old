@@ -89,6 +89,9 @@ Public Const GRH_ERROR As Long = 22512
 Private Declare Function QueryPerformanceFrequency Lib "kernel32" (lpFrequency As Currency) As Long
 Private Declare Function QueryPerformanceCounter Lib "kernel32" (lpPerformanceCount As Currency) As Long
 
+Private Declare Function SetPixel Lib "gdi32" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
+Private Declare Function GetPixel Lib "gdi32" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
+
 Sub ConvertCPtoTP(ByVal viewPortX As Integer, ByVal viewPortY As Integer, ByRef tX As Integer, ByRef tY As Integer)
 '******************************************
 'Converts where the mouse is in the main window to a tile position. MUST be called eveytime the mouse moves.
@@ -136,8 +139,6 @@ On Error Resume Next
     
     'Plot on map
     MapData(X, Y).CharIndex = CharIndex
-    
-    bRefreshRadar = True ' GS
 
 End Sub
 
@@ -162,8 +163,6 @@ Sub EraseChar(CharIndex As Integer)
     
     'Update NumChars
     NumChars = NumChars - 1
-    
-    bRefreshRadar = True ' GS
 
 End Sub
 
@@ -243,8 +242,6 @@ Sub MoveCharbyPos(CharIndex As Integer, nX As Integer, nY As Integer)
     
     CharList(CharIndex).Moving = 1
     CharList(CharIndex).Heading = nHeading
-    
-    bRefreshRadar = True ' GS
 
 End Sub
 
@@ -629,6 +626,17 @@ Public Sub GenerarVista()
     VerObjetos = frmMain.mnuVerObjetos.Checked
     VerNpcs = frmMain.mnuVerNPCs.Checked
     
+    MMiniMap_capa1 = frmMain.Minimap_capa1.Checked
+    MMiniMap_capa2 = frmMain.Minimap_capa2.Checked
+    MMiniMap_capa3 = frmMain.Minimap_capa3.Checked
+    MMiniMap_capa4 = frmMain.Minimap_capa4.Checked
+    MMiniMap_Npcs = frmMain.Minimap_npcs.Checked
+    MMiniMap_objetos = frmMain.Minimap_objetos.Checked
+    MMiniMap_Bloqueos = frmMain.Minimap_bloqueos.Checked
+    MMiniMap_particulas = frmMain.Minimap_particulas.Checked
+    MMiniMap_Nombre = frmMain.Minimap_ndemapa.Checked
+
+    
 End Sub
 ' [/Loopzer]
 
@@ -889,6 +897,17 @@ On Error GoTo RenderScreen_Err
                     If MapData(X, Y).Trigger > 0 Then _
                         Call DrawText(PixelOffsetXTemp + 5, PixelOffsetYTemp - 13, MapData(X, Y).Trigger, -1, False, 2)
                 End If
+                
+                If ClientSetup.WeMode = eWeMode.WinterAO Then
+                    If frmMain.mnuVerZonas(0).Checked Then 'Zona actual
+                        If MapData(X, Y).ZonaIndex = frmMain.LstZona.ListIndex + 1 And MapData(X, Y).ZonaIndex > 0 Then _
+                            Call DrawText(PixelOffsetXTemp + 7, PixelOffsetYTemp + 7, "z" & MapData(X, Y).ZonaIndex, -1, False, 1)
+                            
+                    ElseIf frmMain.mnuVerZonas(1).Checked Then 'Todas las zonas
+                        If MapData(X, Y).ZonaIndex > 0 Then _
+                            Call DrawText(PixelOffsetXTemp + 7, PixelOffsetYTemp + 7, "z" & MapData(X, Y).ZonaIndex, -1, False, 1)
+                    End If
+                End If
                     
                 If Seleccionando Then
                         If X >= SeleccionIX And Y >= SeleccionIY Then
@@ -930,7 +949,7 @@ Public Sub RenderPreview()
     'Clear the inventory window
     Call Engine_BeginScene
     
-    If frmMain.MOSAICO = vbUnchecked Then
+    If frmMain.MOSAICO = vbUnchecked Or frmMain.lListado(3).Visible = True Then
         Call Draw_GrhIndex(CurrentGrh.GrhIndex, frmMain.PreviewGrh.Height / 2, frmMain.PreviewGrh.Width - 50, 1, Normal_RGBList(), 0)
         
     Else
@@ -956,6 +975,35 @@ Public Sub RenderPreview()
     frmMain.PreviewGrh.AutoRedraw = True
 
     Call DrawBuffer.PaintPicture(frmMain.PreviewGrh.hDC, 0, 0, frmMain.PreviewGrh.Width, frmMain.PreviewGrh.Height, 0, 0, vbSrcCopy)
+End Sub
+
+Public Sub RenderParticlePreview()
+    Dim destRect     As RECT
+    
+    Dim i As Integer, j As Integer
+    Dim Cont As Integer
+    
+    With destRect
+        .Bottom = 200
+        .Right = 200
+
+    End With
+    
+    'Clear the inventory window
+    Call Engine_BeginScene
+    
+    If ParticlePreview <> 0 Then _
+        Call mDx8_Particulas.Particle_Group_Render(ParticlePreview, 100, 100)
+    
+    frmParticle.ParticlePic.AutoRedraw = False
+
+    Call Engine_EndScene(destRect, frmParticle.ParticlePic.hwnd)
+
+    Call DrawBuffer.LoadPictureBlt(frmParticle.ParticlePic.hDC)
+
+    frmParticle.ParticlePic.AutoRedraw = True
+
+    Call DrawBuffer.PaintPicture(frmParticle.ParticlePic.hDC, 0, 0, frmParticle.ParticlePic.Width, frmParticle.ParticlePic.Height, 0, 0, vbSrcCopy)
 End Sub
 
 Function PixelPos(X As Integer) As Integer
@@ -998,6 +1046,9 @@ On Error GoTo 0
     'Cargamos indice de graficos.
     'TODO: No usar variable de compilacion y acceder a esto desde el config.ini
     Call LoadGrhData
+    If ClientSetup.WeMode = eWeMode.ImperiumClasico Then _
+        Call CargarMinimapa
+        
     Call SimpleLogError("Cargado Graficos...")
     
     'Display form handle, View window offset from 0,0 of display form, Tile Size, Display size in tiles, Screen buffer
@@ -1377,3 +1428,98 @@ MapCapture_Err:
     
 End Sub
 
+Public Sub DibujarMinimapa(Optional ByVal Actualizar = False)
+
+    Dim map_x As Integer
+    Dim map_y As Integer
+    
+    If Actualizar = False Then
+         'Primero limpiamos el minimapa anterior
+         frmMain.MiniMap.BackColor = vbBlack
+         
+        For map_y = 1 To 100
+            For map_x = 1 To 100
+            
+                If MMiniMap_capa1 Then
+                    If MapData(map_x, map_y).Graphic(1).GrhIndex > 0 Then
+                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(1).GrhIndex).mini_map_color
+    
+                    End If
+    
+                End If
+                
+                If MMiniMap_capa2 Then
+                    If MapData(map_x, map_y).Graphic(2).GrhIndex > 0 Then
+                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(2).GrhIndex).mini_map_color
+    
+                    End If
+    
+                End If
+            
+                If MMiniMap_capa3 Then
+                    If MapData(map_x, map_y).Graphic(3).GrhIndex > 0 Then
+                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(3).GrhIndex).mini_map_color
+    
+                    End If
+    
+                End If
+            
+                If MMiniMap_capa4 Then
+                    If MapData(map_x, map_y).Graphic(4).GrhIndex > 0 Then
+                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(4).GrhIndex).mini_map_color
+    
+                    End If
+    
+                End If
+            
+                If MMiniMap_Npcs Then
+                    If MapData(map_x, map_y).NPCIndex > 0 Then
+                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, vbYellow
+    
+                    End If
+    
+                End If
+            
+                If MMiniMap_objetos Then
+                    If MapData(map_x, map_y).OBJInfo.ObjIndex > 0 Then
+                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).ObjGrh.GrhIndex).mini_map_color
+    
+                    End If
+    
+                End If
+            
+                If MMiniMap_Bloqueos Then
+                    If MapData(map_x, map_y).Blocked > 0 Then
+                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, vbRed
+    
+                    End If
+    
+                End If
+            
+                If MMiniMap_particulas Then
+                    If MapData(map_x, map_y).Particle_Index > 0 Then
+                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, vbWhite
+    
+                    End If
+    
+                End If
+    
+                If MMiniMap_Nombre Then
+                    frmMain.MiniMap.CurrentX = 30
+                    frmMain.MiniMap.CurrentY = 26
+                    frmMain.MiniMap.Print frmMain.MapPest(7).Caption
+    
+                End If
+            Next map_x
+        Next map_y
+    
+    End If
+    
+    'frmMain.UserM.Left = (UserPos.X * 2) - 2
+    'frmMain.UserM.Top = (UserPos.Y * 2) - 2
+    frmMain.ApuntadorRadar.Left = (UserPos.X) - 9
+    frmMain.ApuntadorRadar.Top = (UserPos.Y) - 8
+    
+    'Refrescamos
+    'frmMain.Minimap.Refresh
+End Sub

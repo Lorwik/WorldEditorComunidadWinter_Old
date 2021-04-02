@@ -155,7 +155,7 @@ Public Sub NuevoMapa()
     On Error Resume Next
 
     Dim loopc As Integer
-    Dim y As Integer
+    Dim Y As Integer
     Dim X As Integer
     Dim i As Byte
     
@@ -178,10 +178,10 @@ Public Sub NuevoMapa()
     'Volvemos a setear el tamaño del mapa
     Call setMapSize
     
-    For y = YMinMapSize To YMaxMapSize
+    For Y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
         
-            With MapData(X, y)
+            With MapData(X, Y)
         
                 ' Capa 1
                 .Graphic(1).GrhIndex = 1
@@ -208,7 +208,7 @@ Public Sub NuevoMapa()
                 ' Translados
                 .TileExit.Map = 0
                 .TileExit.X = 0
-                .TileExit.y = 0
+                .TileExit.Y = 0
                 
                 ' Triggers
                 .Trigger = 0
@@ -216,7 +216,7 @@ Public Sub NuevoMapa()
                 .Particle_Group_Index = 0
                 'Particle_Group_Remove .Particle_Group_Index
 
-                Call Engine_Long_To_RGB_List(MapData(X, y).Engine_Light(), -1)
+                Call Engine_Long_To_RGB_List(MapData(X, Y).Engine_Light(), -1)
                 
                 .Light.active = False
                 .Light.range = 0
@@ -227,6 +227,9 @@ Public Sub NuevoMapa()
                 .Light.RGBCOLOR.G = 0
                 .Light.RGBCOLOR.B = 0
                 
+                If ClientSetup.WeMode = eWeMode.WinterAO Then _
+                    .ZonaIndex = 0
+                
                 For i = 0 To 3
                     .Engine_Light(i) = 0
                 Next i
@@ -235,29 +238,47 @@ Public Sub NuevoMapa()
         
             End With
         Next X
-    Next y
+    Next Y
     
     'Borramos todas las luces
     Call LightRemoveAll
     
-    MapInfo.MapVersion = 0
-    MapInfo.name = "Mapa Desconocido"
-    MapInfo.Music = 0
-    MapInfo.PK = True
-    MapInfo.MagiaSinEfecto = 0
-    MapInfo.InviSinEfecto = 0
-    MapInfo.ResuSinEfecto = 0
-    MapInfo.Terreno = "BOSQUE"
-    MapInfo.Zona = "CAMPO"
-    MapInfo.Restringir = "No"
-    MapInfo.NoEncriptarMP = 0
-    MapInfo.LuzBase = -1
+    If ClientSetup.WeMode = eWeMode.WinterAO Then
+        CantZonas = 0
+        ReDim MapZonas(CantZonas) As tMapInfo
     
-    Call MapInfo_Actualizar
+        frmMain.LstZona.Clear
     
+        Call NuevaZona(CantZonas)
+                
+        Call MapZona_Actualizar(CantZonas)
+        
+        frmMain.LstZona.ListIndex = 0
+        
+        Call MapZona_Actualizar(frmMain.LstZona.ListIndex + 1)
+           
+    Else
+    
+        MapInfo.MapVersion = 0
+        MapInfo.name = "Mapa Desconocido"
+        MapInfo.Music = 0
+        MapInfo.ambient = 0
+        MapInfo.PK = True
+        MapInfo.MagiaSinEfecto = 0
+        MapInfo.InviSinEfecto = 0
+        MapInfo.ResuSinEfecto = 0
+        MapInfo.Terreno = "BOSQUE"
+        MapInfo.Zona = "CAMPO"
+        MapInfo.Restringir = "No"
+        MapInfo.NoEncriptarMP = 0
+        MapInfo.LuzBase = 0
+            
+        Call MapInfo_Actualizar
+    End If
+
     Call CaptionWorldEditor("", False, "Estandar")
     
-    bRefreshRadar = True ' Radar
+    Call DibujarMinimapa ' Radar
     
     Estado_Actual = Estados(e_estados.MedioDia)
     Call Actualizar_Estado
@@ -293,7 +314,7 @@ Public Sub MapaV2_Guardar(ByVal SaveAs As String)
     Dim FreeFileInf As Long
     Dim loopc       As Long
     Dim TempInt     As Integer
-    Dim y           As Long
+    Dim Y           As Long
     Dim X           As Long
     Dim ByFlags     As Byte
 
@@ -356,10 +377,10 @@ Public Sub MapaV2_Guardar(ByVal SaveAs As String)
     Put FreeFileInf, , TempInt
     
     'Write .map file
-    For y = YMinMapSize To YMaxMapSize
+    For Y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
             
-            With MapData(X, y)
+            With MapData(X, Y)
             
                 ByFlags = 0
                 
@@ -405,7 +426,7 @@ Public Sub MapaV2_Guardar(ByVal SaveAs As String)
                 If .TileExit.Map Then
                     Put FreeFileInf, , .TileExit.Map
                     Put FreeFileInf, , .TileExit.X
-                    Put FreeFileInf, , .TileExit.y
+                    Put FreeFileInf, , .TileExit.Y
                 End If
                     
                 If .NPCIndex Then
@@ -421,7 +442,7 @@ Public Sub MapaV2_Guardar(ByVal SaveAs As String)
             
             
         Next X
-    Next y
+    Next Y
     
     'Close .map file
     Close FreeFileMap
@@ -466,7 +487,7 @@ On Error GoTo ErrorSave
     Dim loopc As Long
     Dim TempInt As Integer
     Dim T As String
-    Dim y As Long
+    Dim Y As Long
     Dim X As Long
     
     If NoSobreescribir = False Then
@@ -519,43 +540,43 @@ On Error GoTo ErrorSave
     Put FreeFileInf, , TempInt
     
     'Write .map file
-    For y = YMinMapSize To YMaxMapSize
+    For Y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
             
             '.map file
             
             ' Bloqueos
-            Put FreeFileMap, , MapData(X, y).Blocked
+            Put FreeFileMap, , MapData(X, Y).Blocked
             
             ' Capas
             For loopc = 1 To 4
-                If loopc = 2 Then Call FixCoasts(MapData(X, y).Graphic(loopc).GrhIndex, X, y)
-                Put FreeFileMap, , MapData(X, y).Graphic(loopc).GrhIndex
+                If loopc = 2 Then Call FixCoasts(MapData(X, Y).Graphic(loopc).GrhIndex, X, Y)
+                Put FreeFileMap, , MapData(X, Y).Graphic(loopc).GrhIndex
             Next loopc
             
             ' Triggers
-            Put FreeFileMap, , MapData(X, y).Trigger
+            Put FreeFileMap, , MapData(X, Y).Trigger
             Put FreeFileMap, , TempInt
             
             '.inf file
             'Tile exit
-            Put FreeFileInf, , MapData(X, y).TileExit.Map
-            Put FreeFileInf, , MapData(X, y).TileExit.X
-            Put FreeFileInf, , MapData(X, y).TileExit.y
+            Put FreeFileInf, , MapData(X, Y).TileExit.Map
+            Put FreeFileInf, , MapData(X, Y).TileExit.X
+            Put FreeFileInf, , MapData(X, Y).TileExit.Y
             
             'NPC
-            Put FreeFileInf, , MapData(X, y).NPCIndex
+            Put FreeFileInf, , MapData(X, Y).NPCIndex
             
             'Object
-            Put FreeFileInf, , MapData(X, y).OBJInfo.ObjIndex
-            Put FreeFileInf, , MapData(X, y).OBJInfo.Amount
+            Put FreeFileInf, , MapData(X, Y).OBJInfo.ObjIndex
+            Put FreeFileInf, , MapData(X, Y).OBJInfo.Amount
             
             'Empty place holders for future expansion
             Put FreeFileInf, , TempInt
             Put FreeFileInf, , TempInt
             
         Next X
-    Next y
+    Next Y
     
     'Close .map file
     Close FreeFileMap
@@ -602,7 +623,7 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
     Dim Body        As Integer
     Dim Head        As Integer
     Dim Heading     As Byte
-    Dim y           As Integer
+    Dim Y           As Integer
     Dim X           As Integer
     Dim i           As Byte
     Dim ByFlags     As Byte
@@ -650,10 +671,10 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
     Get FreeFileInf, , TempInt
 
     'Load arrays
-    For y = YMinMapSize To YMaxMapSize
+    For Y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
             
-            With MapData(X, y)
+            With MapData(X, Y)
             
                 Get FreeFileMap, , ByFlags
                 .Blocked = (ByFlags And 1)
@@ -734,7 +755,7 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
                     
                         Get FreeFileInf, , .Map
                         Get FreeFileInf, , .X
-                        Get FreeFileInf, , .y
+                        Get FreeFileInf, , .Y
                     
                     End With
                     
@@ -752,7 +773,7 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
                         Body = NpcData(.NPCIndex).Body
                         Head = NpcData(.NPCIndex).Head
                         Heading = NpcData(.NPCIndex).Heading
-                        Call MakeChar(NextOpenChar(), Body, Head, Heading, X, y)
+                        Call MakeChar(NextOpenChar(), Body, Head, Heading, X, Y)
                     End If
 
                 End If
@@ -772,7 +793,7 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
             End With
     
         Next X
-    Next y
+    Next Y
     
     'Close files
     Close FreeFileMap
@@ -828,7 +849,7 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
     Dim Body As Integer
     Dim Head As Integer
     Dim Heading As Byte
-    Dim y As Integer
+    Dim Y As Integer
     Dim X As Integer
     Dim FreeFileMap As Long
     Dim FreeFileInf As Long
@@ -865,44 +886,44 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
     
     
     'Load arrays
-    For y = YMinMapSize To YMaxMapSize
+    For Y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
     
             '.map file
-            Get FreeFileMap, , MapData(X, y).Blocked
+            Get FreeFileMap, , MapData(X, Y).Blocked
             
             For loopc = 1 To 4
-                Get FreeFileMap, , MapData(X, y).Graphic(loopc).GrhIndex
+                Get FreeFileMap, , MapData(X, Y).Graphic(loopc).GrhIndex
                 'Set up GRH
-                If MapData(X, y).Graphic(loopc).GrhIndex > 0 Then
-                    InitGrh MapData(X, y).Graphic(loopc), MapData(X, y).Graphic(loopc).GrhIndex
+                If MapData(X, Y).Graphic(loopc).GrhIndex > 0 Then
+                    InitGrh MapData(X, Y).Graphic(loopc), MapData(X, Y).Graphic(loopc).GrhIndex
                 End If
             Next loopc
             'Trigger
-            Get FreeFileMap, , MapData(X, y).Trigger
+            Get FreeFileMap, , MapData(X, Y).Trigger
             
             Get FreeFileMap, , TempInt
             '.inf file
             
             'Tile exit
-            Get FreeFileInf, , MapData(X, y).TileExit.Map
-            Get FreeFileInf, , MapData(X, y).TileExit.X
-            Get FreeFileInf, , MapData(X, y).TileExit.y
+            Get FreeFileInf, , MapData(X, Y).TileExit.Map
+            Get FreeFileInf, , MapData(X, Y).TileExit.X
+            Get FreeFileInf, , MapData(X, Y).TileExit.Y
                           
             'make NPC
-            Get FreeFileInf, , MapData(X, y).NPCIndex
-            If MapData(X, y).NPCIndex > 0 Then
-                Body = NpcData(MapData(X, y).NPCIndex).Body
-                Head = NpcData(MapData(X, y).NPCIndex).Head
-                Heading = NpcData(MapData(X, y).NPCIndex).Heading
-                Call MakeChar(NextOpenChar(), Body, Head, Heading, X, y)
+            Get FreeFileInf, , MapData(X, Y).NPCIndex
+            If MapData(X, Y).NPCIndex > 0 Then
+                Body = NpcData(MapData(X, Y).NPCIndex).Body
+                Head = NpcData(MapData(X, Y).NPCIndex).Head
+                Heading = NpcData(MapData(X, Y).NPCIndex).Heading
+                Call MakeChar(NextOpenChar(), Body, Head, Heading, X, Y)
             End If
             
             'Make obj
-            Get FreeFileInf, , MapData(X, y).OBJInfo.ObjIndex
-            Get FreeFileInf, , MapData(X, y).OBJInfo.Amount
-            If MapData(X, y).OBJInfo.ObjIndex > 0 Then
-                InitGrh MapData(X, y).ObjGrh, ObjData(MapData(X, y).OBJInfo.ObjIndex).GrhIndex
+            Get FreeFileInf, , MapData(X, Y).OBJInfo.ObjIndex
+            Get FreeFileInf, , MapData(X, Y).OBJInfo.Amount
+            If MapData(X, Y).OBJInfo.ObjIndex > 0 Then
+                InitGrh MapData(X, Y).ObjGrh, ObjData(MapData(X, Y).OBJInfo.ObjIndex).GrhIndex
             End If
             
             'Empty place holders for future expansion
@@ -910,7 +931,7 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
             Get FreeFileInf, , TempInt
                  
         Next X
-    Next y
+    Next Y
     
     'Close files
     Close FreeFileMap
@@ -918,7 +939,7 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
      
     Call Pestanas(Map)
     
-    bRefreshRadar = True ' Radar
+    Call DibujarMinimapa ' Radar
     
     Map = Left(Map, Len(Map) - 4) & ".dat"
         
@@ -953,7 +974,7 @@ Public Sub MapaV3_Cargar(ByVal Map As String)
     Dim Body As Integer
     Dim Head As Integer
     Dim Heading As Byte
-    Dim y As Integer
+    Dim Y As Integer
     Dim X As Integer
     Dim FreeFileMap As Long
     Dim FreeFileInf As Long
@@ -969,7 +990,7 @@ Public Sub MapaV3_Cargar(ByVal Map As String)
     
     Call Pestanas(Map)
     
-    bRefreshRadar = True ' Radar
+    Call DibujarMinimapa ' Radar
     
     Map = Left(Map, Len(Map) - 4) & ".dat"
         
@@ -1001,7 +1022,7 @@ On Error GoTo ErrorSave
     Dim loopc As Long
     Dim TempInt As Integer
     Dim T As String
-    Dim y As Long
+    Dim Y As Long
     Dim X As Long
     
     If NoSobreescribir = False Then
@@ -1166,6 +1187,147 @@ On Error Resume Next
         .TxtAmbient.Text = MapInfo.ambient
     End With
 
+End Sub
+
+Public Sub NuevaZona(ByVal id As Integer)
+'*****************************************
+'Autor: Lorwik
+'Fecha: 01/04/2021
+'Descripción: Crea una nueva zona
+'*****************************************
+
+    CantZonas = CantZonas + 1
+    
+    ReDim Preserve MapZonas(CantZonas) As tMapInfo
+
+    Call ResetearZona(id)
+    
+    frmMain.LstZona.AddItem (CantZonas & "- " & MapZonas(CantZonas).name)
+End Sub
+
+Public Sub ResetearZona(ByVal id As Integer)
+'*****************************************
+'Autor: Lorwik
+'Fecha: 01/04/2021
+'Descripción: Resetea las propiedades de la zona indicada
+'*****************************************
+
+    If id > CantZonas Then
+        MsgBox "Error al resetear la zona. El ID de la zona seleccionada es superior al numero de zonas existentes.", vbCritical
+        Exit Sub
+    End If
+
+    With MapZonas(CantZonas)
+        .MapVersion = 0
+        .name = "Zona Desconocida"
+        .Music = 0
+        .ambient = 0
+        .PK = True
+        .MagiaSinEfecto = 0
+        .InviSinEfecto = 0
+        .ResuSinEfecto = 0
+        .Terreno = "BOSQUE"
+        .Zona = "CAMPO"
+        .Restringir = "No"
+        .NoEncriptarMP = 0
+        .LuzBase = 0
+    End With
+    
+End Sub
+
+Public Sub EliminarZona()
+'*****************************************
+'Autor: Lorwik
+'Fecha: 01/04/2021
+'Descripción: Elimina la ultima zona creada
+'*****************************************
+    
+    If CantZonas = 1 Then
+        MsgBox "El numero de zonas llego al mnimo. No puedes eliminar mas zonas."
+        Exit Sub
+    End If
+    
+    'Primero se resetea la zona
+    Call ResetearZona(CantZonas)
+
+    frmMain.LstZona.RemoveItem frmMain.LstZona.ListIndex
+    
+    CantZonas = CantZonas - 1
+    
+    ReDim Preserve MapZonas(CantZonas) As tMapInfo
+    
+End Sub
+
+Public Sub MapZona_Actualizar(ByVal id As Integer)
+    
+    Dim tR As Byte
+    Dim tG As Byte
+    Dim tB As Byte
+    
+    Call ConvertLongToRGB(MapZonas(id).LuzBase, tR, tG, tB)
+    Debug.Print MapZonas(id).ambient
+    With frmMapInfo
+        .txtMapNombre.Text = MapZonas(id).name
+        .txtMapMusica.Text = MapZonas(id).Music
+        .txtMapTerreno.Text = MapZonas(id).Terreno
+        .txtMapZona.Text = MapZonas(id).Zona
+        .txtMapRestringir.Text = MapZonas(id).Restringir
+    '   .chkMapBackup.value = MapZonas(ID).BackUp
+        .chkMapPK.value = IIf(MapZonas(id).PK = True, 1, 0)
+        .TxtAmbient.Text = MapZonas(id).ambient
+        .TxtlvlMinimo = MapZonas(id).lvlMinimo
+        .chkMapMagiaSinEfecto.value = MapZonas(id).MagiaSinEfecto
+        .chkMapInviSinEfecto.value = IIf(MapZonas(id).InviSinEfecto, vbChecked, vbUnchecked)
+        .chkInvocarSin.value = MapZonas(id).InvocarSinEfecto
+        .chkOcultarSin.value = MapZonas(id).OcultarSinEfecto
+        .chkMapResuSinEfecto.value = IIf(MapZonas(id).ResuSinEfecto, vbChecked, vbUnchecked)
+        .txtMapVersion = MapZonas(id).MapVersion
+        .ChkMapNpc.value = MapZonas(id).RoboNpcsPermitido
+        
+        If MapZonas(id).LuzBase = 0 Then
+            .chkLuzClimatica = vbUnchecked
+        Else
+            .chkLuzClimatica = vbChecked
+        End If
+        
+        .PicColorMap.BackColor = MapZonas(id).LuzBase
+        .LuzMapa.Text = tR & "-" & tG & "-" & tB
+    End With
+    
+    With frmMain
+        .chkPKInseguro.value = IIf(MapZonas(id).PK = True, 1, 0)
+        .txtMapNombre.Text = MapZonas(id).name
+        .txtMapMusica.Text = MapZonas(id).Music
+        .TxtAmbient.Text = MapZonas(id).ambient
+        
+        If MapZonas(id).LuzBase = 0 Then
+            .chkLuzClimatica = vbUnchecked
+        Else
+            .chkLuzClimatica = vbChecked
+        End If
+        
+        .PicColorMap.BackColor = MapZonas(id).LuzBase
+        .LuzMapa.Text = tR & "-" & tG & "-" & tB
+    End With
+    
+End Sub
+
+Public Sub ActualizarZonaList()
+'*****************************************
+'Autor: Lorwik
+'Fecha: 02/04/2021
+'Descripción: Actualiza la lista de zonas
+'*****************************************
+
+    Dim i As Integer
+
+    frmMain.LstZona.Clear
+        
+    For i = 1 To CantZonas
+        frmMain.LstZona.AddItem (i & "- " & MapZonas(i).name)
+            
+    Next i
+    
 End Sub
 
 ''

@@ -1,19 +1,22 @@
 VERSION 5.00
 Begin VB.Form frmAbout 
-   BorderStyle     =   1  'Fixed Single
+   BorderStyle     =   4  'Fixed ToolWindow
    Caption         =   "Acerca de WoldEditor"
    ClientHeight    =   4350
    ClientLeft      =   2340
    ClientTop       =   1935
    ClientWidth     =   4365
    ClipControls    =   0   'False
+   ControlBox      =   0   'False
    Icon            =   "frmAbout.frx":0000
    LinkTopic       =   "Form2"
    MaxButton       =   0   'False
+   MinButton       =   0   'False
    Picture         =   "frmAbout.frx":628A
    ScaleHeight     =   3002.447
    ScaleMode       =   0  'User
    ScaleWidth      =   4098.96
+   ShowInTaskbar   =   0   'False
    StartUpPosition =   2  'CenterScreen
    Begin WorldEditor.lvButtons_H cmdOK 
       Height          =   375
@@ -43,7 +46,7 @@ Begin VB.Form frmAbout
    Begin VB.Label lblCred 
       Alignment       =   2  'Center
       BackColor       =   &H00000000&
-      Caption         =   "Mejoras por:                       About, Loopzer, Salvito"
+      Caption         =   "Basado en el WorldEditor de GS para la versión 0.13"
       BeginProperty Font 
          Name            =   "Tahoma"
          Size            =   9
@@ -185,7 +188,7 @@ Begin VB.Form frmAbout
    Begin VB.Label lblCred 
       Alignment       =   2  'Center
       BackColor       =   &H00000000&
-      Caption         =   "Programado por ^[GS]^"
+      Caption         =   "Programado por Lorwik"
       BeginProperty Font 
          Name            =   "Tahoma"
          Size            =   9.75

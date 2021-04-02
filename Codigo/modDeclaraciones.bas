@@ -29,6 +29,18 @@ Attribute VB_Name = "modDeclaraciones"
 
 Option Explicit
 
+Public MMiniMap_capa1      As Boolean
+Public MMiniMap_capa2      As Boolean
+Public MMiniMap_capa3      As Boolean
+Public MMiniMap_capa4      As Boolean
+Public MMiniMap_Npcs       As Boolean
+Public MMiniMap_objetos    As Boolean
+Public MMiniMap_Bloqueos   As Boolean
+Public MMiniMap_particulas As Boolean
+Public MMiniMap_Nombre     As Boolean
+
+Public ParticlePreview As Long
+
 Public NoSobreescribir As Boolean
 
 Public Radio As Byte
@@ -81,7 +93,6 @@ Public Cfg_TrOBJ As Integer
 'Path
 Public IniPath As String
 Public DirRecursos As String
-Public DirMidi As String
 Public DirDats As String
 
 Public bAutoGuardarMapa As Byte
@@ -108,7 +119,6 @@ Public SobreY As Integer   ' Posicion Y bajo el Cursor
 ' Radar
 Public MiRadarX As Integer
 Public MiRadarY As Integer
-Public bRefreshRadar As Boolean
 
 Type SupData
     name As String
@@ -157,7 +167,7 @@ Public MapaCargado As Boolean
 Public dLastWalk As Double
 
 'Hold info about each map
-Public Type MapInfo
+Public Type tMapInfo
     Music As String
     name As String
     MapVersion As Integer
@@ -178,6 +188,9 @@ Public Type MapInfo
     ambient As String
     NoEncriptarMP As Byte
 End Type
+
+Public MapZonas() As tMapInfo
+Public CantZonas As Integer
 
 '********** CONSTANTS ***********
 'Heading Constants
@@ -232,6 +245,7 @@ Public Type GrhData
     
     speed As Single
 
+    mini_map_color As Long
 End Type
 
 ' Cuerpos body.dat
@@ -310,6 +324,8 @@ Public Type MapBlock
     
     fX As Grh
     FxIndex As Integer
+    
+    ZonaIndex As Integer
 End Type
 
 Public Enum eTipoMapa
@@ -341,7 +357,7 @@ Public MaxYBorder As Integer
 Public GrhData() As GrhData 'Holds all the grh data
 Public MapData() As MapBlock 'Holds map data for current map
 Public SuperMapData() As MapBlock
-Public MapInfo As MapInfo 'Holds map info for current map
+Public MapInfo As tMapInfo 'Holds map info for current map
 Public CharList(1 To 10000) As Char 'Holds info about all characters on map
 
 'User status vars

@@ -177,12 +177,14 @@ Public Sub VerFuncion(ByVal Numero As Byte, ByVal Ver As Boolean, Optional Norma
             frmMain.cAgregarFuncalAzar(Numero - 3).Visible = Ver
             frmMain.lCantFunc(Numero - 3).Visible = Ver
             frmMain.cCantFunc(Numero - 3).Visible = Ver
+            frmMain.PreviewGrh.Visible = Ver
             
         Case 6 ' Triggers
             frmMain.cQuitarTrigger.Visible = Ver
             frmMain.cInsertarTrigger.Visible = Ver
             frmMain.cVerTriggers.Visible = Ver
             frmMain.lListado(4).Visible = Ver
+            frmMain.FraRellenar.Visible = Ver
             
         Case 7 'Copiar Bordes
             Call frmCopiarBordes.Inicializar

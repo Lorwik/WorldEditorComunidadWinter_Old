@@ -67,7 +67,8 @@ If HotKeysAllow = False Then Exit Sub
         ElseIf WalkMode = False Then
             UserPos.Y = UserPos.Y - 1
         End If
-        bRefreshRadar = True ' Radar
+        
+        Call DibujarMinimapa(True)
         frmMain.SetFocus
         Exit Sub
     End If
@@ -85,7 +86,7 @@ If HotKeysAllow = False Then Exit Sub
             
         End If
         
-        bRefreshRadar = True ' Radar
+        Call DibujarMinimapa(True)
         frmMain.SetFocus
         Exit Sub
     End If
@@ -104,7 +105,7 @@ If HotKeysAllow = False Then Exit Sub
             
         End If
         
-        bRefreshRadar = True ' Radar
+        Call DibujarMinimapa(True)
         frmMain.SetFocus
         Exit Sub
         
@@ -120,7 +121,8 @@ If HotKeysAllow = False Then Exit Sub
         ElseIf WalkMode = False Then
             UserPos.X = UserPos.X - 1
         End If
-        bRefreshRadar = True ' Radar
+
+        Call DibujarMinimapa(True)
         frmMain.SetFocus
         Exit Sub
     End If
@@ -232,6 +234,8 @@ On Error Resume Next
     frmLuces.Visible = False
     frmCopiarBordes.Show , frmMain
     frmCopiarBordes.Visible = False
+    frmConvert.Show , frmMain
+    frmConvert.Visible = False
     modMapIO.NuevoMapa
     DoEvents
     
@@ -244,6 +248,8 @@ On Error Resume Next
         If frmMain.WindowState <> vbMinimized And frmMain.Visible Then
             Call ShowNextFrame
             Call CheckKeys
+            
+            If frmParticle.Visible Then Call RenderParticlePreview
             
             If CurrentGrh.GrhIndex = 0 Then
                 InitGrh CurrentGrh, 1
@@ -370,19 +376,11 @@ Public Sub RefreshAllChars()
 '*************************************************
     On Error Resume Next
     Dim loopc As Integer
-    frmMain.ApuntadorRadar.Move UserPos.X - 12, UserPos.Y - 10
-    frmMain.picRadar.Cls
     For loopc = 1 To LastChar
         If CharList(loopc).active = 1 Then
             MapData(CharList(loopc).Pos.X, CharList(loopc).Pos.Y).CharIndex = loopc
-            If CharList(loopc).Heading <> 0 Then
-                frmMain.picRadar.ForeColor = vbGreen
-                frmMain.picRadar.Line (0 + CharList(loopc).Pos.X, 0 + CharList(loopc).Pos.Y)-(2 + CharList(loopc).Pos.X, 0 + CharList(loopc).Pos.Y)
-                frmMain.picRadar.Line (0 + CharList(loopc).Pos.X, 1 + CharList(loopc).Pos.Y)-(2 + CharList(loopc).Pos.X, 1 + CharList(loopc).Pos.Y)
-            End If
         End If
     Next loopc
-    bRefreshRadar = False
 End Sub
 
 ''
@@ -511,11 +509,11 @@ Public Function Selected_Color()
         ' initial default color selection.
         .flags = cdlCCFullOpen + cdlCCRGBInit
       
-        .Color = RGB(255, 255, 255)
+        .color = RGB(255, 255, 255)
       
         ' Display the full color palette
         .ShowColor
-        c = .Color
+        c = .color
                       
     End With
 

@@ -189,7 +189,7 @@ Private Sub LightRender(ByVal light_index As Integer)
     Dim Y As Integer
     Dim ia As Single
     Dim i As Integer
-    Dim Color(3) As Long
+    Dim color(3) As Long
     Dim Ya As Integer
     Dim Xa As Integer
 
@@ -198,10 +198,10 @@ Private Sub LightRender(ByVal light_index As Integer)
     
     With Light_List(light_index)
     
-        Color(0) = D3DColorARGB(255, .RGBCOLOR.R, .RGBCOLOR.G, .RGBCOLOR.B)
-        Color(1) = Color(0)
-        Color(2) = Color(0)
-        Color(3) = Color(0)
+        color(0) = D3DColorARGB(255, .RGBCOLOR.R, .RGBCOLOR.G, .RGBCOLOR.B)
+        color(1) = color(0)
+        color(2) = color(0)
+        color(3) = color(0)
     
         'Set up light borders
         min_x = .map_x - .range
@@ -215,22 +215,22 @@ Private Sub LightRender(ByVal light_index As Integer)
     
     'NE
     If InMapBounds(min_x, min_y) Then
-        MapData(min_x, min_y).Engine_Light(2) = Color(2)
+        MapData(min_x, min_y).Engine_Light(2) = color(2)
     End If
     
     'NW
     If InMapBounds(max_x, min_y) Then
-        MapData(max_x, min_y).Engine_Light(1) = Color(1)
+        MapData(max_x, min_y).Engine_Light(1) = color(1)
     End If
     
     'SW
     If InMapBounds(max_x, max_y) Then
-        MapData(max_x, max_y).Engine_Light(0) = Color(0)
+        MapData(max_x, max_y).Engine_Light(0) = color(0)
     End If
     
     'SE
     If InMapBounds(min_x, max_y) Then
-        MapData(min_x, max_y).Engine_Light(3) = Color(3)
+        MapData(min_x, max_y).Engine_Light(3) = color(3)
     End If
     
     'Arrange borders
@@ -238,32 +238,32 @@ Private Sub LightRender(ByVal light_index As Integer)
     'Upper border
     For X = min_x + 1 To max_x - 1
         If InMapBounds(X, min_y) Then
-            MapData(X, min_y).Engine_Light(1) = Color(1)
-            MapData(X, min_y).Engine_Light(2) = Color(2)
+            MapData(X, min_y).Engine_Light(1) = color(1)
+            MapData(X, min_y).Engine_Light(2) = color(2)
         End If
     Next X
     
     'Lower border
     For X = min_x + 1 To max_x - 1
         If InMapBounds(X, max_y) Then
-            MapData(X, max_y).Engine_Light(0) = Color(0)
-            MapData(X, max_y).Engine_Light(3) = Color(3)
+            MapData(X, max_y).Engine_Light(0) = color(0)
+            MapData(X, max_y).Engine_Light(3) = color(3)
         End If
     Next X
     
     'Left border
     For Y = min_y + 1 To max_y - 1
         If InMapBounds(min_x, Y) Then
-            MapData(min_x, Y).Engine_Light(2) = Color(2)
-            MapData(min_x, Y).Engine_Light(3) = Color(3)
+            MapData(min_x, Y).Engine_Light(2) = color(2)
+            MapData(min_x, Y).Engine_Light(3) = color(3)
         End If
     Next Y
     
     'Right border
     For Y = min_y + 1 To max_y - 1
         If InMapBounds(max_x, Y) Then
-            MapData(max_x, Y).Engine_Light(0) = Color(0)
-            MapData(max_x, Y).Engine_Light(1) = Color(1)
+            MapData(max_x, Y).Engine_Light(0) = color(0)
+            MapData(max_x, Y).Engine_Light(1) = color(1)
         End If
     Next Y
     
@@ -271,10 +271,10 @@ Private Sub LightRender(ByVal light_index As Integer)
     For X = min_x + 1 To max_x - 1
         For Y = min_y + 1 To max_y - 1
             If InMapBounds(X, Y) Then
-                MapData(X, Y).Engine_Light(0) = Color(0)
-                MapData(X, Y).Engine_Light(1) = Color(1)
-                MapData(X, Y).Engine_Light(2) = Color(2)
-                MapData(X, Y).Engine_Light(3) = Color(3)
+                MapData(X, Y).Engine_Light(0) = color(0)
+                MapData(X, Y).Engine_Light(1) = color(1)
+                MapData(X, Y).Engine_Light(2) = color(2)
+                MapData(X, Y).Engine_Light(3) = color(3)
             End If
         Next Y
     Next X
@@ -368,26 +368,74 @@ Public Sub Actualizar_Estado()
 'Actualiza el estado del clima y del dia
 '***************************************************
     Dim X As Integer, Y As Integer
-
-    '¿El mapa tiene su propia luz?
-    If MapInfo.LuzBase <> -1 Then
+    Dim tR As Byte
+    Dim tG As Byte
+    Dim tB As Byte
+    
+    '******************
+    'MODO WINTER
+    '******************
+    If ClientSetup.WeMode = eWeMode.WinterAO Then
+    
         For X = XMinMapSize To XMaxMapSize
             For Y = YMinMapSize To YMaxMapSize
-                Call Engine_D3DColor_To_RGB_List(MapData(X, Y).Engine_Light(), Estado_Custom)
+                If MapZonas(MapData(X, Y).ZonaIndex).LuzBase <> 0 Then
+                
+                    Call ConvertLongToRGB(MapZonas(MapData(X, Y).ZonaIndex).LuzBase, tR, tG, tB)
+                    
+                    With Estado_Custom
+                        .a = 255
+                        .R = tR
+                        .G = tG
+                        .B = tB
+                    End With
+                    
+                    Call Engine_D3DColor_To_RGB_List(MapData(X, Y).Engine_Light(), Estado_Custom)
+            
+                Else
+                
+                    Call Engine_D3DColor_To_RGB_List(MapData(X, Y).Engine_Light(), Estado_Actual)
+                
+                End If
             Next Y
         Next X
         
-        Call LightRenderAll
+    Else
+    '******************
+    'MODO IMPC
+    '******************
+    
+        '¿El mapa tiene su propia luz?
+        If MapInfo.LuzBase <> 0 Then
         
-        Exit Sub
+            Call ConvertLongToRGB(MapZonas(MapData(X, Y).ZonaIndex).LuzBase, tR, tG, tB)
+                    
+            With Estado_Custom
+                .a = 255
+                .R = tR
+                .G = tG
+                .B = tB
+            End With
+        
+            For X = XMinMapSize To XMaxMapSize
+                For Y = YMinMapSize To YMaxMapSize
+                    Call Engine_D3DColor_To_RGB_List(MapData(X, Y).Engine_Light(), Estado_Custom)
+                Next Y
+            Next X
+            
+            Call LightRenderAll
+            
+            Exit Sub
+        End If
+            
+        For X = XMinMapSize To XMaxMapSize
+            For Y = YMinMapSize To YMaxMapSize
+                Call Engine_D3DColor_To_RGB_List(MapData(X, Y).Engine_Light(), Estado_Actual)
+            Next Y
+        Next X
+        
     End If
-        
-    For X = XMinMapSize To XMaxMapSize
-        For Y = YMinMapSize To YMaxMapSize
-            Call Engine_D3DColor_To_RGB_List(MapData(X, Y).Engine_Light(), Estado_Actual)
-        Next Y
-    Next X
-        
+    
     Call LightRenderAll
 
 End Sub

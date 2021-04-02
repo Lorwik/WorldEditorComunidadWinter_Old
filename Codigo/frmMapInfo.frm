@@ -239,12 +239,12 @@ Begin VB.Form frmMapInfo
       cgradient       =   0
       font            =   "frmMapInfo.frx":628A
       mode            =   0
-      value           =   0
+      value           =   0   'False
       cback           =   -2147483633
    End
    Begin WorldEditor.lvButtons_H cmdCerrar 
       Height          =   375
-      Left            =   2640
+      Left            =   240
       TabIndex        =   13
       Top             =   5760
       Width           =   1695
@@ -256,7 +256,7 @@ Begin VB.Form frmMapInfo
       cgradient       =   0
       font            =   "frmMapInfo.frx":62B6
       mode            =   0
-      value           =   0
+      value           =   0   'False
       cback           =   -2147483633
    End
    Begin VB.ComboBox txtMapRestringir 
@@ -272,7 +272,7 @@ Begin VB.Form frmMapInfo
       Height          =   330
       ItemData        =   "frmMapInfo.frx":62E2
       Left            =   1680
-      List            =   "frmMapInfo.frx":62F8
+      List            =   "frmMapInfo.frx":62FB
       TabIndex        =   11
       Text            =   "NO"
       Top             =   1920
@@ -315,9 +315,9 @@ Begin VB.Form frmMapInfo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   330
-      ItemData        =   "frmMapInfo.frx":6327
+      ItemData        =   "frmMapInfo.frx":6335
       Left            =   1680
-      List            =   "frmMapInfo.frx":6334
+      List            =   "frmMapInfo.frx":6342
       TabIndex        =   9
       Top             =   1560
       Width           =   2655
@@ -333,9 +333,9 @@ Begin VB.Form frmMapInfo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   330
-      ItemData        =   "frmMapInfo.frx":6351
+      ItemData        =   "frmMapInfo.frx":635F
       Left            =   1680
-      List            =   "frmMapInfo.frx":635E
+      List            =   "frmMapInfo.frx":636C
       TabIndex        =   8
       Top             =   1200
       Width           =   2655
@@ -408,6 +408,23 @@ Begin VB.Form frmMapInfo
       TabIndex        =   2
       Top             =   3360
       Width           =   1575
+   End
+   Begin WorldEditor.lvButtons_H LvBGuardar 
+      Height          =   375
+      Left            =   2520
+      TabIndex        =   30
+      Top             =   5760
+      Width           =   1695
+      _extentx        =   2990
+      _extenty        =   661
+      caption         =   "&Guardar"
+      capalign        =   2
+      backstyle       =   2
+      cgradient       =   0
+      font            =   "frmMapInfo.frx":6388
+      mode            =   0
+      value           =   0   'False
+      cback           =   12632319
    End
    Begin VB.Label Label8 
       Caption         =   "Sonido Ambiental:"
@@ -702,6 +719,34 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
         Me.Hide
     End If
     
+End Sub
+
+Private Sub LvBGuardar_Click()
+    Call guardarInfoZona(frmMain.LstZona.ListIndex + 1)
+End Sub
+
+Public Sub guardarInfoZona(ByVal id As Integer)
+    Dim i As Integer
+    
+    With MapZonas(id)
+        .MapVersion = txtMapVersion.Text
+        .name = txtMapNombre.Text
+        .Music = txtMapMusica.Text
+        .ambient = TxtAmbient.Text
+        .PK = chkMapPK.value
+        .MagiaSinEfecto = chkMapMagiaSinEfecto.value
+        .InviSinEfecto = chkMapInviSinEfecto.value
+        .ResuSinEfecto = chkMapResuSinEfecto.value
+        .Terreno = txtMapTerreno.Text
+        .Zona = txtMapZona.Text
+        .Restringir = txtMapRestringir.Text
+        .NoEncriptarMP = 0
+        .LuzBase = .LuzBase
+        
+    End With
+    
+    Call ActualizarZonaList
+
 End Sub
 
 Private Sub PicColorMap_Click()

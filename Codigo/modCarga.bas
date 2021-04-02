@@ -117,8 +117,6 @@ Public Sub CargarMapIni()
     If Not FileExist(WEConfigDir, vbArchive) Then
         frmMain.mnuGuardarUltimaConfig.Checked = True
         DirRecursos = IniPath & "Recursos\"
-        DirMidi = IniPath & "MIDI\"
-        frmMusica.fleMusicas.Path = DirMidi
         DirDats = IniPath & "DATS\"
         MaxGrhs = 15000
         UserPos.X = 50
@@ -167,22 +165,6 @@ Public Sub CargarMapIni()
     End If
     
     '****
-    'RUTA DE MIDI
-    '*****************
-    DirMidi = autoCompletaPath(Leer.GetValue("PATH" & ClientSetup.WeMode, "DirMidi"))
-    
-    If DirMidi = "\" Then
-        DirMidi = IniPath & "MIDI\"
-    End If
-    
-    If FileExist(DirMidi, vbDirectory) = False Then
-        MsgBox "El directorio de MIDI es incorrecto", vbCritical + vbOKOnly
-        End
-    End If
-    
-    frmMusica.fleMusicas.Path = DirMidi
-    
-    '****
     'RUTA DE DATS
     '*****************
     DirDats = autoCompletaPath(Leer.GetValue("PATH" & ClientSetup.WeMode, "DirDats"))
@@ -225,6 +207,16 @@ Public Sub CargarMapIni()
     frmMain.mnuVerBloqueos.Checked = Val(Leer.GetValue("MOSTRAR", "Bloqueos"))
     frmMain.cVerTriggers.value = frmMain.mnuVerTriggers.Checked
     frmMain.cVerBloqueos.value = frmMain.mnuVerBloqueos.Checked
+    
+    frmMain.Minimap_capa1.Checked = Val(Leer.GetValue("MINIMAP", "Capa1"))
+    frmMain.Minimap_capa2.Checked = Val(Leer.GetValue("MINIMAP", "Capa2"))
+    frmMain.Minimap_capa3.Checked = Val(Leer.GetValue("MINIMAP", "Capa3"))
+    frmMain.Minimap_capa4.Checked = Val(Leer.GetValue("MINIMAP", "Capa4"))
+    frmMain.Minimap_objetos.Checked = Val(Leer.GetValue("MINIMAP", "Obj"))
+    frmMain.Minimap_npcs.Checked = Val(Leer.GetValue("MINIMAP", "NPC"))
+    frmMain.Minimap_particulas.Checked = Val(Leer.GetValue("MINIMAP", "Particulas"))
+    frmMain.Minimap_ndemapa.Checked = Val(Leer.GetValue("MINIMAP", "Nombre"))
+    frmMain.Minimap_bloqueos.Checked = Val(Leer.GetValue("MINIMAP", "Bloqueos"))
     
     ' Tamaño de visualizacion
     PantallaX = Val(Leer.GetValue("MOSTRAR", "PantallaX"))
@@ -337,9 +329,8 @@ Public Sub CargarIndicesTriggers()
 '*************************************************
 
 On Error GoTo Fallo
-
     If FileExist(IniPath & "Datos\Triggers.ini", vbArchive) = False Then
-        MsgBox "Falta el archivo 'Triggers.ini' en " & IniPath & "Datos\", vbCritical
+        MsgBox "Falta el archivo 'Triggers.ini' en Datos\Triggers.ini", vbCritical
         End
     End If
     
@@ -347,16 +338,21 @@ On Error GoTo Fallo
     Dim T As Integer
     Dim Leer As New clsIniReader
     
-    Leer.Initialize IniPath & "Datos\Triggers.ini"
+    Call Leer.Initialize(IniPath & "Datos\Triggers.ini")
+    
     frmMain.lListado(4).Clear
+    
     NumT = Val(Leer.GetValue("INIT", "NumTriggers"))
     For T = 1 To NumT
          frmMain.lListado(4).AddItem Leer.GetValue("Trig" & T, "Name") & " - #" & (T - 1)
     Next T
 
+    Set Leer = Nothing
+
 Exit Sub
 Fallo:
-    MsgBox "Error al intentar cargar el Trigger " & T & " de Datos\Triggers.ini" & vbCrLf & "Err: " & Err.Number & " - " & Err.Description, vbCritical + vbOKOnly
+    MsgBox "Error al intentar cargar el Trigger " & T & " de Triggers.ini en " & App.Path & "\Datos\Triggers.ini" & vbCrLf & "Err: " & Err.Number & " - " & Err.Description, vbCritical + vbOKOnly
+
 End Sub
 
 Sub CargarCuerpos()
@@ -631,4 +627,45 @@ ErrorHandler:
     
 End Sub
 
+Public Sub CargarMinimapa()
+
+    Dim fileBuff    As clsByteBuffer
+    Dim InfoHead    As INFOHEADER
+    Dim buffer()    As Byte
+    Dim i           As Long
+    
+    InfoHead = File_Find(DirRecursos & "Scripts" & Formato, LCase$("minimap.ind"))
+    
+    If InfoHead.lngFileSize <> 0 Then
+    
+        Extract_File_Memory Scripts, LCase$("minimap.ind"), buffer()
+        
+        Set fileBuff = New clsByteBuffer
+        
+        fileBuff.initializeReader buffer
+        
+        For i = 1 To grhCount
+            If Grh_Check(i) Then
+                GrhData(i).mini_map_color = fileBuff.getLong
+            End If
+        Next i
+        
+        Erase buffer
+    End If
+    
+    Set fileBuff = Nothing
+    
+End Sub
+
+Private Function Grh_Check(ByVal grh_index As Long) As Boolean
+'**************************************************************
+'Author: Aaron Perkins - Modified by Juan Martín Sotuyo Dodero
+'Last Modify Date: 1/04/2003
+'
+'**************************************************************
+    'check grh_index
+    If grh_index > 0 And grh_index <= grhCount Then
+        Grh_Check = GrhData(grh_index).NumFrames
+    End If
+End Function
 
