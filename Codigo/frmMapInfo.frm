@@ -1,39 +1,51 @@
 VERSION 5.00
 Begin VB.Form frmMapInfo 
-   BorderStyle     =   1  'Fixed Single
-   Caption         =   "Información del Mapa"
-   ClientHeight    =   6240
+   BackColor       =   &H00FFFFFF&
+   BorderStyle     =   4  'Fixed ToolWindow
+   Caption         =   "Información del Mapa / Zona"
+   ClientHeight    =   7050
    ClientLeft      =   45
    ClientTop       =   435
-   ClientWidth     =   4425
+   ClientWidth     =   4920
    ControlBox      =   0   'False
+   BeginProperty Font 
+      Name            =   "Tahoma"
+      Size            =   8.25
+      Charset         =   0
+      Weight          =   400
+      Underline       =   0   'False
+      Italic          =   0   'False
+      Strikethrough   =   0   'False
+   EndProperty
    Icon            =   "frmMapInfo.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   6240
-   ScaleWidth      =   4425
+   ScaleHeight     =   470
+   ScaleMode       =   3  'Pixel
+   ScaleWidth      =   328
+   ShowInTaskbar   =   0   'False
    StartUpPosition =   2  'CenterScreen
-   Begin VB.Frame FraLuzBase 
-      Caption         =   "Luz base"
+   Begin VB.Frame FraInformacion 
+      BackColor       =   &H00FFFFFF&
+      Caption         =   "Informacion"
       BeginProperty Font 
-         Name            =   "Verdana"
+         Name            =   "Tahoma"
          Size            =   8.25
          Charset         =   0
-         Weight          =   400
+         Weight          =   700
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Height          =   1215
+      Height          =   6855
       Left            =   120
-      TabIndex        =   26
-      Top             =   4440
-      Width           =   4215
-      Begin VB.CheckBox chkLuzClimatica 
-         Caption         =   "Desactivado"
+      TabIndex        =   0
+      Top             =   120
+      Width           =   4695
+      Begin VB.ComboBox txtMapZona 
          BeginProperty Font 
-            Name            =   "Verdana"
+            Name            =   "Arial"
             Size            =   8.25
             Charset         =   0
             Weight          =   400
@@ -41,544 +53,538 @@ Begin VB.Form frmMapInfo
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         ForeColor       =   &H00000000&
-         Height          =   195
-         Left            =   1080
-         MaskColor       =   &H00404040&
-         TabIndex        =   29
-         Top             =   360
-         Width           =   1575
+         Height          =   330
+         ItemData        =   "frmMapInfo.frx":628A
+         Left            =   1680
+         List            =   "frmMapInfo.frx":6294
+         TabIndex        =   38
+         Text            =   "txtMapZona"
+         Top             =   1440
+         Width           =   2655
       End
-      Begin VB.PictureBox PicColorMap 
+      Begin VB.Frame FraTamanoDel 
          BackColor       =   &H00FFFFFF&
+         Caption         =   "Tamaño del Screen"
          Height          =   735
          Left            =   120
-         ScaleHeight     =   675
-         ScaleWidth      =   795
-         TabIndex        =   28
-         TabStop         =   0   'False
-         Top             =   360
-         Width           =   855
+         TabIndex        =   35
+         Top             =   5520
+         Width           =   4455
+         Begin VB.OptionButton OptTam 
+            BackColor       =   &H00FFFFFF&
+            Caption         =   "Tam. Winter"
+            Height          =   195
+            Index           =   1
+            Left            =   2640
+            TabIndex        =   37
+            Top             =   360
+            Value           =   -1  'True
+            Width           =   1335
+         End
+         Begin VB.OptionButton OptTam 
+            BackColor       =   &H00FFFFFF&
+            Caption         =   "Tam. Clasico"
+            Height          =   195
+            Index           =   0
+            Left            =   480
+            TabIndex        =   36
+            Top             =   360
+            Width           =   1335
+         End
       End
-      Begin VB.TextBox LuzMapa 
-         Appearance      =   0  'Flat
-         Enabled         =   0   'False
+      Begin VB.Frame FraLuzBase 
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "Luz base"
+         Height          =   975
+         Left            =   120
+         TabIndex        =   28
+         Top             =   4440
+         Width           =   2175
+         Begin VB.TextBox LuzMapa 
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "Verdana"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   285
+            Left            =   600
+            TabIndex        =   31
+            Top             =   580
+            Width           =   1335
+         End
+         Begin VB.PictureBox PicColorMap 
+            BackColor       =   &H00FFFFFF&
+            BeginProperty Font 
+               Name            =   "MS Sans Serif"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   375
+            Left            =   120
+            ScaleHeight     =   315
+            ScaleWidth      =   315
+            TabIndex        =   30
+            TabStop         =   0   'False
+            Top             =   480
+            Width           =   375
+         End
+         Begin VB.CheckBox chkLuzClimatica 
+            BackColor       =   &H00FFFFFF&
+            Caption         =   "Luz climatica"
+            ForeColor       =   &H00000000&
+            Height          =   195
+            Left            =   120
+            MaskColor       =   &H00404040&
+            TabIndex        =   29
+            Top             =   240
+            Width           =   1455
+         End
+         Begin WorldEditor.lvButtons_H LvBActualizarLuces 
+            Height          =   375
+            Left            =   1570
+            TabIndex        =   32
+            Top             =   120
+            Width           =   375
+            _ExtentX        =   661
+            _ExtentY        =   661
+            CapAlign        =   2
+            BackStyle       =   2
+            BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+               Name            =   "Tahoma"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            cGradient       =   0
+            Mode            =   0
+            Value           =   0   'False
+            Image           =   "frmMapInfo.frx":62A8
+            cBack           =   -2147483633
+         End
+      End
+      Begin VB.Frame FraFormatoDel 
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "Tamaño del Mapa"
+         Height          =   975
+         Left            =   2400
+         TabIndex        =   25
+         Top             =   4440
+         Width           =   2175
+         Begin VB.OptionButton LvBOptX 
+            BackColor       =   &H00FFFFFF&
+            Caption         =   "100 x 100 (Clasico)"
+            Height          =   195
+            Index           =   0
+            Left            =   120
+            TabIndex        =   27
+            Top             =   360
+            Width           =   1695
+         End
+         Begin VB.OptionButton LvBOptX 
+            BackColor       =   &H00FFFFFF&
+            Caption         =   "1100 x 1100 (Winter)"
+            Height          =   195
+            Index           =   1
+            Left            =   120
+            TabIndex        =   26
+            Top             =   600
+            Value           =   -1  'True
+            Width           =   1935
+         End
+      End
+      Begin VB.CheckBox chkMapMagiaSinEfecto 
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "Magia Sin Efecto"
+         Height          =   255
+         Left            =   120
+         TabIndex        =   16
+         Top             =   3600
+         Width           =   1575
+      End
+      Begin VB.CheckBox chkMapBackup 
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "Backup"
+         Height          =   255
+         Left            =   2400
+         TabIndex        =   15
+         Top             =   3600
+         Value           =   2  'Grayed
+         Width           =   1575
+      End
+      Begin VB.TextBox txtMapNombre 
+         Height          =   285
+         Left            =   1680
+         TabIndex        =   14
+         Text            =   "Mapa Desconocido"
+         Top             =   360
+         Width           =   2655
+      End
+      Begin VB.TextBox txtMapMusica 
+         Height          =   285
+         Left            =   1680
+         TabIndex        =   13
+         Text            =   "0"
+         Top             =   1080
+         Width           =   1815
+      End
+      Begin VB.ComboBox txtMapTerreno 
+         Height          =   315
+         ItemData        =   "frmMapInfo.frx":8326
+         Left            =   1680
+         List            =   "frmMapInfo.frx":8330
+         TabIndex        =   12
+         Text            =   "txtMapTerreno"
+         Top             =   1800
+         Width           =   2655
+      End
+      Begin VB.CheckBox chkMapPK 
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "PK (inseguro)"
+         BeginProperty DataFormat 
+            Type            =   4
+            Format          =   "0%"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   11274
+            SubFormatType   =   8
+         EndProperty
+         Height          =   255
+         Left            =   120
+         TabIndex        =   11
+         Top             =   3840
+         Width           =   1575
+      End
+      Begin VB.ComboBox txtMapRestringir 
+         Height          =   315
+         ItemData        =   "frmMapInfo.frx":8346
+         Left            =   1680
+         List            =   "frmMapInfo.frx":835C
+         TabIndex        =   10
+         Text            =   "txtMapRestringir"
+         Top             =   2160
+         Width           =   2655
+      End
+      Begin VB.TextBox txtMapVersion 
+         Height          =   285
+         Left            =   1680
+         TabIndex        =   8
+         Text            =   "0"
+         Top             =   720
+         Width           =   2655
+      End
+      Begin VB.CheckBox chkMapInviSinEfecto 
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "InviSinEfecto"
+         Height          =   255
+         Left            =   120
+         TabIndex        =   7
+         Top             =   3360
+         Width           =   2055
+      End
+      Begin VB.CheckBox chkMapResuSinEfecto 
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "ResuSinEfecto"
+         Height          =   255
+         Left            =   2400
+         TabIndex        =   6
+         Top             =   3360
+         Width           =   1815
+      End
+      Begin VB.CheckBox ChkMapNpc 
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "Robo de NPC Permitido"
+         BeginProperty DataFormat 
+            Type            =   4
+            Format          =   "0%"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   11274
+            SubFormatType   =   8
+         EndProperty
+         Height          =   255
+         Left            =   120
+         TabIndex        =   5
+         Top             =   4080
+         Width           =   2055
+      End
+      Begin VB.TextBox TxtlvlMinimo 
+         Height          =   285
+         Left            =   1680
+         TabIndex        =   4
+         Text            =   "0"
+         Top             =   2520
+         Width           =   2655
+      End
+      Begin VB.TextBox TxtAmbient 
+         Height          =   285
+         Left            =   1680
+         TabIndex        =   3
+         Text            =   "0"
+         Top             =   2880
+         Width           =   2655
+      End
+      Begin VB.CheckBox chkInvocarSin 
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "Invocar sin efecto"
+         BeginProperty DataFormat 
+            Type            =   4
+            Format          =   "0%"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   11274
+            SubFormatType   =   8
+         EndProperty
+         Height          =   255
+         Left            =   2400
+         TabIndex        =   2
+         Top             =   3840
+         Width           =   1935
+      End
+      Begin VB.CheckBox chkOcultarSin 
+         BackColor       =   &H00FFFFFF&
+         Caption         =   "Ocultar sin Efecto"
+         BeginProperty DataFormat 
+            Type            =   4
+            Format          =   "0%"
+            HaveTrueFalseNull=   0
+            FirstDayOfWeek  =   0
+            FirstWeekOfYear =   0
+            LCID            =   11274
+            SubFormatType   =   8
+         EndProperty
+         Height          =   255
+         Left            =   2400
+         TabIndex        =   1
+         Top             =   4080
+         Width           =   1935
+      End
+      Begin WorldEditor.lvButtons_H cmdMusica 
+         Height          =   330
+         Left            =   3600
+         TabIndex        =   9
+         Top             =   1050
+         Width           =   735
+         _extentx        =   1296
+         _extenty        =   582
+         caption         =   "&Más"
+         capalign        =   2
+         backstyle       =   2
+         cgradient       =   0
+         font            =   "frmMapInfo.frx":8392
+         mode            =   0
+         value           =   0   'False
+         cback           =   -2147483633
+      End
+      Begin WorldEditor.lvButtons_H LvBGuardar 
+         Height          =   375
+         Left            =   2400
+         TabIndex        =   33
+         Top             =   6360
+         Width           =   2055
+         _extentx        =   2990
+         _extenty        =   661
+         caption         =   "&Guardar"
+         capalign        =   2
+         backstyle       =   2
+         cgradient       =   0
+         font            =   "frmMapInfo.frx":83BE
+         mode            =   0
+         value           =   0   'False
+         cback           =   12632319
+      End
+      Begin WorldEditor.lvButtons_H cmdCerrar 
+         Height          =   375
+         Left            =   240
+         TabIndex        =   34
+         Top             =   6360
+         Width           =   1815
+         _extentx        =   2990
+         _extenty        =   661
+         caption         =   "&Cerrar"
+         capalign        =   2
+         backstyle       =   2
+         cgradient       =   0
+         font            =   "frmMapInfo.frx":83EA
+         mode            =   0
+         value           =   0   'False
+         cback           =   -2147483633
+      End
+      Begin VB.Line Line1 
+         BorderColor     =   &H00FFFFFF&
+         BorderWidth     =   2
+         Index           =   0
+         X1              =   120
+         X2              =   4315
+         Y1              =   4440
+         Y2              =   4440
+      End
+      Begin VB.Label Label1 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Nombre del Mapa:"
          BeginProperty Font 
-            Name            =   "Verdana"
-            Size            =   12
+            Name            =   "Tahoma"
+            Size            =   8.25
             Charset         =   0
             Weight          =   400
-            Underline       =   0   'False
+            Underline       =   -1  'True
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Height          =   405
-         Left            =   1080
-         TabIndex        =   27
-         Text            =   "0-0-0"
-         Top             =   600
-         Width           =   1935
+         Height          =   195
+         Left            =   120
+         TabIndex        =   24
+         Top             =   360
+         Width           =   1305
       End
-   End
-   Begin VB.CheckBox chkOcultarSin 
-      Caption         =   "Ocultar sin Efecto"
-      BeginProperty DataFormat 
-         Type            =   4
-         Format          =   "0%"
-         HaveTrueFalseNull=   0
-         FirstDayOfWeek  =   0
-         FirstWeekOfYear =   0
-         LCID            =   11274
-         SubFormatType   =   8
-      EndProperty
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   2400
-      TabIndex        =   25
-      Top             =   3840
-      Width           =   1935
-   End
-   Begin VB.CheckBox chkInvocarSin 
-      Caption         =   "Invocar sin efecto"
-      BeginProperty DataFormat 
-         Type            =   4
-         Format          =   "0%"
-         HaveTrueFalseNull=   0
-         FirstDayOfWeek  =   0
-         FirstWeekOfYear =   0
-         LCID            =   11274
-         SubFormatType   =   8
-      EndProperty
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   2400
-      TabIndex        =   24
-      Top             =   3600
-      Width           =   1935
-   End
-   Begin VB.TextBox TxtAmbient 
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   285
-      Left            =   1680
-      TabIndex        =   22
-      Text            =   "0"
-      Top             =   2640
-      Width           =   2655
-   End
-   Begin VB.TextBox TxtlvlMinimo 
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   285
-      Left            =   1680
-      TabIndex        =   21
-      Text            =   "0"
-      Top             =   2280
-      Width           =   2655
-   End
-   Begin VB.CheckBox ChkMapNpc 
-      Caption         =   "Robo de NPC Permitido"
-      BeginProperty DataFormat 
-         Type            =   4
-         Format          =   "0%"
-         HaveTrueFalseNull=   0
-         FirstDayOfWeek  =   0
-         FirstWeekOfYear =   0
-         LCID            =   11274
-         SubFormatType   =   8
-      EndProperty
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   19
-      Top             =   3840
-      Width           =   1935
-   End
-   Begin VB.CheckBox chkMapResuSinEfecto 
-      Caption         =   "ResuSinEfecto"
-      Height          =   255
-      Left            =   2400
-      TabIndex        =   18
-      Top             =   3120
-      Width           =   1815
-   End
-   Begin VB.CheckBox chkMapInviSinEfecto 
-      Caption         =   "InviSinEfecto"
-      Height          =   255
-      Left            =   120
-      TabIndex        =   17
-      Top             =   3120
-      Width           =   2055
-   End
-   Begin VB.TextBox txtMapVersion 
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   285
-      Left            =   1680
-      TabIndex        =   15
-      Text            =   "0"
-      Top             =   480
-      Width           =   2655
-   End
-   Begin WorldEditor.lvButtons_H cmdMusica 
-      Height          =   330
-      Left            =   3600
-      TabIndex        =   14
-      Top             =   810
-      Width           =   735
-      _extentx        =   1296
-      _extenty        =   582
-      caption         =   "&Más"
-      capalign        =   2
-      backstyle       =   2
-      cgradient       =   0
-      font            =   "frmMapInfo.frx":628A
-      mode            =   0
-      value           =   0   'False
-      cback           =   -2147483633
-   End
-   Begin WorldEditor.lvButtons_H cmdCerrar 
-      Height          =   375
-      Left            =   240
-      TabIndex        =   13
-      Top             =   5760
-      Width           =   1695
-      _extentx        =   2990
-      _extenty        =   661
-      caption         =   "&Cerrar"
-      capalign        =   2
-      backstyle       =   2
-      cgradient       =   0
-      font            =   "frmMapInfo.frx":62B6
-      mode            =   0
-      value           =   0   'False
-      cback           =   -2147483633
-   End
-   Begin VB.ComboBox txtMapRestringir 
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   330
-      ItemData        =   "frmMapInfo.frx":62E2
-      Left            =   1680
-      List            =   "frmMapInfo.frx":62FB
-      TabIndex        =   11
-      Text            =   "NO"
-      Top             =   1920
-      Width           =   2655
-   End
-   Begin VB.CheckBox chkMapPK 
-      Caption         =   "PK (inseguro)"
-      BeginProperty DataFormat 
-         Type            =   4
-         Format          =   "0%"
-         HaveTrueFalseNull=   0
-         FirstDayOfWeek  =   0
-         FirstWeekOfYear =   0
-         LCID            =   11274
-         SubFormatType   =   8
-      EndProperty
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   10
-      Top             =   3600
-      Width           =   1575
-   End
-   Begin VB.ComboBox txtMapTerreno 
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   330
-      ItemData        =   "frmMapInfo.frx":6335
-      Left            =   1680
-      List            =   "frmMapInfo.frx":6342
-      TabIndex        =   9
-      Top             =   1560
-      Width           =   2655
-   End
-   Begin VB.ComboBox txtMapZona 
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   330
-      ItemData        =   "frmMapInfo.frx":635F
-      Left            =   1680
-      List            =   "frmMapInfo.frx":636C
-      TabIndex        =   8
-      Top             =   1200
-      Width           =   2655
-   End
-   Begin VB.TextBox txtMapMusica 
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   285
-      Left            =   1680
-      TabIndex        =   7
-      Text            =   "0"
-      Top             =   840
-      Width           =   1815
-   End
-   Begin VB.TextBox txtMapNombre 
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   285
-      Left            =   1680
-      TabIndex        =   6
-      Text            =   "Nuevo Mapa"
-      Top             =   120
-      Width           =   2655
-   End
-   Begin VB.CheckBox chkMapBackup 
-      Caption         =   "Backup"
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   2400
-      TabIndex        =   3
-      Top             =   3360
-      Value           =   2  'Grayed
-      Width           =   1575
-   End
-   Begin VB.CheckBox chkMapMagiaSinEfecto 
-      Caption         =   "Magia Sin Efecto"
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   2
-      Top             =   3360
-      Width           =   1575
-   End
-   Begin WorldEditor.lvButtons_H LvBGuardar 
-      Height          =   375
-      Left            =   2520
-      TabIndex        =   30
-      Top             =   5760
-      Width           =   1695
-      _extentx        =   2990
-      _extenty        =   661
-      caption         =   "&Guardar"
-      capalign        =   2
-      backstyle       =   2
-      cgradient       =   0
-      font            =   "frmMapInfo.frx":6388
-      mode            =   0
-      value           =   0   'False
-      cback           =   12632319
-   End
-   Begin VB.Label Label8 
-      Caption         =   "Sonido Ambiental:"
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   23
-      Top             =   2640
-      Width           =   1455
-   End
-   Begin VB.Label Label7 
-      Caption         =   "Nivel Minimo:"
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   20
-      Top             =   2280
-      Width           =   1455
-   End
-   Begin VB.Label Label6 
-      Caption         =   "Versión del Mapa:"
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   16
-      Top             =   480
-      Width           =   1455
-   End
-   Begin VB.Line Line1 
-      BorderColor     =   &H00808080&
-      BorderStyle     =   6  'Inside Solid
-      Index           =   1
-      X1              =   120
-      X2              =   4300
-      Y1              =   4320
-      Y2              =   4320
-   End
-   Begin VB.Label Label5 
-      Caption         =   "Restringir:"
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   12
-      Top             =   1920
-      Width           =   1455
-   End
-   Begin VB.Label Label4 
-      Caption         =   "Terreno:"
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   5
-      Top             =   1560
-      Width           =   1455
-   End
-   Begin VB.Label Label3 
-      Caption         =   "Zona:"
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   4
-      Top             =   1200
-      Width           =   1455
-   End
-   Begin VB.Label Label2 
-      Caption         =   "Musica:"
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   1
-      Top             =   840
-      Width           =   1455
-   End
-   Begin VB.Label Label1 
-      Caption         =   "Nombre del Mapa:"
-      BeginProperty Font 
-         Name            =   "Arial"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   255
-      Left            =   120
-      TabIndex        =   0
-      Top             =   120
-      Width           =   1455
-   End
-   Begin VB.Line Line1 
-      BorderColor     =   &H00FFFFFF&
-      BorderWidth     =   2
-      Index           =   0
-      X1              =   120
-      X2              =   4315
-      Y1              =   4200
-      Y2              =   4200
+      Begin VB.Label Label2 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Musica:"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   -1  'True
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   120
+         TabIndex        =   23
+         Top             =   1080
+         Width           =   540
+      End
+      Begin VB.Label Label3 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Zona:"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   -1  'True
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   120
+         TabIndex        =   22
+         Top             =   1440
+         Width           =   420
+      End
+      Begin VB.Label Label4 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Terreno:"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   -1  'True
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   120
+         TabIndex        =   21
+         Top             =   1800
+         Width           =   630
+      End
+      Begin VB.Label Label5 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Restringir:"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   -1  'True
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   120
+         TabIndex        =   20
+         Top             =   2160
+         Width           =   750
+      End
+      Begin VB.Label Label6 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Versión del Mapa:"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   -1  'True
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   120
+         TabIndex        =   19
+         Top             =   720
+         Width           =   1275
+      End
+      Begin VB.Label Label7 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Nivel Minimo:"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   -1  'True
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   120
+         TabIndex        =   18
+         Top             =   2520
+         Width           =   930
+      End
+      Begin VB.Label Label8 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Sonido Ambiental:"
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   400
+            Underline       =   -1  'True
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   195
+         Left            =   120
+         TabIndex        =   17
+         Top             =   2880
+         Width           =   1290
+      End
    End
 End
 Attribute VB_Name = "frmMapInfo"
@@ -618,7 +624,23 @@ Private Sub chkInvocarSin_LostFocus()
 End Sub
 
 Private Sub chkLuzClimatica_Click()
-    frmMain.chkLuzClimatica.value = chkLuzClimatica.value
+
+    If chkLuzClimatica.value = Unchecked Then
+        PicColorMap.BackColor = 0
+        
+        If ClientSetup.WeMode = eWeMode.WinterAO Then
+            MapZonas(frmZonas.LstZona.ListIndex + 1).LuzBase = 0
+            
+        Else
+            MapInfo.LuzBase = 0
+            
+        End If
+        
+        Call Actualizar_Estado
+    End If
+    
+    frmMapInfo.chkLuzClimatica.value = chkLuzClimatica.value
+    
 End Sub
 
 Private Sub chkMapBackup_LostFocus()
@@ -676,7 +698,6 @@ Private Sub chkMapPK_LostFocus()
 'Last modified: 20/05/06
 '*************************************************
     MapInfo.PK = chkMapPK.value
-    frmMain.chkPKInseguro.value = IIf(MapInfo.PK = True, 1, 0)
     MapInfo.Changed = 1
     
 End Sub
@@ -721,8 +742,13 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
     
 End Sub
 
+
+Private Sub LvBActualizarLuces_Click()
+    Call Actualizar_Estado
+End Sub
+
 Private Sub LvBGuardar_Click()
-    Call guardarInfoZona(frmMain.LstZona.ListIndex + 1)
+    Call guardarInfoZona(frmZonas.LstZona.ListIndex + 1)
 End Sub
 
 Public Sub guardarInfoZona(ByVal id As Integer)
@@ -749,6 +775,28 @@ Public Sub guardarInfoZona(ByVal id As Integer)
 
 End Sub
 
+Public Sub LvBOptX_Click(Index As Integer)
+'*************************************************
+'Author: Lorwik
+'Last modified: 25/04/2020
+'*************************************************
+'Nota: Hay que cambiar muchas cosas, el engine cuando inicia hace calculos con el tamaï¿½o de los mapas
+'ademas hay mas funciones que manejan estos datos, no basta con cambiar el XMax & YMax.
+       
+    ClientSetup.MapTam = Index
+    
+    Call WriteVar(WEConfigDir, "MOSTRAR", "MapTam", CStr(ClientSetup.MapTam))
+       
+    'Seteamos el nuevo tamaño del mapa
+    Call setMapSize
+End Sub
+
+Public Sub OptTam_Click(Index As Integer)
+    Call Resolucion
+    
+    Call WriteVar(WEConfigDir, "MOSTRAR", "Resolution", CStr(Index))
+End Sub
+
 Private Sub PicColorMap_Click()
     If chkLuzClimatica.value = False Then Exit Sub
     
@@ -771,7 +819,6 @@ Private Sub txtMapMusica_LostFocus()
 'Last modified: 20/05/06
 '*************************************************
     MapInfo.Music = txtMapMusica.Text
-    frmMain.txtMapMusica.Text = MapInfo.Music
     MapInfo.Changed = 1
     
 End Sub
@@ -782,7 +829,6 @@ Private Sub txtMapVersion_LostFocus()
 'Last modified: 29/05/06
 '*************************************************
     MapInfo.MapVersion = txtMapVersion.Text
-    frmMain.txtMapVersion.Text = MapInfo.MapVersion
     MapInfo.Changed = 1
     
 End Sub
@@ -793,7 +839,6 @@ Private Sub txtMapNombre_LostFocus()
 'Last modified: 20/05/06
 '*************************************************
     MapInfo.name = txtMapNombre.Text
-    frmMain.txtMapNombre.Text = MapInfo.name
     MapInfo.Changed = 1
     Call AddtoRichTextBox(frmMain.StatTxt, "Nombre de mapa cambiado a:  " & MapInfo.name, 255, 255, 255, False, True, True)
     
@@ -864,4 +909,25 @@ Private Sub txtMapZona_LostFocus()
     MapInfo.Zona = txtMapZona.Text
     MapInfo.Changed = 1
     
+End Sub
+
+Public Sub CambiarColorMap()
+On Error GoTo PicColorMap_Err
+    
+    If ClientSetup.WeMode = eWeMode.WinterAO Then
+        PicColorMap.BackColor = MapZonas(frmZonas.LstZona.ListIndex + 1).LuzBase
+    Else
+        PicColorMap.BackColor = MapInfo.LuzBase
+        
+    End If
+    
+    frmMapInfo.PicColorMap.BackColor = PicColorMap.BackColor
+    
+    MapInfo.Changed = 1
+    
+    Exit Sub
+
+PicColorMap_Err:
+    Call RegistrarError(Err.Number, Err.Description, " FrmMain.Picture3_Click", Erl)
+    Resume Next
 End Sub

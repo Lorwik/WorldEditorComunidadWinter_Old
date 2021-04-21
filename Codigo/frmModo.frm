@@ -169,8 +169,14 @@ Public ModoElegido As Boolean
 Private Sub Form_Load()
     On Error Resume Next
     
-    'Marcamos la opcion
-    OptModo(ClientSetup.WeMode).value = True
+    #If Privado = 0 Then
+        'Marcamos la opcion
+        OptModo(ClientSetup.WeMode).value = True
+        
+    #Else
+        OptModo(eWeMode.WinterAO).value = True
+        OptModo(eWeMode.ImperiumClasico).Visible = False
+    #End If
     
     cmbProcesado.ListIndex = ClientSetup.OverrideVertexProcess
     
@@ -193,8 +199,8 @@ Private Sub chkvSync_Click()
     End If
 End Sub
 
-Private Sub LvBBoton_Click(index As Integer)
-    Select Case index
+Private Sub LvBBoton_Click(Index As Integer)
+    Select Case Index
     
         Case 0 'Salir
             Call SimpleLogError("Seleccion de modo cancelador, saliendo de WorldEditor.")
@@ -209,13 +215,21 @@ Private Sub LvBBoton_Click(index As Integer)
             Call WriteVar(WEConfigDir, "VIDEO", "VertexProcessingOverride", CByte(ClientSetup.OverrideVertexProcess))
             Call WriteVar(WEConfigDir, "VIDEO", "LimitarFPS", IIf(ClientSetup.LimiteFPS, "1", "0"))
             
-            Call SimpleLogError("Modo " & OptModo(ClientSetup.WeMode).Caption & " elegido.")
+            #If Privado = 0 Then
+                Call SimpleLogError("Modo " & OptModo(ClientSetup.WeMode).Caption & " elegido.")
+            #End If
             
             Unload Me
     End Select
 End Sub
 
-Private Sub OptModo_Click(index As Integer)
-    ClientSetup.WeMode = index
+Private Sub OptModo_Click(Index As Integer)
+
+    #If Privado = 1 Then
+        ClientSetup.WeMode = eWeMode.WinterAO
+        
+    #Else
+        ClientSetup.WeMode = Index
+    #End If
     
 End Sub

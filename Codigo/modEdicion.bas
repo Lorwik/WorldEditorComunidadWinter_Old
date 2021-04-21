@@ -260,13 +260,13 @@ Public Sub Superficie_Azar()
             X = RandomNumber(10, 90)
             Y = RandomNumber(10, 90)
             
-            If frmMain.MOSAICO.value = vbChecked Then
+            If frmConfigSup.MOSAICO.value = vbChecked Then
               Dim aux As Integer
               Dim dy As Integer
               Dim dX As Integer
-              If frmMain.DespMosaic.value = vbChecked Then
-                            dy = Val(frmMain.DMLargo)
-                            dX = Val(frmMain.DMAncho.Text)
+              If frmConfigSup.DespMosaic.value = vbChecked Then
+                            dy = Val(frmConfigSup.DMLargo)
+                            dX = Val(frmConfigSup.DMAncho.Text)
               Else
                         dy = 0
                         dX = 0
@@ -274,7 +274,7 @@ Public Sub Superficie_Azar()
                     
               If frmMain.mnuAutoCompletarSuperficies.Checked = False Then
                     aux = Val(frmMain.cGrh.Text) + _
-                    (((Y + dy) Mod frmMain.mLargo.Text) * frmMain.mAncho.Text) + ((X + dX) Mod frmMain.mAncho.Text)
+                    (((Y + dy) Mod frmConfigSup.mLargo.Text) * frmConfigSup.mAncho.Text) + ((X + dX) Mod frmConfigSup.mAncho.Text)
                     If frmMain.cInsertarBloqueo.value = True Then
                         MapData(X, Y).Blocked = 1
                     Else
@@ -287,8 +287,8 @@ Public Sub Superficie_Azar()
                     tXX = X
                     tYY = Y
                     desptile = 0
-                    For i = 1 To frmMain.mLargo.Text
-                        For j = 1 To frmMain.mAncho.Text
+                    For i = 1 To frmConfigSup.mLargo.Text
+                        For j = 1 To frmConfigSup.mAncho.Text
                             aux = Val(frmMain.cGrh.Text) + desptile
                              
                             If frmMain.cInsertarBloqueo.value = True Then
@@ -341,10 +341,10 @@ Public Sub Superficie_Bordes()
     
             If X < MinXBorder Or X > MaxXBorder Or Y < MinYBorder Or Y > MaxYBorder Then
     
-              If frmMain.MOSAICO.value = vbChecked Then
+              If frmConfigSup.MOSAICO.value = vbChecked Then
                 Dim aux As Integer
                 aux = Val(frmMain.cGrh.Text) + _
-                ((Y Mod frmMain.mLargo) * frmMain.mAncho) + (X Mod frmMain.mAncho)
+                ((Y Mod frmConfigSup.mLargo) * frmConfigSup.mAncho) + (X Mod frmConfigSup.mAncho)
                 If frmMain.cInsertarBloqueo.value = True Then
                     MapData(X, Y).Blocked = 1
                 Else
@@ -417,10 +417,10 @@ Public Sub Superficie_Todo()
     For Y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
     
-            If frmMain.MOSAICO.value = vbChecked Then
+            If frmConfigSup.MOSAICO.value = vbChecked Then
                 Dim aux As Integer
                 aux = Val(frmMain.cGrh.Text) + _
-                ((Y Mod frmMain.mLargo) * frmMain.mAncho) + (X Mod frmMain.mAncho)
+                ((Y Mod frmConfigSup.mLargo) * frmConfigSup.mAncho) + (X Mod frmConfigSup.mAncho)
                  MapData(X, Y).Graphic(Val(frmMain.cCapas.Text)).GrhIndex = aux
                 'Setup GRH
                 InitGrh MapData(X, Y).Graphic(Val(frmMain.cCapas.Text)), aux
@@ -459,10 +459,10 @@ Public Sub Superficie_Area(ByVal x1 As Integer, ByVal x2 As Integer, ByVal y1 As
     For Y = y1 To y2
         For X = x1 To x2
             If Poner = True Then
-                If frmMain.MOSAICO.value = vbChecked Then
+                If frmConfigSup.MOSAICO.value = vbChecked Then
                     Dim aux As Integer
                     aux = Val(frmMain.cGrh.Text) + _
-                    ((Y Mod frmMain.mLargo) * frmMain.mAncho) + (X Mod frmMain.mAncho)
+                    ((Y Mod frmConfigSup.mLargo) * frmConfigSup.mAncho) + (X Mod frmConfigSup.mAncho)
                      MapData(X, Y).Graphic(Val(frmMain.cCapas.Text)).GrhIndex = aux
                     'Setup GRH
                     InitGrh MapData(X, Y).Graphic(Val(frmMain.cCapas.Text)), aux
@@ -537,7 +537,7 @@ Public Sub Triggers_Area(ByVal x1 As Integer, ByVal x2 As Integer, ByVal y1 As I
     For Y = y1 To y2
         For X = x1 To x2
             If Poner = True Then
-                If frmMain.MOSAICO.value = vbChecked Then
+                If frmConfigSup.MOSAICO.value = vbChecked Then
                     MapInfo.Changed = 1 'Set changed flag
                     MapData(X, Y).Trigger = frmMain.lListado(4).ListIndex
                 Else
@@ -579,9 +579,9 @@ Public Sub Zonas_Area(ByVal x1 As Integer, ByVal x2 As Integer, ByVal y1 As Inte
     For Y = y1 To y2
         For X = x1 To x2
             If Poner = True Then
-                If frmMain.MOSAICO.value = vbChecked Then
+                If frmConfigSup.MOSAICO.value = vbChecked Then
                     MapInfo.Changed = 1 'Set changed flag
-                    MapData(X, Y).ZonaIndex = frmMain.LstZona.ListIndex + 1
+                    MapData(X, Y).ZonaIndex = frmZonas.LstZona.ListIndex + 1
                     Debug.Print "Inserto"
                 Else
                     MapInfo.Changed = 1
@@ -723,8 +723,6 @@ Public Sub Quitar_NPCs(ByVal Hostiles As Boolean)
             End If
         Next X
     Next Y
-    
-    Call DibujarMinimapa(True)
     
     'Set changed flag
     MapInfo.Changed = 1
@@ -968,6 +966,7 @@ Sub DobleClick(tX As Integer, tY As Integer)
                         If ClientSetup.WeMode = eWeMode.WinterAO Then
                             Call modMapWinter.Cargar_CSM(frmMain.Dialog.filename)
                             
+                   #If Privado = 0 Then
                         ElseIf ClientSetup.WeMode = eWeMode.ImperiumClasico Then
                             If TipoMapaCargado = eTipoMapa.tIAOClasico Then
                                 Call modMapImpC.Cargar_MapImpClasico(frmMain.Dialog.filename)
@@ -976,8 +975,8 @@ Sub DobleClick(tX As Integer, tY As Integer)
                                 Call modMapImpC.Cargar_MapIAO(frmMain.Dialog.filename, TipoMapaCargado)
                                 
                             End If
+                    #End If
                         End If
-                    Case 2
                 
                 End Select
                 
@@ -1019,6 +1018,7 @@ Sub ClickEdit(Button As Integer, tX As Integer, tY As Integer)
     If tY < YMinMapSize Or tY > YMaxMapSize Then Exit Sub
     If tX < XMinMapSize Or tX > XMaxMapSize Then Exit Sub
     
+    Call ActualizarMinimapa(tX, tY)
     
     If Button = 0 Then
         ' Pasando sobre :P
@@ -1120,13 +1120,13 @@ Sub ClickEdit(Button As Integer, tX As Integer, tY As Integer)
             '************** Place grh
             If frmMain.cSeleccionarSuperficie.value = True Then
                 
-                If frmMain.MOSAICO.value = vbChecked Then
+                If frmConfigSup.MOSAICO.value = vbChecked Then
                     Dim aux As Long
                     Dim dy As Integer
                     Dim dX As Integer
-                    If frmMain.DespMosaic.value = vbChecked Then
-                        dy = Val(frmMain.DMLargo)
-                        dX = Val(frmMain.DMAncho.Text)
+                    If frmConfigSup.DespMosaic.value = vbChecked Then
+                        dy = Val(frmConfigSup.DMLargo)
+                        dX = Val(frmConfigSup.DMAncho.Text)
                     Else
                         dy = 0
                         dX = 0
@@ -1136,7 +1136,7 @@ Sub ClickEdit(Button As Integer, tX As Integer, tY As Integer)
                         modEdicion.Deshacer_Add "Insertar Superficie' Hago deshacer"
                         MapInfo.Changed = 1 'Set changed flag
                         aux = Val(frmMain.cGrh.Text) + _
-                        (((tY + dy) Mod frmMain.mLargo.Text) * frmMain.mAncho.Text) + ((tX + dX) Mod frmMain.mAncho.Text)
+                        (((tY + dy) Mod frmConfigSup.mLargo.Text) * frmConfigSup.mAncho.Text) + ((tX + dX) Mod frmConfigSup.mAncho.Text)
                         
                          If MapData(tX, tY).Graphic(Val(frmMain.cCapas.Text)).GrhIndex <> aux Or MapData(tX, tY).Blocked <> frmMain.SelectPanel(2).value Then
                             MapData(tX, tY).Graphic(Val(frmMain.cCapas.Text)).GrhIndex = aux
@@ -1159,8 +1159,8 @@ Sub ClickEdit(Button As Integer, tX As Integer, tY As Integer)
                         If tYY > YMaxMapSize Then tYY = YMaxMapSize
                         If tYY < YMinMapSize Then tYY = YMinMapSize
                         
-                        For i = 1 To frmMain.mLargo.Text
-                            For j = 1 To frmMain.mAncho.Text
+                        For i = 1 To frmConfigSup.mLargo.Text
+                            For j = 1 To frmConfigSup.mAncho.Text
                                 If tYY >= 1 And tYY <= 100 Then
                                     If tXX >= 1 And tXX <= 100 Then
                                         aux = Val(frmMain.cGrh.Text) + desptile
@@ -1412,12 +1412,12 @@ Sub ClickEdit(Button As Integer, tX As Integer, tY As Integer)
                 
             End If
             
-            If frmMain.LvBPintar.value Then
-                MapData(tX, tY).ZonaIndex = frmMain.LstZona.ListIndex + 1
+            If frmZonas.LvBPintar.value Then
+                MapData(tX, tY).ZonaIndex = frmZonas.LstZona.ListIndex + 1
                 MapInfo.Changed = 1
                 
-            ElseIf frmMain.LvBQuitar.value Then
-                MapData(tX, tY).ZonaIndex = 1
+            ElseIf frmZonas.LvBQuitar.value Then
+                MapData(tX, tY).ZonaIndex = 0
                 MapInfo.Changed = 1
                 
             End If

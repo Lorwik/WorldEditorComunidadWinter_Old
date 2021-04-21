@@ -175,7 +175,6 @@ Private Sub cmdAplicarYCerrar_Click()
     If Len(MidiActual) >= 5 Then
         MapInfo.Music = Left(MidiActual, Len(MidiActual) - 4)
         frmMapInfo.txtMapMusica.Text = MapInfo.Music
-        frmMain.txtMapMusica = MapInfo.Music
         MidiActual = Empty
     End If
     

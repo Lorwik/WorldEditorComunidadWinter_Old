@@ -523,7 +523,7 @@ Public Function Selected_Color()
   
     ' If H mode is selected, replace default with hex RGB values.
     Out = "&H" & Format(Hex(R), "0#") & Format(Hex(G), "0#") & Format(Hex(B), "0#")
-    frmMain.PicColorMap.BackColor = RGB(R, G, B)
+    frmMapInfo.PicColorMap.BackColor = RGB(R, G, B)
 
     Selected_Color = Out
     
@@ -553,4 +553,61 @@ Public Sub Resolucion()
     MaxYBorder = YMaxMapSize - (ClienteHeight \ 2)
 
 End Sub
+
+Public Sub ObtenerCuadrante(ByRef Cuadrante As Integer, ByRef tX As Integer, ByRef tY As Integer)
+'*****************************************************
+'Autor: Lorwik
+'Fecha: 03/04/2021
+'Descripción: Actualiza las coordenadas ya sean totales o por cuadrantes
+'*****************************************************
+
+    Dim cX As Integer
+    Dim cY As Integer
+    
+    cX = Fix((UserPos.X / 100))
+    cY = Fix((UserPos.Y / 100))
+    
+    tX = UserPos.X - (cX * 100)
+    tY = UserPos.Y - (cY * 100)
+    
+    Cuadrante = cX * cY
+
+End Sub
+
+' Funcción que abre el cuadro de dialogo y retorna la ruta
+'******************************************************************
+Function Buscar_Carpeta(Optional Titulo As String, _
+                        Optional Path_Inicial As Variant) As String
+  
+On Local Error GoTo errFunction
+      
+    Dim objShell As Object
+    Dim objFolder As Object
+    Dim o_Carpeta As Object
+      
+    ' Nuevo objeto Shell.Application
+    Set objShell = CreateObject("Shell.Application")
+      
+    On Error Resume Next
+    'Abre el cuadro de diálogo para seleccionar
+    Set objFolder = objShell.BrowseForFolder( _
+                            0, _
+                            Titulo, _
+                            0, _
+                            Path_Inicial)
+      
+    ' Devuelve solo el nombre de carpeta
+    Set o_Carpeta = objFolder.Self
+      
+    ' Devuelve la ruta completa seleccionada en el diálogo
+    Buscar_Carpeta = o_Carpeta.Path
+  
+Exit Function
+'Error
+errFunction:
+    MsgBox Err.Description, vbCritical
+    Buscar_Carpeta = vbNullString
+    Call RegistrarError(Err.Number, Err.Description, "Buscar_Carpeta", Erl)
+  
+End Function
 

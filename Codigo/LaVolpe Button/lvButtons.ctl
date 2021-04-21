@@ -59,7 +59,6 @@ Public Event KeyPress(KeyAscii As Integer)
 Public Event KeyUp(KeyCode As Integer, Shift As Integer)
 Public Event MouseOnButton(OnButton As Boolean)
 Public Event Click()
-Attribute Click.VB_MemberFlags = "200"
 Public Event DoubleClick(Button As Integer)   ' added benefit
 Public Event OLECompleteDrag(Effect As Long)
 Public Event OLEDragDrop(data As DataObject, Effect As Long, Button As Integer, Shift As Integer, X As Single, y As Single)
@@ -406,7 +405,6 @@ Public Enum BackStyleConstants      ' button styles
 End Enum
 
 Public Property Let ButtonStyle(Style As BackStyleConstants)
-Attribute ButtonStyle.VB_Description = "Various operating system button styles"
     
     On Error GoTo ButtonStyle_Err
     
@@ -450,7 +448,6 @@ ButtonStyle_Err:
 End Property
 
 Public Property Let Mode(nMode As ButtonModeConstants)
-Attribute Mode.VB_Description = "Command button, check box or option button mode"
     
     On Error GoTo Mode_Err
     
@@ -500,10 +497,6 @@ Mode_Err:
 End Property
 
 Public Property Let Caption(sCaption As String)
-Attribute Caption.VB_Description = "The caption of the button. Double pipe (||) is a line break."
-Attribute Caption.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
-Attribute Caption.VB_UserMemId = -518
-Attribute Caption.VB_MemberFlags = "200"
     
     On Error GoTo Caption_Err
     
@@ -558,8 +551,6 @@ Caption_Err:
 End Property
 
 Public Property Let CaptionAlign(nAlign As AlignmentConstants)
-Attribute CaptionAlign.VB_Description = "Horizontal alignment of caption on the button."
-Attribute CaptionAlign.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
     
     On Error GoTo CaptionAlign_Err
     
@@ -610,7 +601,6 @@ CaptionAlign_Err:
 End Property
 
 Public Property Let CaptionStyle(nStyle As CaptionEffectConstants)
-Attribute CaptionStyle.VB_Description = "Flat, Embossed or Engraved effects"
     
     On Error GoTo CaptionStyle_Err
     
@@ -652,7 +642,6 @@ CaptionStyle_Err:
 End Property
 
 Public Property Let CustomClick(nOpt As CustomCickConstants)
-Attribute CustomClick.VB_Description = "Custom shaped buttons only. Moves the button vs the traditional click effect."
     
     On Error GoTo CustomClick_Err
     
@@ -691,8 +680,6 @@ CustomClick_Err:
 End Property
 
 Public Property Let ButtonShape(nShape As ButtonStyleConstants)
-Attribute ButtonShape.VB_Description = "Rectangular or various diagonal shapes"
-Attribute ButtonShape.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
     
     On Error GoTo ButtonShape_Err
     
@@ -750,7 +737,6 @@ ButtonShape_Err:
 End Property
 
 Public Property Set Picture(xPic As StdPicture)
-Attribute Picture.VB_Description = "The image used to display on the button."
     
     On Error GoTo Picture_Err
     
@@ -809,7 +795,6 @@ Picture_Err:
 End Property
 
 Public Property Let PictureAlign(ImgAlign As ImagePlacementConstants)
-Attribute PictureAlign.VB_Description = "Alignment of the button image in relation to the caption and/or button."
     
     On Error GoTo PictureAlign_Err
     
@@ -849,9 +834,6 @@ PictureAlign_Err:
 End Property
 
 Public Property Let Enabled(bEnabled As Boolean)
-Attribute Enabled.VB_Description = "Determines if events are fired for this button."
-Attribute Enabled.VB_ProcData.VB_Invoke_PropertyPut = ";Behavior"
-Attribute Enabled.VB_UserMemId = -514
     
     On Error GoTo Enabled_Err
     
@@ -899,8 +881,6 @@ Enabled_Err:
 End Property
 
 Public Property Let ShowFocusRect(bShow As Boolean)
-Attribute ShowFocusRect.VB_Description = "Allows or prevents a focus rectangle from being displayed. In design mode, this may always be displayed for button set as Default."
-Attribute ShowFocusRect.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
     
     On Error GoTo ShowFocusRect_Err
     
@@ -953,8 +933,6 @@ ShowFocusRect_Err:
 End Property
 
 Public Property Let value(bValue As Boolean)
-Attribute value.VB_Description = "Applicable to only check box or option button modes: True or False"
-Attribute value.VB_UserMemId = 0
     
     On Error GoTo value_Err
     
@@ -1005,7 +983,6 @@ value_Err:
 End Property
 
 Public Property Let PictureSize(nSize As ImageSizeConstants)
-Attribute PictureSize.VB_Description = "Various sizes for images used on buttons. Last 2 options center image automatically."
     
     On Error GoTo PictureSize_Err
     
@@ -1054,7 +1031,6 @@ PictureSize_Err:
 End Property
 
 Public Property Let MousePointer(nPointer As MousePointerConstants)
-Attribute MousePointer.VB_Description = "Various optional mouse pointers to use when mouse is over the button"
     
     On Error GoTo MousePointer_Err
     
@@ -1089,7 +1065,6 @@ MousePointer_Err:
 End Property
 
 Public Property Set MouseIcon(nIcon As StdPicture)
-Attribute MouseIcon.VB_Description = "Icon or cursor used to display when mouse is over the button. MousePointer must be set to Custom."
 
     ' Sets the mouse icon for the button, MousePointer must be vbCustom
 
@@ -1126,8 +1101,6 @@ MouseIcon_Err:
 End Property
 
 Public Property Set font(nFont As StdFont)
-Attribute font.VB_Description = "Font used to display the caption."
-Attribute font.VB_ProcData.VB_Invoke_PropertyPutRef = ";Font"
     
     On Error GoTo font_Err
     
@@ -1166,7 +1139,6 @@ font_Err:
 End Property
 
 Public Property Let FontStyle(nStyle As FontStyles)
-Attribute FontStyle.VB_Description = "Various font attributes that can be changed directly."
     
     On Error GoTo FontStyle_Err
     
@@ -1214,8 +1186,6 @@ FontStyle_Err:
 End Property
 
 Public Property Let ForeColor(nColor As OLE_COLOR)
-Attribute ForeColor.VB_Description = "The color of the caption's font ."
-Attribute ForeColor.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
     
     On Error GoTo ForeColor_Err
     
@@ -1259,8 +1229,6 @@ ForeColor_Err:
 End Property
 
 Public Property Let BackColor(nColor As OLE_COLOR)
-Attribute BackColor.VB_Description = "Button back color. See also ResetDefaultColors"
-Attribute BackColor.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
     
     On Error GoTo BackColor_Err
     
@@ -1308,7 +1276,6 @@ BackColor_Err:
 End Property
 
 Public Property Let GradientColor(nColor As OLE_COLOR)
-Attribute GradientColor.VB_Description = "Secondary color used for gradient shades. The BackColor property is the primary color."
     
     On Error GoTo GradientColor_Err
     
@@ -1354,7 +1321,6 @@ GradientColor_Err:
 End Property
 
 Public Property Let GradientMode(nOpt As GradientConstants)
-Attribute GradientMode.VB_Description = "Various directions to draw the gradient shading."
     
     On Error GoTo GradientMode_Err
     
@@ -1405,8 +1371,6 @@ GradientMode_Err:
 End Property
 
 Public Property Let ResetDefaultColors(nDefault As Boolean)
-Attribute ResetDefaultColors.VB_Description = "Resets button's back color and text color to Window's standard. The hover properties are also reset."
-Attribute ResetDefaultColors.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
     
     On Error GoTo ResetDefaultColors_Err
     
@@ -1452,8 +1416,6 @@ ResetDefaultColors_Err:
 End Property
 
 Public Property Let HoverColorLocks(nLock As HoverLockConstants)
-Attribute HoverColorLocks.VB_Description = "Can ensure the hover colors match the caption and back colors. Click for more options."
-Attribute HoverColorLocks.VB_ProcData.VB_Invoke_PropertyPut = ";Behavior"
     
     On Error GoTo HoverColorLocks_Err
     
@@ -1521,8 +1483,6 @@ HoverColorLocks_Err:
 End Property
 
 Public Property Let HoverForeColor(nColor As OLE_COLOR)
-Attribute HoverForeColor.VB_Description = "Color of button caption's text when mouse is hovering over it. Affects the HoverLockColors property."
-Attribute HoverForeColor.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
     
     On Error GoTo HoverForeColor_Err
     
@@ -1573,8 +1533,6 @@ HoverForeColor_Err:
 End Property
 
 Public Property Let HoverBackColor(nColor As OLE_COLOR)
-Attribute HoverBackColor.VB_Description = "Color of button background when mouse is hovering over it. Affects the HoverLockColors property."
-Attribute HoverBackColor.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
     
     On Error GoTo HoverBackColor_Err
     
@@ -5309,3 +5267,4 @@ DrawButton_Java_Err:
     Resume Next
     
 End Sub
+

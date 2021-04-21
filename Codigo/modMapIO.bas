@@ -104,6 +104,7 @@ On Error GoTo ErrHandler
             Case eWeMode.WinterAO
                 Call Save_CSM(Path)
                 
+            #If Privado = 0 Then
             Case eWeMode.ImperiumClasico
                 If TipoMapaCargado = eTipoMapa.tIAOClasico Then
                     Call modMapImpC.Save_MapImpClasico(Path)
@@ -113,6 +114,7 @@ On Error GoTo ErrHandler
                     
                 End If
                 
+            #End If
         End Select
         
             
@@ -164,8 +166,6 @@ Public Sub NuevoMapa()
     'frmMain.mnuUtirialNuevoFormato.Checked = True
     frmMain.mnuReAbrirMapa.Enabled = False
     frmMain.TimAutoGuardarMapa.Enabled = False
-    frmMain.txtMapVersion.Text = 0
-    frmMain.TxtAmbient.Text = 0
     
     MapaCargado = False
     
@@ -247,15 +247,15 @@ Public Sub NuevoMapa()
         CantZonas = 0
         ReDim MapZonas(CantZonas) As tMapInfo
     
-        frmMain.LstZona.Clear
+        frmZonas.LstZona.Clear
     
         Call NuevaZona(CantZonas)
                 
         Call MapZona_Actualizar(CantZonas)
         
-        frmMain.LstZona.ListIndex = 0
+        frmZonas.LstZona.ListIndex = 0
         
-        Call MapZona_Actualizar(frmMain.LstZona.ListIndex + 1)
+        Call MapZona_Actualizar(frmZonas.LstZona.ListIndex + 1)
            
     Else
     
@@ -357,12 +357,11 @@ Public Sub MapaV2_Guardar(ByVal SaveAs As String)
     'map Header
     
     ' Version del Mapa
-    If frmMain.txtMapVersion.Text < 32767 Then
-        frmMain.txtMapVersion.Text = frmMain.txtMapVersion + 1
-        frmMapInfo.txtMapVersion = frmMain.txtMapVersion.Text
+    If frmMapInfo.txtMapVersion.Text < 32767 Then
+        frmMapInfo.txtMapVersion.Text = frmMapInfo.txtMapVersion + 1
     End If
 
-    Put FreeFileMap, , CInt(frmMain.txtMapVersion.Text)
+    Put FreeFileMap, , CInt(frmMapInfo.txtMapVersion.Text)
     Put FreeFileMap, , MiCabecera
     Put FreeFileMap, , TempInt
     Put FreeFileMap, , TempInt
@@ -520,11 +519,11 @@ On Error GoTo ErrorSave
     Open SaveAs For Binary As FreeFileInf
     Seek FreeFileInf, 1
     'map Header
-    If frmMain.txtMapVersion.Text < 32767 Then
-        frmMain.txtMapVersion.Text = frmMain.txtMapVersion + 1
-        frmMapInfo.txtMapVersion = frmMain.txtMapVersion.Text
+    If frmMapInfo.txtMapVersion.Text < 32767 Then
+        frmMapInfo.txtMapVersion.Text = frmMapInfo.txtMapVersion + 1
     End If
-    Put FreeFileMap, , CInt(frmMain.txtMapVersion.Text)
+    
+    Put FreeFileMap, , CInt(frmMapInfo.txtMapVersion.Text)
     Put FreeFileMap, , MiCabecera
     
     Put FreeFileMap, , TempInt
@@ -807,7 +806,7 @@ Public Sub MapaV2_Cargar(ByVal Map As String, Optional ByVal EsInteger As Boolea
     
     With frmMain
     
-        frmMain.txtMapVersion.Text = MapInfo.MapVersion
+        frmMapInfo.txtMapVersion.Text = MapInfo.MapVersion
     
         ' Avisamos que estamos trabajando con un mapa de tipo integer.
         If EsInteger Then
@@ -944,7 +943,7 @@ Public Sub MapaV1_Cargar(ByVal Map As String)
     Map = Left(Map, Len(Map) - 4) & ".dat"
         
     MapInfo_Cargar Map
-    frmMain.txtMapVersion.Text = MapInfo.MapVersion
+    frmMapInfo.txtMapVersion.Text = MapInfo.MapVersion
     
     'Set changed flag
     MapInfo.Changed = 0
@@ -995,7 +994,7 @@ Public Sub MapaV3_Cargar(ByVal Map As String)
     Map = Left(Map, Len(Map) - 4) & ".dat"
         
     MapInfo_Cargar Map
-    frmMain.txtMapVersion.Text = MapInfo.MapVersion
+    frmMapInfo.txtMapVersion.Text = MapInfo.MapVersion
     
     'Set changed flag
     MapInfo.Changed = 0
@@ -1179,13 +1178,6 @@ On Error Resume Next
         .txtMapVersion = MapInfo.MapVersion
         .ChkMapNpc.value = MapInfo.RoboNpcsPermitido
     End With
-    
-    With frmMain
-        .chkPKInseguro.value = IIf(MapInfo.PK = True, 1, 0)
-        .txtMapNombre.Text = MapInfo.name
-        .txtMapMusica.Text = MapInfo.Music
-        .TxtAmbient.Text = MapInfo.ambient
-    End With
 
 End Sub
 
@@ -1202,7 +1194,7 @@ Public Sub NuevaZona(ByVal id As Integer)
 
     Call ResetearZona(id)
     
-    frmMain.LstZona.AddItem (CantZonas & "- " & MapZonas(CantZonas).name)
+    frmZonas.LstZona.AddItem (CantZonas & "- " & MapZonas(CantZonas).name)
 End Sub
 
 Public Sub ResetearZona(ByVal id As Integer)
@@ -1250,7 +1242,7 @@ Public Sub EliminarZona()
     'Primero se resetea la zona
     Call ResetearZona(CantZonas)
 
-    frmMain.LstZona.RemoveItem frmMain.LstZona.ListIndex
+    frmZonas.LstZona.RemoveItem frmZonas.LstZona.ListIndex
     
     CantZonas = CantZonas - 1
     
@@ -1265,13 +1257,13 @@ Public Sub MapZona_Actualizar(ByVal id As Integer)
     Dim tB As Byte
     
     Call ConvertLongToRGB(MapZonas(id).LuzBase, tR, tG, tB)
-    Debug.Print MapZonas(id).ambient
+
     With frmMapInfo
         .txtMapNombre.Text = MapZonas(id).name
         .txtMapMusica.Text = MapZonas(id).Music
         .txtMapTerreno.Text = MapZonas(id).Terreno
-        .txtMapZona.Text = MapZonas(id).Zona
-        .txtMapRestringir.Text = MapZonas(id).Restringir
+        .txtMapZona = MapZonas(id).Zona
+        .txtMapRestringir = MapZonas(id).Restringir
     '   .chkMapBackup.value = MapZonas(ID).BackUp
         .chkMapPK.value = IIf(MapZonas(id).PK = True, 1, 0)
         .TxtAmbient.Text = MapZonas(id).ambient
@@ -1294,22 +1286,6 @@ Public Sub MapZona_Actualizar(ByVal id As Integer)
         .LuzMapa.Text = tR & "-" & tG & "-" & tB
     End With
     
-    With frmMain
-        .chkPKInseguro.value = IIf(MapZonas(id).PK = True, 1, 0)
-        .txtMapNombre.Text = MapZonas(id).name
-        .txtMapMusica.Text = MapZonas(id).Music
-        .TxtAmbient.Text = MapZonas(id).ambient
-        
-        If MapZonas(id).LuzBase = 0 Then
-            .chkLuzClimatica = vbUnchecked
-        Else
-            .chkLuzClimatica = vbChecked
-        End If
-        
-        .PicColorMap.BackColor = MapZonas(id).LuzBase
-        .LuzMapa.Text = tR & "-" & tG & "-" & tB
-    End With
-    
 End Sub
 
 Public Sub ActualizarZonaList()
@@ -1321,10 +1297,10 @@ Public Sub ActualizarZonaList()
 
     Dim i As Integer
 
-    frmMain.LstZona.Clear
+    frmZonas.LstZona.Clear
         
     For i = 1 To CantZonas
-        frmMain.LstZona.AddItem (i & "- " & MapZonas(i).name)
+        frmZonas.LstZona.AddItem (i & "- " & MapZonas(i).name)
             
     Next i
     
@@ -1363,13 +1339,13 @@ On Error Resume Next
         End If
     Next
     
-    For loopc = (NumMap_Save - 7) To (NumMap_Save + 7)
+    For loopc = (NumMap_Save - 4) To (NumMap_Save + 8)
             If FileExist(PATH_Save & NameMap_Save & loopc & MapFormat, vbArchive) = True Then
-                frmMain.MapPest(loopc - NumMap_Save + 7).Visible = True
-                frmMain.MapPest(loopc - NumMap_Save + 7).Enabled = True
-                frmMain.MapPest(loopc - NumMap_Save + 7).Caption = NameMap_Save & loopc
+                frmMain.MapPest(loopc - NumMap_Save + 4).Visible = True
+                frmMain.MapPest(loopc - NumMap_Save + 4).Enabled = True
+                frmMain.MapPest(loopc - NumMap_Save + 4).Caption = NameMap_Save & loopc
             Else
-                frmMain.MapPest(loopc - NumMap_Save + 7).Visible = False
+                frmMain.MapPest(loopc - NumMap_Save + 4).Visible = False
             End If
     Next
     
@@ -1401,7 +1377,7 @@ Public Sub AbrirMapa(Optional ByVal IntMode As Boolean = False)
 ErrHandler:
 End Sub
 
-Public Sub AbrirunMapa(ByVal Path As String, Optional ByVal IntMode As Boolean = False)
+Public Sub AbrirunMapa(ByVal Path As String, Optional ByVal Mode As Boolean = False)
 '********************************
 'Autor: Lorwik
 'Fecha: 23/03/2021
@@ -1409,15 +1385,22 @@ Public Sub AbrirunMapa(ByVal Path As String, Optional ByVal IntMode As Boolean =
 
     If frmMain.Dialog.FilterIndex = 1 Then
         If ClientSetup.WeMode = eWeMode.WinterAO Then
-            Call modMapWinter.Cargar_CSM(Path)
+            If Mode Then
+                Call modMapWinter.Cargar_CSM_Old(Path)
                 
+            Else
+                Call modMapWinter.Cargar_CSM(Path)
+                
+            End If
+                
+        #If Privado = 0 Then
         ElseIf ClientSetup.WeMode = eWeMode.ImperiumClasico Then
             Call modMapImpC.Cargar_MapImpClasico(Path)
-                
+        #End If
+        
         End If
     Else
-        Call MapaV2_Cargar(Path, IntMode)
+        Call MapaV2_Cargar(Path, Mode)
             
     End If
 End Sub
-

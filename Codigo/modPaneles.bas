@@ -121,8 +121,6 @@ Public Sub VerFuncion(ByVal Numero As Byte, ByVal Ver As Boolean, Optional Norma
             frmMain.lbGrh.Visible = Ver
             frmMain.PreviewGrh.Visible = Ver
             frmMain.FraRellenar.Visible = Ver
-            frmMain.chkActivarPreview.Visible = Ver
-            frmMain.lblActivarPreview.Visible = Ver
             
         Case 1 ' Translados
             frmMain.lMapN.Visible = Ver
@@ -272,7 +270,7 @@ Public Sub Filtrar(ByVal Numero As Byte)
     Next
 End Sub
 
-Public Function DameGrhIndex(ByVal GrhIn As Integer) As Integer
+Public Function DameGrhIndex(ByVal GrhIn As Long) As Long
 '*************************************************
 'Author: Unkwown
 'Last modified: 20/05/06
@@ -281,18 +279,20 @@ Public Function DameGrhIndex(ByVal GrhIn As Integer) As Integer
     DameGrhIndex = SupData(GrhIn).Grh
     
     If SupData(GrhIn).Width > 0 Then
-        frmMain.MOSAICO.value = vbChecked
-        frmMain.mAncho.Text = SupData(GrhIn).Width
-        frmMain.mLargo.Text = SupData(GrhIn).Height
+        frmConfigSup.MOSAICO.value = vbChecked
+        frmConfigSup.mAncho.Text = SupData(GrhIn).Width
+        frmConfigSup.mLargo.Text = SupData(GrhIn).Height
+        
     Else
-        frmMain.MOSAICO.value = vbUnchecked
-        frmMain.mAncho.Text = "0"
-        frmMain.mLargo.Text = "0"
+        frmConfigSup.MOSAICO.value = vbUnchecked
+        frmConfigSup.mAncho.Text = "0"
+        frmConfigSup.mLargo.Text = "0"
+        
     End If
 
 End Function
 
-Public Sub fPreviewGrh(ByVal GrhIn As Integer)
+Public Sub fPreviewGrh(ByVal GrhIn As Long)
 '*************************************************
 'Author: Unkwown
 'Last modified: 22/05/06

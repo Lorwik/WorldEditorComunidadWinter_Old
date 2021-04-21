@@ -1,6 +1,6 @@
 Attribute VB_Name = "modMapImpC"
 Option Explicit
-
+#If Privado = 0 Then
 '***************************
 'Map format .CSM
 '***************************
@@ -304,7 +304,7 @@ Sub Cargar_MapIAO(ByVal Map As String, ByVal Tipo As eTipoMapa)
     Next j
     
     'MapInfo_Cargar Map
-    frmMain.txtMapVersion.Text = MapInfo.MapVersion
+    frmMapInfo.txtMapVersion.Text = MapInfo.MapVersion
     
     Call Pestanas(Map, ".csm")
 
@@ -700,7 +700,7 @@ Sub Cargar_MapImpClasico(ByVal Map As String)
     Next j
     
     'MapInfo_Cargar Map
-    frmMain.txtMapVersion.Text = MapInfo.MapVersion
+    frmMapInfo.txtMapVersion.Text = MapInfo.MapVersion
     
     Call Pestanas(Map, ".csm")
 
@@ -959,7 +959,7 @@ Public Sub CSMInfoSaveIAO()
     MapDatIAO.music_number = MapInfo.Music
     MapDatIAO.base_light = MapInfo.LuzBase
     
-    If frmMain.chkLuzClimatica = Checked Then
+    If frmMapInfo.chkLuzClimatica = Checked Then
         MapDatIAO.base_light = MapInfo.LuzBase
         
     Else
@@ -989,7 +989,7 @@ Public Sub CSMInfoSaveIAC()
     
     MapDatIAC.lvlMinimo = MapInfo.lvlMinimo
     
-    If frmMain.chkLuzClimatica = Checked Then
+    If frmMapInfo.chkLuzClimatica = Checked Then
         MapDatIAC.LuzBase = MapInfo.LuzBase
         
     Else
@@ -1031,12 +1031,12 @@ Public Sub CSMInfoCargarIAC()
     MapInfo.LuzBase = MapDatIAC.LuzBase
     
     If MapDatIAC.LuzBase <> 0 Then
-        frmMain.chkLuzClimatica = Checked
+        frmMapInfo.chkLuzClimatica = Checked
         Call ConvertLongToRGB(MapDatIAC.LuzBase, tR, tG, tB)
         
-        frmMain.LuzMapa.Text = tR & "-" & tG & "-" & tB
+        frmMapInfo.LuzMapa.Text = tR & "-" & tG & "-" & tB
     Else
-        frmMain.chkLuzClimatica = Unchecked
+        frmMapInfo.chkLuzClimatica = Unchecked
     End If
     
     MapInfo.MapVersion = MapDatIAC.version
@@ -1098,3 +1098,5 @@ Public Sub AbrirunMapaIAO(ByVal Path As String, ByVal Tipo As eTipoMapa)
             
     End If
 End Sub
+
+#End If

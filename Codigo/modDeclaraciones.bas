@@ -128,7 +128,7 @@ Type SupData
     Block As Boolean
     Capa As Byte
 End Type
-Public MaxSup As Integer
+Public MaxSup As Long
 Public SupData() As SupData
 
 Public Type NpcData
@@ -287,6 +287,12 @@ Public Type Char
     Moving As Byte
     MoveOffset As Position
     
+    MoveOffsetX As Single
+    MoveOffsetY As Single
+    
+    scrollDirectionX As Integer
+    scrollDirectionY As Integer
+    
 End Type
 
 'Holds info about a object
@@ -298,8 +304,8 @@ End Type
 Private Type tLight
     RGBCOLOR As D3DCOLORVALUE
     active As Boolean
-    map_x As Byte
-    map_y As Byte
+    map_x As Integer
+    map_y As Integer
     range As Byte
 End Type
 
@@ -335,6 +341,7 @@ Public Enum eTipoMapa
     tIAOClasico
     tIAOnew
     tIAOold
+    tWinter_Old
 End Enum
 
 Public TipoMapaCargado As Byte
@@ -379,7 +386,7 @@ Public WalkMode As Boolean
 Public NumMaps As Integer 'Number of maps
 Public Numheads As Integer
 Public NumGrhFiles As Integer 'Number of bmps
-Public MaxGrhs As Integer 'Number of Grhs
+Public MaxGrhs As Long 'Number of Grhs
 Global NumChars As Integer
 Global LastChar As Integer
 

@@ -560,21 +560,20 @@ End Function
 
 Private Sub Command1_Click()
     If ClientSetup.WeMode = eWeMode.WinterAO Then
-        MapZonas(frmMain.LstZona.ListIndex + 1).LuzBase = RGB(Text1(3), Text1(4), Text1(5))
+        MapZonas(frmZonas.LstZona.ListIndex + 1).LuzBase = RGB(Text1(3), Text1(4), Text1(5))
         
     Else
         MapInfo.LuzBase = RGB(Text1(3), Text1(4), Text1(5))
         
     End If
     
-    frmMain.LuzMapa.Text = frmColorPicker.Text1(3) & "-" & frmColorPicker.Text1(4) & "-" & frmColorPicker.Text1(5)
-    frmMapInfo.LuzMapa.Text = frmMain.LuzMapa.Text
+    frmMapInfo.LuzMapa.Text = frmColorPicker.Text1(3).Text & "-" & frmColorPicker.Text1(4).Text & "-" & frmColorPicker.Text1(5).Text
 
     Call AddtoRichTextBox(frmMain.StatTxt, "Luz de mapa aceptada. Luz: " & RGB(Text1(3), Text1(4), Text1(5)) & ".", 255, 255, 255, False, True, True)
 
     Call Actualizar_Estado
 
-    Call frmMain.CambiarColorMap
+    Call frmMapInfo.CambiarColorMap
 
     Me.Visible = False
 End Sub

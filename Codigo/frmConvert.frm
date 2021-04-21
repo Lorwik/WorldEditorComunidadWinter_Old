@@ -667,7 +667,7 @@ Private Sub ConvertirInteger()
 
     Dim i As Integer
     
-    Call frmMain.LvBOptX_Click(0)
+    Call frmMapInfo.LvBOptX_Click(0)
     
     If Automatico = False Then
         If FileExist(App.Path & "\Conversor\Integer\Mapa" & txtMin.Text & ".map", vbNormal) = True Then
@@ -703,7 +703,7 @@ Private Sub ConvertirLong()
 
     Dim i As Integer
     
-    Call frmMain.LvBOptX_Click(0)
+    Call frmMapInfo.LvBOptX_Click(0)
     
     If Automatico = False Then
         If FileExist(App.Path & "\Conversor\Long\Mapa" & txtMin.Text & ".map", vbNormal) = True Then
@@ -739,11 +739,11 @@ Private Sub ConvertirLong()
     
 End Sub
 
+#If Privado = 0 Then
 Private Sub ConvertirIAO()
-
     Dim i As Integer
     
-    Call frmMain.LvBOptX_Click(0)
+    Call frmMapInfo.LvBOptX_Click(0)
     
     If Automatico = False Then
         If FileExist(App.Path & "\Conversor\IAO 1.3\Mapa" & txtMin.Text & ".csm", vbNormal) = True Then
@@ -783,7 +783,7 @@ Private Sub ConvertirImpC()
 
     Dim i As Integer
     
-    Call frmMain.LvBOptX_Click(0)
+    Call frmMapInfo.LvBOptX_Click(0)
     
     If Automatico = False Then
         If FileExist(App.Path & "\Conversor\IAO 1.4\Mapa" & txtMin.Text & ".csm", vbNormal) = True Then
@@ -815,6 +815,8 @@ Private Sub ConvertirImpC()
     
 End Sub
 
+#End If
+
 Private Sub LvBConversion_Click()
 
     Select Case ComOpracion.ListIndex
@@ -825,12 +827,13 @@ Private Sub LvBConversion_Click()
         Case 1 'Long > CSM
             Call ConvertirLong
         
+        #If Privado = 0 Then
         Case 2 'IAO 1.3 > IAO 1.4
             Call ConvertirIAO
             
         Case 3 'IAO 1.4 > ImpC
             Call ConvertirImpC
-            
+        #End If
     End Select
 End Sub
 
@@ -862,10 +865,10 @@ Private Sub LvBFusionarMapas_Click()
     
     i = CInt(Val(txtDesde.Text))
     
-    Do While i > 0
+    Do While i > Val(txtHasta.Text) - 1
         If i <> 0 Then
             Call modMapIO.NuevoMapa
-            Call modMapWinter.Cargar_CSM(App.Path & "\Conversor\Mapas\" & "Mapa" & i & ".csm")
+            Call modMapWinter.Cargar_CSM_Old(App.Path & "\Conversor\Mapas\" & "Mapa" & i & ".csm")
             
             For tX = 1 To MiniMapX
                 For tY = 1 To MiniMapY
@@ -889,10 +892,10 @@ Private Sub LvBFusionarMapas_Click()
         End If
         
         If Val(txtDesde.Text) > Val(txtHasta.Text) Then
-            i = i - txtHasta.Text
+            i = i - Val(txtHasta.Text)
             
         Else
-            i = i + txtHasta.Text
+            i = i + Val(txtHasta.Text)
             
         End If
         

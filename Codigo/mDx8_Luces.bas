@@ -11,8 +11,8 @@ Option Base 0
 Private Type tLight
     RGBCOLOR As D3DCOLORVALUE
     active As Boolean
-    map_x As Byte
-    map_y As Byte
+    map_x As Integer
+    map_y As Integer
     range As Byte
 End Type
  
@@ -30,7 +30,7 @@ Public Estados(0 To 3) As D3DCOLORVALUE
 Public Estado_Actual As D3DCOLORVALUE
 Public Estado_Custom As D3DCOLORVALUE
 
-Public Function Create_Light_To_Map(ByVal map_x As Byte, ByVal map_y As Byte, Optional range As Byte = 3, Optional ByVal Red As Byte = 255, Optional ByVal Green As Byte = 255, Optional ByVal Blue As Byte = 255)
+Public Function Create_Light_To_Map(ByVal map_x As Integer, ByVal map_y As Integer, Optional range As Byte = 3, Optional ByVal Red As Byte = 255, Optional ByVal Green As Byte = 255, Optional ByVal Blue As Byte = 255)
     NumLights = NumLights + 1
    
     ReDim Preserve Light_List(1 To NumLights) As tLight
@@ -47,7 +47,7 @@ Public Function Create_Light_To_Map(ByVal map_x As Byte, ByVal map_y As Byte, Op
     Call LightRender(NumLights)
 End Function
 
-Public Function Delete_Light_To_Map(ByVal X As Byte, ByVal Y As Byte)
+Public Function Delete_Light_To_Map(ByVal X As Integer, ByVal Y As Integer)
    
     Dim i As Long
    

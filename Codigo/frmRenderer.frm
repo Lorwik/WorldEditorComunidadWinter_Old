@@ -167,7 +167,7 @@ Public Sub Capturar_Imagen(Control As Control, Destino As Object)
     End If
     
     ' Convierte la imagen anterior en un Mapa de bits
-    Destino.Picture = Destino.image
+    Destino.Picture = Destino.Image
     
     ' Borra la imagen ya que ahora usa el Picture
     Call Destino.Cls

@@ -210,38 +210,43 @@ Sub MoveCharbyPos(CharIndex As Integer, nX As Integer, nY As Integer)
     Dim addY As Integer
     Dim nHeading As Byte
     
-    X = CharList(CharIndex).Pos.X
-    Y = CharList(CharIndex).Pos.Y
-    
-    addX = nX - X
-    addY = nY - Y
-    
-    If Sgn(addX) = 1 Then
-        nHeading = eDireccion.EAST
-    End If
-    
-    If Sgn(addX) = -1 Then
-        nHeading = eDireccion.WEST
-    End If
-    
-    If Sgn(addY) = -1 Then
-        nHeading = eDireccion.NORTH
-    End If
-    
-    If Sgn(addY) = 1 Then
-        nHeading = eDireccion.SOUTH
-    End If
-    
-    MapData(nX, nY).CharIndex = CharIndex
-    CharList(CharIndex).Pos.X = nX
-    CharList(CharIndex).Pos.Y = nY
-    MapData(X, Y).CharIndex = 0
-    
-    CharList(CharIndex).MoveOffset.X = -1 * (TilePixelWidth * addX)
-    CharList(CharIndex).MoveOffset.Y = -1 * (TilePixelHeight * addY)
-    
-    CharList(CharIndex).Moving = 1
-    CharList(CharIndex).Heading = nHeading
+    With CharList(CharIndex)
+        X = .Pos.X
+        Y = .Pos.Y
+        
+        addX = nX - X
+        addY = nY - Y
+        
+        If Sgn(addX) = 1 Then
+            nHeading = eDireccion.EAST
+        End If
+        
+        If Sgn(addX) = -1 Then
+            nHeading = eDireccion.WEST
+        End If
+        
+        If Sgn(addY) = -1 Then
+            nHeading = eDireccion.NORTH
+        End If
+        
+        If Sgn(addY) = 1 Then
+            nHeading = eDireccion.SOUTH
+        End If
+        
+        MapData(nX, nY).CharIndex = CharIndex
+        .Pos.X = nX
+        .Pos.Y = nY
+        MapData(X, Y).CharIndex = 0
+        
+        .MoveOffset.X = -1 * (TilePixelWidth * addX)
+        .MoveOffset.Y = -1 * (TilePixelHeight * addY)
+        
+        .Moving = 1
+        .Heading = nHeading
+        
+        .scrollDirectionX = Sgn(addX)
+        .scrollDirectionY = Sgn(addY)
+    End With
 
 End Sub
 
@@ -715,14 +720,14 @@ On Error GoTo RenderScreen_Err
                 If frmMain.cSeleccionarSuperficie.value = True And ClientSetup.Preview = True Then
                     Sobre = MapData(X, Y).Graphic(bCapa).GrhIndex
     
-                    If frmMain.MOSAICO.value = vbChecked Then
+                    If frmConfigSup.MOSAICO.value = vbChecked Then
                         Dim aux As Long
                         Dim dy  As Integer
                         Dim dX  As Integer
     
-                        If frmMain.DespMosaic.value = vbChecked Then
-                            dy = Val(frmMain.DMLargo.Text)
-                            dX = Val(frmMain.DMAncho.Text)
+                        If frmConfigSup.DespMosaic.value = vbChecked Then
+                            dy = Val(frmConfigSup.DMLargo.Text)
+                            dX = Val(frmConfigSup.DMAncho.Text)
                         Else
                             dy = 0
                             dX = 0
@@ -730,7 +735,7 @@ On Error GoTo RenderScreen_Err
                         End If
     
                         If frmMain.mnuAutoCompletarSuperficies.Checked = False Then
-                            aux = Val(frmMain.cGrh.Text) + (((Y + dy) Mod frmMain.mLargo.Text) * frmMain.mAncho.Text) + ((X + dX) Mod frmMain.mAncho.Text)
+                            aux = Val(frmMain.cGrh.Text) + (((Y + dy) Mod frmConfigSup.mLargo.Text) * frmConfigSup.mAncho.Text) + ((X + dX) Mod frmConfigSup.mAncho.Text)
     
                             If MapData(X, Y).Graphic(bCapa).GrhIndex <> aux Then
                                 MapData(X, Y).Graphic(bCapa).GrhIndex = aux
@@ -739,7 +744,7 @@ On Error GoTo RenderScreen_Err
                             End If
     
                         Else
-                            aux = Val(frmMain.cGrh.Text) + (((Y + dy) Mod frmMain.mLargo.Text) * frmMain.mAncho.Text) + ((X + dX) Mod frmMain.mAncho.Text)
+                            aux = Val(frmMain.cGrh.Text) + (((Y + dy) Mod frmConfigSup.mLargo.Text) * frmConfigSup.mAncho.Text) + ((X + dX) Mod frmConfigSup.mAncho.Text)
     
                             If MapData(X, Y).Graphic(bCapa).GrhIndex <> aux Then
                                 MapData(X, Y).Graphic(bCapa).GrhIndex = aux
@@ -823,7 +828,7 @@ On Error GoTo RenderScreen_Err
                     
                     'Char layer **********************************
                     If .CharIndex <> 0 And VerNpcs Then
-                        'Llamada al CharRender
+                        Call CharRender(.CharIndex, PixelOffsetXTemp, PixelOffsetYTemp)
                     End If
                      
                     'Layer 3 *****************************************
@@ -900,7 +905,7 @@ On Error GoTo RenderScreen_Err
                 
                 If ClientSetup.WeMode = eWeMode.WinterAO Then
                     If frmMain.mnuVerZonas(0).Checked Then 'Zona actual
-                        If MapData(X, Y).ZonaIndex = frmMain.LstZona.ListIndex + 1 And MapData(X, Y).ZonaIndex > 0 Then _
+                        If MapData(X, Y).ZonaIndex = frmZonas.LstZona.ListIndex + 1 And MapData(X, Y).ZonaIndex > 0 Then _
                             Call DrawText(PixelOffsetXTemp + 7, PixelOffsetYTemp + 7, "z" & MapData(X, Y).ZonaIndex, -1, False, 1)
                             
                     ElseIf frmMain.mnuVerZonas(1).Checked Then 'Todas las zonas
@@ -935,6 +940,76 @@ RenderScreen_Err:
     End If
 End Sub
 
+Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
+'*******************************************************
+'Esto forma parte del RenderScreen.
+'Dibuja todo aquello que tenga cuerpo (por asi decirlo)
+'Bichos y PJ
+'*******************************************************
+    Dim moved As Boolean
+    Dim Pos As Integer
+    Dim line As String
+    
+    With CharList(CharIndex)
+        If .Moving Then
+
+            'If needed, move left and right
+            If .scrollDirectionX <> 0 Then
+                .MoveOffsetX = .MoveOffsetX + ScrollPixelsPerFrameX * Sgn(.scrollDirectionX) * timerTicksPerFrame
+                
+                'Start animations
+                'TODO : Este parche es para evita los uncornos exploten al moverse!! REVER!!!
+                If .Body.Walk(.Heading).speed > 0 Then .Body.Walk(.Heading).Started = 1
+                
+                'Char moved
+                moved = True
+                
+                'Check if we already got there
+                If (Sgn(.scrollDirectionX) = 1 And .MoveOffsetX >= 0) Or (Sgn(.scrollDirectionX) = -1 And .MoveOffsetX <= 0) Then
+                    .MoveOffsetX = 0
+                    .scrollDirectionX = 0
+
+                End If
+
+            End If
+            
+            'If needed, move up and down
+            If .scrollDirectionY <> 0 Then
+                .MoveOffsetY = .MoveOffsetY + ScrollPixelsPerFrameY * Sgn(.scrollDirectionY) * timerTicksPerFrame
+                
+                'Start animations
+                'TODO : Este parche es para evita los uncornos exploten al moverse!! REVER!!!
+                If .Body.Walk(.Heading).speed > 0 Then .Body.Walk(.Heading).Started = 1
+                
+                'Char moved
+                moved = True
+                
+                'Check if we already got there
+                If (Sgn(.scrollDirectionY) = 1 And .MoveOffsetY >= 0) Or (Sgn(.scrollDirectionY) = -1 And .MoveOffsetY <= 0) Then
+                    .MoveOffsetY = 0
+                    .scrollDirectionY = 0
+
+                End If
+
+            End If
+
+        End If
+        
+        If .Heading = 0 Then Exit Sub
+        
+        PixelOffsetX = PixelOffsetX + .MoveOffsetX
+        PixelOffsetY = PixelOffsetY + .MoveOffsetY
+
+        'Dibujamos el cuerpo
+        If .Body.Walk(.Heading).GrhIndex Then _
+            Call Draw_Grh(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, Normal_RGBList(), 1, False)
+        'Dibujamos la Cabeza
+        'If .Head Then _
+            Call DrawHead(.Head, PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, LightIluminado(), , X, Y)
+
+    End With
+End Sub
+
 Public Sub RenderPreview()
     Dim destRect     As RECT
     
@@ -949,16 +1024,16 @@ Public Sub RenderPreview()
     'Clear the inventory window
     Call Engine_BeginScene
     
-    If frmMain.MOSAICO = vbUnchecked Or frmMain.lListado(3).Visible = True Then
+    If frmConfigSup.MOSAICO = vbUnchecked Or frmMain.lListado(3).Visible = True Then
         Call Draw_GrhIndex(CurrentGrh.GrhIndex, frmMain.PreviewGrh.Height / 2, frmMain.PreviewGrh.Width - 50, 1, Normal_RGBList(), 0)
         
     Else
-        For i = 1 To CInt(Val(frmMain.mLargo))
-            For j = 1 To CInt(Val(frmMain.mAncho))
+        For i = 1 To CInt(Val(frmConfigSup.mLargo))
+            For j = 1 To CInt(Val(frmConfigSup.mAncho))
             
                 Call Draw_GrhIndex(CurrentGrh.GrhIndex, (j - 1) * 32, (i - 1) * 32, 1, Normal_RGBList(), 0)
                 
-                If Cont < CInt(Val(frmMain.mLargo)) * CInt(Val(frmMain.mAncho)) Then _
+                If Cont < CInt(Val(frmConfigSup.mLargo)) * CInt(Val(frmConfigSup.mAncho)) Then _
                     Cont = Cont + 1: CurrentGrh.GrhIndex = CurrentGrh.GrhIndex + 1
             Next j
         Next i
@@ -1016,6 +1091,14 @@ PixelPos = (TilePixelWidth * X) - TilePixelWidth
 
 End Function
 
+Public Sub ChangeView()
+    WindowTileHeight = Round(frmMain.MainViewPic.Height / 32, 0)
+    WindowTileWidth = Round(frmMain.MainViewPic.Width / 32, 0)
+
+    HalfWindowTileHeight = WindowTileHeight \ 2
+    HalfWindowTileWidth = WindowTileWidth \ 2
+End Sub
+
 Public Sub InitTileEngine(ByVal setTilePixelHeight As Integer, ByVal setTilePixelWidth As Integer, ByVal pixelsToScrollPerFrameX As Integer, pixelsToScrollPerFrameY As Integer)
 '***************************************************
 'Author: Aaron Perkins
@@ -1028,11 +1111,8 @@ On Error GoTo ErrorHandler:
 
     TilePixelWidth = setTilePixelWidth
     TilePixelHeight = setTilePixelHeight
-    WindowTileHeight = Round(frmMain.MainViewPic.Height / 32, 0)
-    WindowTileWidth = Round(frmMain.MainViewPic.Width / 32, 0)
-
-    HalfWindowTileHeight = WindowTileHeight \ 2
-    HalfWindowTileWidth = WindowTileWidth \ 2
+    
+    Call ChangeView
 
     'Establecemos el tamaño del mapa
     Call setMapSize
@@ -1046,8 +1126,8 @@ On Error GoTo 0
     'Cargamos indice de graficos.
     'TODO: No usar variable de compilacion y acceder a esto desde el config.ini
     Call LoadGrhData
-    If ClientSetup.WeMode = eWeMode.ImperiumClasico Then _
-        Call CargarMinimapa
+
+    Call CargarMinimapa
         
     Call SimpleLogError("Cargado Graficos...")
     
@@ -1131,7 +1211,7 @@ Public Sub setMapSize()
         
     End If
     
-    frmMain.LvBOptX(ClientSetup.MapTam).Enabled = False
+    frmMapInfo.LvBOptX(ClientSetup.MapTam).value = False
     
     MinXBorder = XMinMapSize + (ClienteWidth \ 2)
     MaxXBorder = XMaxMapSize - (ClienteWidth \ 2)
@@ -1160,6 +1240,10 @@ Sub ShowNextFrame()
 
 On Error GoTo ErrorHandler:
 
+    Dim cX As Integer
+    Dim cY As Integer
+    Dim Cuadrante As Integer
+    
     If EngineRun Then
         
         Call Engine_BeginScene
@@ -1195,6 +1279,9 @@ On Error GoTo ErrorHandler:
         Call Engine_Update_FPS
         Call DrawText(10, 5, "FPS: " & mod_TileEngine.FPS, -1, False)
         Call DrawText(10, 20, "Mouse: " & MousePos, -1, False)
+        
+        Call ObtenerCuadrante(Cuadrante, cX, cY)
+        Call DrawText(10, 35, "Cuadrante: " & Cuadrante & " X:" & cX & " Y: " & cY, -1, False)
     
         'Get timing info
         timerElapsedTime = GetElapsedTime()
@@ -1283,8 +1370,8 @@ Public Sub MapCapture(ByRef Format As Boolean)
     '*************************************************
     
     Dim D3DWindow As D3DPRESENT_PARAMETERS
-    Dim Y As Byte     'Keeps track of where on map we are
-    Dim X As Byte     'Keeps track of where on map we are
+    Dim Y As Integer     'Keeps track of where on map we are
+    Dim X As Integer     'Keeps track of where on map we are
           
     Dim RX As Long
     Dim RY As Long
@@ -1428,21 +1515,34 @@ MapCapture_Err:
     
 End Sub
 
-Public Sub DibujarMinimapa(Optional ByVal Actualizar = False)
+Public Sub DibujarMinimapa(Optional ByVal Refrescar = False)
 
     Dim map_x As Integer
     Dim map_y As Integer
+    Dim XMin As Long
+    Dim XMax As Long
+    Dim YMin As Long
+    Dim YMax As Long
     
-    If Actualizar = False Then
-         'Primero limpiamos el minimapa anterior
-         frmMain.MiniMap.BackColor = vbBlack
-         
-        For map_y = 1 To 100
-            For map_x = 1 To 100
+    Dim picMapahDC As Long
+    
+    'Dibujamos todo el minimapa al completo
+    If Refrescar = False Then
+    
+        frmMapa.picMapa.BackColor = vbBlack
+        picMapahDC = frmMapa.picMapa.hDC
+            
+        XMin = XMinMapSize
+        XMax = XMaxMapSize
+        YMin = YMinMapSize
+        YMax = YMaxMapSize
+
+        For map_y = YMin To YMax
+            For map_x = YMin To XMax
             
                 If MMiniMap_capa1 Then
                     If MapData(map_x, map_y).Graphic(1).GrhIndex > 0 Then
-                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(1).GrhIndex).mini_map_color
+                        SetPixel picMapahDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(1).GrhIndex).mini_map_color
     
                     End If
     
@@ -1450,7 +1550,7 @@ Public Sub DibujarMinimapa(Optional ByVal Actualizar = False)
                 
                 If MMiniMap_capa2 Then
                     If MapData(map_x, map_y).Graphic(2).GrhIndex > 0 Then
-                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(2).GrhIndex).mini_map_color
+                        SetPixel picMapahDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(2).GrhIndex).mini_map_color
     
                     End If
     
@@ -1458,7 +1558,7 @@ Public Sub DibujarMinimapa(Optional ByVal Actualizar = False)
             
                 If MMiniMap_capa3 Then
                     If MapData(map_x, map_y).Graphic(3).GrhIndex > 0 Then
-                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(3).GrhIndex).mini_map_color
+                        SetPixel picMapahDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(3).GrhIndex).mini_map_color
     
                     End If
     
@@ -1466,7 +1566,7 @@ Public Sub DibujarMinimapa(Optional ByVal Actualizar = False)
             
                 If MMiniMap_capa4 Then
                     If MapData(map_x, map_y).Graphic(4).GrhIndex > 0 Then
-                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(4).GrhIndex).mini_map_color
+                        SetPixel picMapahDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).Graphic(4).GrhIndex).mini_map_color
     
                     End If
     
@@ -1474,7 +1574,7 @@ Public Sub DibujarMinimapa(Optional ByVal Actualizar = False)
             
                 If MMiniMap_Npcs Then
                     If MapData(map_x, map_y).NPCIndex > 0 Then
-                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, vbYellow
+                        SetPixel picMapahDC, map_x - 1, map_y - 1, vbYellow
     
                     End If
     
@@ -1482,7 +1582,7 @@ Public Sub DibujarMinimapa(Optional ByVal Actualizar = False)
             
                 If MMiniMap_objetos Then
                     If MapData(map_x, map_y).OBJInfo.ObjIndex > 0 Then
-                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).ObjGrh.GrhIndex).mini_map_color
+                        SetPixel picMapahDC, map_x - 1, map_y - 1, GrhData(MapData(map_x, map_y).ObjGrh.GrhIndex).mini_map_color
     
                     End If
     
@@ -1490,7 +1590,7 @@ Public Sub DibujarMinimapa(Optional ByVal Actualizar = False)
             
                 If MMiniMap_Bloqueos Then
                     If MapData(map_x, map_y).Blocked > 0 Then
-                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, vbRed
+                        SetPixel picMapahDC, map_x - 1, map_y - 1, vbRed
     
                     End If
     
@@ -1498,16 +1598,16 @@ Public Sub DibujarMinimapa(Optional ByVal Actualizar = False)
             
                 If MMiniMap_particulas Then
                     If MapData(map_x, map_y).Particle_Index > 0 Then
-                        SetPixel frmMain.MiniMap.hDC, map_x - 1, map_y - 1, vbWhite
+                        SetPixel picMapahDC, map_x - 1, map_y - 1, vbWhite
     
                     End If
     
                 End If
     
                 If MMiniMap_Nombre Then
-                    frmMain.MiniMap.CurrentX = 30
-                    frmMain.MiniMap.CurrentY = 26
-                    frmMain.MiniMap.Print frmMain.MapPest(7).Caption
+                    frmMapa.picMapa.CurrentX = 30
+                    frmMapa.picMapa.CurrentY = 26
+                    frmMapa.picMapa.Print frmMain.MapPest(7).Caption
     
                 End If
             Next map_x
@@ -1517,9 +1617,25 @@ Public Sub DibujarMinimapa(Optional ByVal Actualizar = False)
     
     'frmMain.UserM.Left = (UserPos.X * 2) - 2
     'frmMain.UserM.Top = (UserPos.Y * 2) - 2
-    frmMain.ApuntadorRadar.Left = (UserPos.X) - 9
-    frmMain.ApuntadorRadar.Top = (UserPos.Y) - 8
+    frmMapa.ApuntadorRadar.Left = (UserPos.X) - 9
+    frmMapa.ApuntadorRadar.Top = (UserPos.Y) - 8
     
     'Refrescamos
     'frmMain.Minimap.Refresh
+End Sub
+
+Public Sub ActualizarMinimapa(ByVal tX As Integer, ByVal tY As Integer)
+
+    If tY < YMinMapSize Or tY > YMaxMapSize Then Exit Sub
+    If tX < XMinMapSize Or tX > XMaxMapSize Then Exit Sub
+    
+    If frmMain.cSeleccionarSuperficie.value = True Then
+        If MapData(tX, tY).Graphic(Val(frmMain.cCapas.Text)).GrhIndex > 0 Then _
+            SetPixel frmMapa.picMapa.hDC, tX - 1, tY - 1, GrhData(MapData(tX, tY).Graphic(Val(frmMain.cCapas.Text)).GrhIndex).mini_map_color
+            
+    ElseIf frmMain.cQuitarEnEstaCapa.value = True Then
+        SetPixel frmMapa.picMapa.hDC, tX - 1, tY - 1, 0
+        
+    End If
+
 End Sub

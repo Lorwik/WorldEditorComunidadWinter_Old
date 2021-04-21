@@ -112,13 +112,12 @@ Public Sub CargarMapIni()
     On Error GoTo Fallo
     Dim tStr As String
     Dim Leer As New clsIniReader
-
+    Dim NewPath As String
+    
     'Si el WorldEditor.ini no existe, tomamos estos parametros por defecto
     If Not FileExist(WEConfigDir, vbArchive) Then
         frmMain.mnuGuardarUltimaConfig.Checked = True
-        DirRecursos = IniPath & "Recursos\"
-        DirDats = IniPath & "DATS\"
-        MaxGrhs = 15000
+        MaxGrhs = 32000
         UserPos.X = 50
         UserPos.Y = 50
         PantallaX = 19
@@ -142,7 +141,7 @@ Public Sub CargarMapIni()
     
     ' Index
     MaxGrhs = Val(GetVar(WEConfigDir, "INDEX", "MaxGrhs"))
-    If MaxGrhs < 1 Then MaxGrhs = 15000
+    If MaxGrhs < 1 Then MaxGrhs = 32000
     
     'Reciente
     frmMain.Dialog.InitDir = Leer.GetValue("PATH" & ClientSetup.WeMode, "UltimoMapa")
@@ -151,16 +150,26 @@ Public Sub CargarMapIni()
     '-------
     'Carga de rutas
     '-----------------------------------------
-    
+
     '****
     'RUTA DE GRAFFICOS
     '*****************
-    If DirRecursos = "\" Then
-        DirRecursos = IniPath & "Recursos\"
+
+    If FileExist(DirRecursos, vbDirectory) = False Or DirRecursos = "\" Then
+        MsgBox "El directorio de Recursos es incorrecto", vbCritical + vbOKOnly
+        
+        NewPath = Buscar_Carpeta("DirRecursos", "")
+        Call WriteVar(WEConfigDir, "PATH" & ClientSetup.WeMode, "DirRecursos", NewPath)
+        DirRecursos = NewPath & "\"
     End If
     
-    If FileExist(DirRecursos, vbDirectory) = False Then
-        MsgBox "El directorio de Graficos es incorrecto", vbCritical + vbOKOnly
+    If FileExist(DirRecursos & "Graficos" & Formato, vbArchive) = False Then
+        MsgBox "No se encontro el recursos de graficos."
+        End
+    End If
+    
+    If FileExist(DirRecursos & "Scripts" & Formato, vbArchive) = False Then
+        MsgBox "No se encontro el recursos de Scripts."
         End
     End If
     
@@ -168,12 +177,22 @@ Public Sub CargarMapIni()
     'RUTA DE DATS
     '*****************
     DirDats = autoCompletaPath(Leer.GetValue("PATH" & ClientSetup.WeMode, "DirDats"))
-    If DirDats = "\" Then
-        DirDats = IniPath & "DATS\"
+    
+    If FileExist(DirDats, vbDirectory) = False Or DirDats = "\" Then
+        MsgBox "El directorio de Dats es incorrecto", vbCritical + vbOKOnly
+        
+        NewPath = Buscar_Carpeta("DirDats", "")
+        Call WriteVar(WEConfigDir, "PATH" & ClientSetup.WeMode, "DirDats", NewPath)
+        DirDats = NewPath & "\"
     End If
     
-    If FileExist(DirDats, vbDirectory) = False Then
-        MsgBox "El directorio de Dats es incorrecto", vbCritical + vbOKOnly
+    If FileExist(DirDats & "Obj.dat", vbArchive) = False Then
+        MsgBox "No se encontro el archivo Obj.dat."
+        End
+    End If
+    
+    If FileExist(DirDats & "NPcs.dat", vbArchive) = False Then
+        MsgBox "No se encontro el archivo NPCs.dat."
         End
     End If
     
@@ -543,7 +562,7 @@ On Error GoTo ErrorHandler:
         fileVersion = fileBuff.getLong
         
         grhCount = fileBuff.getLong
-
+        
         ReDim GrhData(0 To grhCount) As GrhData
         
         While Grh < grhCount
