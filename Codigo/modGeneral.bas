@@ -421,6 +421,8 @@ Public Sub CloseClient()
     On Error Resume Next
 
     Dim mifrm As Form
+    
+    Call GuardarConfiguracion
 
     EngineRun = False
     
@@ -433,6 +435,11 @@ Public Sub CloseClient()
     For Each mifrm In Forms
         Unload mifrm
     Next
+    
+    'Allow MainLoop to close program
+    If prgRun = True Then
+        prgRun = False
+    End If
     
     End
     

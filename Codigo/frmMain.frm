@@ -2259,6 +2259,7 @@ Begin VB.Form frmMain
       _Version        =   393217
       BackColor       =   0
       BorderStyle     =   0
+      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -5478,44 +5479,8 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
 'Last modified: 24/11/08
 '*************************************************
 
-    ' Guardar configuración
-    WriteVar WEConfigDir, "CONFIGURACION", "GuardarConfig", IIf(frmMain.mnuGuardarUltimaConfig.Checked = True, "1", "0")
-    If frmMain.mnuGuardarUltimaConfig.Checked = True Then
-        WriteVar WEConfigDir, "PATH" & ClientSetup.WeMode, "UltimoMapa", Dialog.filename
-        WriteVar WEConfigDir, "MOSTRAR", "ControlAutomatico", IIf(frmMain.mnuVerAutomatico.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "Capa2", IIf(frmMain.mnuVerCapa2.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "Capa3", IIf(frmMain.mnuVerCapa3.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "Capa4", IIf(frmMain.mnuVerCapa4.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "Translados", IIf(frmMain.mnuVerTranslados.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "Objetos", IIf(frmMain.mnuVerObjetos.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "NPCs", IIf(frmMain.mnuVerNPCs.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "Triggers", IIf(frmMain.mnuVerTriggers.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "Grilla", IIf(frmMain.mnuVerGrilla.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "Particulas", IIf(frmMain.mnuVerParticulas.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "Bloqueos", IIf(frmMain.mnuVerBloqueos.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MOSTRAR", "LastPos", UserPos.X & "-" & UserPos.Y
-        WriteVar WEConfigDir, "CONFIGURACION", "UtilizarDeshacer", IIf(frmMain.mnuUtilizarDeshacer.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "CONFIGURACION", "AutoCapturarTrans", IIf(frmMain.mnuAutoCapturarTranslados.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "CONFIGURACION", "AutoCapturarSup", IIf(frmMain.mnuAutoCapturarSuperficie.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "CONFIGURACION", "ObjTranslado", Val(Cfg_TrOBJ)
-        
-        WriteVar WEConfigDir, "MINIMAP", "Capa1", IIf(frmMain.Minimap_capa1.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MINIMAP", "Capa2", IIf(frmMain.Minimap_capa2.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MINIMAP", "Capa3", IIf(frmMain.Minimap_capa3.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MINIMAP", "Capa4", IIf(frmMain.Minimap_capa4.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MINIMAP", "Obj", IIf(frmMain.Minimap_objetos.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MINIMAP", "NPC", IIf(frmMain.Minimap_npcs.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MINIMAP", "Particulas", IIf(frmMain.Minimap_particulas.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MINIMAP", "Bloqueos", IIf(frmMain.Minimap_bloqueos.Checked = True, "1", "0")
-        WriteVar WEConfigDir, "MINIMAP", "Nombre", IIf(frmMain.Minimap_ndemapa.Checked = True, "1", "0")
-    End If
+    Call CloseClient
     
-    'Allow MainLoop to close program
-    If prgRun = True Then
-        prgRun = False
-        Cancel = 1
-    End If
-
 End Sub
 
 Private Sub SaveAllMiniMap_Click()

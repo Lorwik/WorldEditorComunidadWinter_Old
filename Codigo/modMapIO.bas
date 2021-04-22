@@ -1268,7 +1268,7 @@ Public Sub MapZona_Actualizar(ByVal id As Integer)
         .chkMapPK.value = IIf(MapZonas(id).PK = True, 1, 0)
         .TxtAmbient.Text = MapZonas(id).ambient
         .TxtlvlMinimo = MapZonas(id).lvlMinimo
-        .chkMapMagiaSinEfecto.value = MapZonas(id).MagiaSinEfecto
+        .chkMapMagiaSinEfecto.value = IIf(MapZonas(id).MagiaSinEfecto, vbChecked, vbUnchecked)
         .chkMapInviSinEfecto.value = IIf(MapZonas(id).InviSinEfecto, vbChecked, vbUnchecked)
         .chkInvocarSin.value = MapZonas(id).InvocarSinEfecto
         .chkOcultarSin.value = MapZonas(id).OcultarSinEfecto
