@@ -7,4 +7,6 @@ Soporta mapas de mundo continuo en un formato de 1000 x 1000 con un innovador si
 
 A pesar de que este WE fue programado desde 0, se reutilizaron algunas funciones del WorldEditor común.
 
+Soporta resoluciones dinamicas, testeado hasta resoluciones de 2K y compatible con multi monitor, haciendo que mas agradable la experiencia de mapeo.
+
 Este proyecto fue desarrollado por Lorwik y liberado bajo la licencia GNU/GPL.
