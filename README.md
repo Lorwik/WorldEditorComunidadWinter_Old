@@ -9,4 +9,6 @@ A pesar de que este WE fue programado desde 0, se reutilizaron algunas funciones
 
 Soporta resoluciones dinamicas, testeado hasta resoluciones de 2K y compatible con multi monitor, haciendo que mas agradable la experiencia de mapeo.
 
+** NOTA: Para utilizar este WorldEditor es necesario tener los recursos comprimidos con mi compresor o modificar el codigo **
+
 Este proyecto fue desarrollado por Lorwik y liberado bajo la licencia GNU/GPL.
